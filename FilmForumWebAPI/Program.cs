@@ -1,3 +1,9 @@
+using FilmForumWebAPI.Extensions;
+using FilmForumWebAPI.Services;
+using FilmForumWebAPI.Services.Interfaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FilmForumWebAPI;
 
@@ -9,7 +15,25 @@ public class Program
 
         // Add services to the container.
 
-        builder.Services.AddControllers();
+        #region Services
+
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IPasswordService, PasswordService>();
+
+        #endregion Services
+
+        #region Validators
+
+        builder.Services.AddValidatorsFromAssemblyContaining<Program>(); // register validators
+        builder.Services.AddFluentValidationAutoValidation(); //auto validation
+
+        #endregion Validators
+
+        builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+        {
+            options.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.GetValidationErrorsMessagesAsString());
+        });
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -26,7 +50,6 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 
