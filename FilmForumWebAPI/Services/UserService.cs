@@ -35,7 +35,7 @@ public class UserService : IUserService
 
     public async Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto)
          => await _usersDatabaseContext.Users.Where(x => x.Id == id)
-                                       .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Password, _passwordService.HashPassword(changePasswordDto.NewPassword)));
+                                       .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Password, _passwordService.HashPassword(changePasswordDto.Password)));
 
     public async Task<int> ChangeEmailAsync(int id, string email)
         => await _usersDatabaseContext.Users.Where(x => x.Id == id)

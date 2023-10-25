@@ -11,4 +11,3 @@ public class UsersDatabaseContext : DbContext
 
     public DbSet<User> Users { get; set; }
 }
-

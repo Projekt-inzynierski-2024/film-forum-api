@@ -1,4 +1,3 @@
-﻿namespace FilmForumWebAPI.Models.Dtos.User
-{
-    public record GetUserDto(int Id, string Username, string Email);
-}
+﻿namespace FilmForumWebAPI.Models.Dtos.User;
+
+public record GetUserDto(int Id, string Username, string Email);

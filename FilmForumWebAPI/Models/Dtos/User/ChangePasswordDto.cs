@@ -1,3 +1,3 @@
 ﻿namespace FilmForumWebAPI.Models.Dtos.User;
 
-public record ChangePasswordDto(string NewPassword, string ConfirmPassword);
+public record ChangePasswordDto(string Password, string ConfirmPassword);

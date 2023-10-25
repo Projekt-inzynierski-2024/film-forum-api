@@ -71,14 +71,14 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("/change-email{id}")]
-    public async Task<IActionResult> ChangeEmail(int id, [FromBody] string email)
+    public async Task<IActionResult> ChangeEmail(int id, [FromBody] ChangeEmailDto changeEmailDto)
     {
-        if (await _userService.UserWithEmailExistsAsync(email))
+        if (await _userService.UserWithEmailExistsAsync(changeEmailDto.Email))
         {
             return NotFound("Email already exists");
         }
 
-        int result = await _userService.ChangeEmailAsync(id, email);
+        int result = await _userService.ChangeEmailAsync(id, changeEmailDto.Email);
 
         return NoContent();
     }
