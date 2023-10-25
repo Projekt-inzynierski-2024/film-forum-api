@@ -2,7 +2,7 @@
 
 public interface IPasswordService
 {
-    public bool VerifyPassword(string password, string hashedPassword);
+    bool VerifyPassword(string password, string hashedPassword);
 
-    public string HashPassword(string password);
+    string HashPassword(string password);
 }

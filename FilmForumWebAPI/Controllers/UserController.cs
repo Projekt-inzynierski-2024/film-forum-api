@@ -22,25 +22,25 @@ public class UserController : ControllerBase
     [HttpPost("/register")]
     public async Task<IActionResult> Register([FromBody] CreateUserDto createUserDto)
     {
-        if (await _userService.UserWithEmailExists(createUserDto.Email))
+        if (await _userService.UserWithEmailExistsAsync(createUserDto.Email))
         {
             return BadRequest("Email already exists");
         }
 
-        if (await _userService.UserWithUsernameExists(createUserDto.Username))
+        if (await _userService.UserWithUsernameExistsAsync(createUserDto.Username))
         {
             return BadRequest("Username already exists");
         }
 
         UserCreatedDto result = await _userService.CreateUserAsync(createUserDto);
 
-        return Ok();
+        return Created(nameof(GetById), result);
     }
 
     [HttpPost("/login")]
     public async Task<IActionResult> Login([FromBody] LogInDto logInDto)
     {
-        if(!await _userService.UserWithEmailExists(logInDto.Email))
+        if (!await _userService.UserWithEmailExistsAsync(logInDto.Email))
         {
             return NotFound("User not found");
         }
@@ -48,5 +48,38 @@ public class UserController : ControllerBase
         var result = await _userService.LogInAsync(logInDto);
 
         return Ok();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        GetUserDto? user = await _userService.GetUserAsync(id);
+        return user is not null ? Ok(user) : NotFound($"User not found");
+    }
+
+    [HttpPut("/change-password{id}")]
+    public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto changePasswordDto)
+    {
+        if (!await _userService.UserWithIdExistsAsync(id))
+        {
+            return NotFound("User not found");
+        }
+
+        int result = await _userService.ChangePasswordAsync(id, changePasswordDto);
+
+        return NoContent();
+    }
+
+    [HttpPut("/change-email{id}")]
+    public async Task<IActionResult> ChangeEmail(int id, [FromBody] string email)
+    {
+        if (await _userService.UserWithEmailExistsAsync(email))
+        {
+            return NotFound("Email already exists");
+        }
+
+        int result = await _userService.ChangeEmailAsync(id, email);
+
+        return NoContent();
     }
 }

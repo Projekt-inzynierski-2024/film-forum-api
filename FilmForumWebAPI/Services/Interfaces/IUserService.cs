@@ -4,14 +4,19 @@ namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IUserService
 {
-    public Task<bool> UserWithUsernameExists(string username);
+    Task<bool> UserWithIdExistsAsync(int id);
 
-    public Task<bool> UserWithEmailExists(string email);
+    Task<bool> UserWithUsernameExistsAsync(string username);
 
-    public Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto);
+    Task<bool> UserWithEmailExistsAsync(string email);
 
-    public Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto);
+    Task<GetUserDto?> GetUserAsync(int id);
 
-    public Task<bool> LogInAsync(LogInDto logInDto);
+    Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto);
 
+    Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto);
+
+    Task<int> ChangeEmailAsync(int id, string email);
+
+    Task<bool> LogInAsync(LogInDto logInDto);
 }
