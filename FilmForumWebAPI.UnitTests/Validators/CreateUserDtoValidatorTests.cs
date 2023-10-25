@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos;
+﻿using FilmForumWebAPI.Models.Dtos.User;
 using FilmForumWebAPI.Validators;
 using FluentValidation;
 using FluentValidation.TestHelper;
@@ -7,12 +7,7 @@ namespace FilmForumWebAPI.UnitTests.Validators;
 
 public class CreateUserDtoValidatorTests
 {
-    private readonly IValidator<CreateUserDto> _validator;
-
-    public CreateUserDtoValidatorTests()
-    {
-        _validator = new CreateUserDtoValidator();
-    }
+    private readonly IValidator<CreateUserDto> _validator = new CreateUserDtoValidator(); 
 
     [Fact]
     public void Validate_ForValidData_PassValidation()
@@ -62,18 +57,11 @@ public class CreateUserDtoValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.Email);
     }
 
-    public static IEnumerable<object[]> InvalidPasswords()
+    //More password tests in PasswordValidatorTests.cs
+    [Fact]
+    public void Validate_ForInvalidPassword_FailValidation()
     {
-        yield return new object[] { "" };
-        yield return new object[] { "123" };
-        yield return new object[] { new string('K', 200) };
-    }
-
-    [Theory]
-    [MemberData(nameof(InvalidPasswords))]
-    public void Validate_ForInvalidPassword_FailValidation(string password)
-    {
-        CreateUserDto dto = new("username", "email@email.com", password, password);
+        CreateUserDto dto = new("username", "email@email.com", "i", "i");
 
         TestValidationResult<CreateUserDto> result = _validator.TestValidate(dto);
 

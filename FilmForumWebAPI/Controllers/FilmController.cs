@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos;
+﻿using FilmForumWebAPI.Models.Dtos.Film;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FilmForumWebAPI.Controllers;

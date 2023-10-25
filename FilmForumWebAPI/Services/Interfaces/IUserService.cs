@@ -1,14 +1,17 @@
-﻿using FilmForumWebAPI.Models.Dtos;
+﻿using FilmForumWebAPI.Models.Dtos.User;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IUserService
 {
-    public Task<bool> UsernameExists(string username);
+    public Task<bool> UserWithUsernameExists(string username);
 
-    public Task<bool> EmailExists(string email);
+    public Task<bool> UserWithEmailExists(string email);
 
     public Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto);
 
-    public Task<int> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
+    public Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto);
+
+    public Task<bool> LogInAsync(LogInDto logInDto);
+
 }

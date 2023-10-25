@@ -1,9 +1,11 @@
+using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FilmForumWebAPI;
 
@@ -14,6 +16,15 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+
+        #region Database
+
+        builder.Services.AddDbContext<UsersDatabaseContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("UsersDbConnection"));
+        });
+
+        #endregion Database
 
         #region Services
 

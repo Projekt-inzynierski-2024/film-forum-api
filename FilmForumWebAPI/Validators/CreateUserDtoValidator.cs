@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos;
+﻿using FilmForumWebAPI.Models.Dtos.User;
 using FluentValidation;
 
 namespace FilmForumWebAPI.Validators;
@@ -21,20 +21,9 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
             .EmailAddress()
             .WithMessage("Email is not valid");
 
-        RuleFor(x => x.Password)
-            .NotEmpty()
-            .WithMessage("Password is required")
-            .MinimumLength(5)
-            .WithMessage("Password must have at least 5 characters")
-            .MaximumLength(50)
-            .WithMessage("Password can't have more than 50 characters")
+        RuleFor(x => x.Password)        
+            .SetValidator(new PasswordValidator())
             .Equal(x => x.ConfirmPassword)
-            .WithMessage("Passwords must be identical")
-            .Must(y => y.Any(char.IsDigit))
-            .WithMessage("Password must have at least one digit")
-            .Must(y => y.Any(char.IsAsciiLetterLower))
-            .WithMessage("Password must have at least one lower letter")
-            .Must(y => y.Any(char.IsAsciiLetterUpper))
-            .WithMessage("Password must have at least one upper letter");         
+            .WithMessage("Passwords must be identical");         
     }
 }

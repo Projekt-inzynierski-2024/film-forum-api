@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Services.Interfaces;
+﻿using FilmForumWebAPI.Services;
 using FluentAssertions;
 
 namespace FilmForumWebAPI.UnitTests.Services;

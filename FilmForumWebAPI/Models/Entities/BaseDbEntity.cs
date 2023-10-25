@@ -1,7 +1,10 @@
-﻿namespace FilmForumWebAPI.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FilmForumWebAPI.Models.Entities;
+
+public abstract class BaseDbEntity
 {
-    public abstract class BaseDbEntity
-    {
-        public int Id { get; set; }
-    }
+    [Key, Column("id")]
+    public int Id { get; set; }
 }
