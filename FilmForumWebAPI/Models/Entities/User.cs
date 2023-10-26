@@ -15,4 +15,13 @@ public class User : BaseMsSqlDatabaseEntity
 
     [Required, Column("password")]
     public string Password { get; set; } = string.Empty;
+
+    [Column("recover_password_token")]
+    public string? RecoverPasswordToken { get; set; } = null;
+
+    [Column("recover_password_token_expiration")]
+    public DateTime? RecoverPasswordTokenExpiration { get; set; } = null;
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 }
