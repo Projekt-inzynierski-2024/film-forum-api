@@ -13,7 +13,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
 
@@ -28,8 +28,13 @@ public class Program
 
         #region Services
 
-        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IActorService, ActorService>();
+        builder.Services.AddScoped<IDirectorService, DirectorService>();
+        builder.Services.AddScoped<IEpisodeService, EpisodeService>();
+        builder.Services.AddScoped<IFilmService, FilmService>();
         builder.Services.AddScoped<IPasswordService, PasswordService>();
+        builder.Services.AddScoped<IReviewService, ReviewService>();
+        builder.Services.AddScoped<IUserService, UserService>();
 
         #endregion Services
 
@@ -49,7 +54,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        var app = builder.Build();
+        WebApplication app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
