@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FilmForumWebAPI.Models.Entities.BaseEntities;
 
 namespace FilmForumWebAPI.Models.Entities;
 
 [Table("users")]
-public class User : BaseDbEntity
+public class User : BaseMsSqlDatabaseEntity
 {
     [Required, Column("username")]
     public string Username { get; set; } = string.Empty;

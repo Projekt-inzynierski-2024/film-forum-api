@@ -1,31 +1,28 @@
 ﻿using FilmForumWebAPI.Models.Dtos.Film;
-using FilmForumWebAPI.Services;
-using Microsoft.AspNetCore.Mvc;
 using FilmForumWebAPI.Models.Entities;
+using FilmForumWebAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FilmForumWebAPI.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
+[ApiController]
 public class FilmController : ControllerBase
 {
-    private readonly FilmService filmService;
+    private readonly IFilmService _filmService;
 
-    public FilmController(FilmService filmService)
+    public FilmController(IFilmService filmService)
     {
-        this.filmService = filmService;
+        _filmService = filmService;
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateFilmDto createFilmDto)
     {
-        this.filmService.CreateAsync(Film.of(createFilmDto));
+        await _filmService.CreateAsync(createFilmDto);
         return Ok();
     }
 
     [HttpGet]
-    public async Task<List<Film>> Get(){
-        return await filmService.GetAsync();
-    }
-
+    public async Task<List<Film>> GetAll() => await _filmService.GetAllAsync();
 }
