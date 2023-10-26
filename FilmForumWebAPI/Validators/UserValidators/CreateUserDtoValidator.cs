@@ -1,7 +1,7 @@
 ﻿using FilmForumWebAPI.Models.Dtos.User;
 using FluentValidation;
 
-namespace FilmForumWebAPI.Validators;
+namespace FilmForumWebAPI.Validators.UserValidators;
 
 public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
 {
@@ -21,9 +21,9 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
             .EmailAddress()
             .WithMessage("Email is not valid");
 
-        RuleFor(x => x.Password)        
+        RuleFor(x => x.Password)
             .SetValidator(new PasswordValidator())
             .Equal(x => x.ConfirmPassword)
-            .WithMessage("Passwords must be identical");         
+            .WithMessage("Passwords must be identical");
     }
 }

@@ -1,13 +1,13 @@
 ﻿using FilmForumWebAPI.Models.Dtos.User;
-using FilmForumWebAPI.Validators;
+using FilmForumWebAPI.Validators.UserValidators;
 using FluentValidation;
 using FluentValidation.TestHelper;
 
-namespace FilmForumWebAPI.UnitTests.Validators;
+namespace FilmForumWebAPI.UnitTests.Validators.UserValidators;
 
 public class CreateUserDtoValidatorTests
 {
-    private readonly IValidator<CreateUserDto> _validator = new CreateUserDtoValidator(); 
+    private readonly IValidator<CreateUserDto> _validator = new CreateUserDtoValidator();
 
     [Fact]
     public void Validate_ForValidData_PassValidation()

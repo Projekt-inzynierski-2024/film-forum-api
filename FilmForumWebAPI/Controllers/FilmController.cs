@@ -24,5 +24,26 @@ public class FilmController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<Film>> GetAll() => await _filmService.GetAllAsync();
+    public async Task<IActionResult> GetAll() => Ok(await _filmService.GetAllAsync());
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        Film? film = await _filmService.GetAsync(id);
+        return film is not null ? Ok(film) : NotFound($"Film not found");
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] CreateFilmDto updatedFilm)
+    {
+        await _filmService.UpdateAsync(id, updatedFilm);
+        return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Remove(string id)
+    {
+        await _filmService.RemoveAsync(id);
+        return Ok();
+    }
 }
