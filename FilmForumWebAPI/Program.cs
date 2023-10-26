@@ -1,3 +1,4 @@
+using FilmForumWebAPI.Models;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services;
@@ -23,6 +24,9 @@ public class Program
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("UsersDbConnection"));
         });
+
+        builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection("FilmForumMongoDatabase"));
+        builder.Services.AddSingleton<FilmService>();
 
         #endregion Database
 
