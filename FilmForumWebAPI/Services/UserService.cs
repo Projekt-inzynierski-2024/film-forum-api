@@ -1,5 +1,5 @@
 ﻿using FilmForumWebAPI.Database;
-using FilmForumWebAPI.Models.Dtos.User;
+using FilmForumWebAPI.Models.Dtos.UserDtos;
 using FilmForumWebAPI.Models.Entities;
 using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;

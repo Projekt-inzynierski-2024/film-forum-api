@@ -1,12 +1,16 @@
-﻿using FilmForumWebAPI.Models.Dtos.Actor;
+﻿using FilmForumWebAPI.Models.Dtos.ActorDtos;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IActorService
 {
-    Task<int> CreateAsync(CreateActorDto createActorDto);
+    Task CreateAsync(CreateActorDto createActorDto);
+
+    Task<List<GetActorDto>> GetAllAsync();
 
     Task<GetActorDto?> GetAsync(string id);
 
-    Task<List<GetActorDto>> GetAllAsync();
+    Task UpdateAsync(string id, CreateActorDto createActorDto);
+
+    Task RemoveAsync(string id);
 }

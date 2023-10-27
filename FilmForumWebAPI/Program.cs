@@ -26,7 +26,7 @@ public class Program
         });
 
         builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection("FilmForumMongoDatabase"));
-        builder.Services.AddSingleton<IFilmService, FilmService>();
+        //builder.Services.AddSingleton<IFilmService, FilmService>();
 
         #endregion Database
 

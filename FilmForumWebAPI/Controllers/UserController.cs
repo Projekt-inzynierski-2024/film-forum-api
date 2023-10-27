@@ -1,6 +1,8 @@
-﻿using FilmForumWebAPI.Models.Dtos.User;
+﻿using FilmForumWebAPI.Extensions;
+using FilmForumWebAPI.Models.Dtos.UserDtos;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FilmForumWebAPI.Controllers;
@@ -22,9 +24,10 @@ public class UserController : ControllerBase
     [HttpPost("/register")]
     public async Task<IActionResult> Register([FromBody] CreateUserDto createUserDto)
     {
-        if (!_createUserValidator.Validate(createUserDto).IsValid)
+        ValidationResult validation = _createUserValidator.Validate(createUserDto);
+        if (!validation.IsValid)
         {
-            return BadRequest("Invalid user data");
+            return BadRequest(validation.Errors.GetMessagesAsString());
         }
 
         if (await _userService.UserWithEmailExistsAsync(createUserDto.Email))

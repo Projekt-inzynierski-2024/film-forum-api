@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos.Film;
+﻿using FilmForumWebAPI.Models.Dtos.FilmDtos;
 using FluentValidation;
 
 namespace FilmForumWebAPI.Validators.FilmValidators;

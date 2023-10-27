@@ -1,5 +1,5 @@
 ﻿using FilmForumWebAPI.Models;
-using FilmForumWebAPI.Models.Dtos.Actor;
+using FilmForumWebAPI.Models.Dtos.ActorDtos;
 using FilmForumWebAPI.Models.Entities;
 using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.Extensions.Options;
@@ -19,15 +19,15 @@ public class ActorService : IActorService
 
         _actorCollection = mongoDatabase.GetCollection<Actor>(mongoDatabaseSettings.Value.ActorsCollectionName);
     }
-
-    public async Task<int> CreateAsync(CreateActorDto createActorDto)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task CreateAsync(CreateActorDto createActorDto) => await _actorCollection.InsertOneAsync(new(createActorDto));
+  
+    public async Task<List<GetActorDto>> GetAllAsync()
+        => await _actorCollection.Find(_ => true).ToListAsync() is IEnumerable<Actor> list ? list.Select(x => new GetActorDto(x)).ToList() : new();
 
     public async Task<GetActorDto?> GetAsync(string id)
         => await _actorCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Actor actor ? new(actor) : null;
 
-    public async Task<List<GetActorDto>> GetAllAsync()
-        => await _actorCollection.Find(_ => true).Project(x => new GetActorDto(x)).ToListAsync();
+    public async Task UpdateAsync(string id, CreateActorDto createActorDto) => await _actorCollection.ReplaceOneAsync(x => x.Id == id, new(createActorDto));
+
+    public async Task RemoveAsync(string id) => await _actorCollection.DeleteOneAsync(x => x.Id == id);
 }

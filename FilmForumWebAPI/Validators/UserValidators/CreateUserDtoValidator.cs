@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos.User;
+﻿using FilmForumWebAPI.Models.Dtos.UserDtos;
 using FluentValidation;
 
 namespace FilmForumWebAPI.Validators.UserValidators;

@@ -1,4 +1,4 @@
-﻿namespace FilmForumWebAPI.Models.Dtos.Film;
+﻿namespace FilmForumWebAPI.Models.Dtos.FilmDtos;
 
 public class GetFilmDto
 {

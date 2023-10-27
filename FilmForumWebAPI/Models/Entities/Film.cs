@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using FilmForumWebAPI.Models.Dtos.Film;
+using FilmForumWebAPI.Models.Dtos.FilmDtos;
 using FilmForumWebAPI.Models.Entities.BaseEntities;
 
 namespace FilmForumWebAPI.Models.Entities;

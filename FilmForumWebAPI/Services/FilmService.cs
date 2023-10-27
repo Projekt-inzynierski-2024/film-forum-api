@@ -2,8 +2,8 @@
 using FilmForumWebAPI.Models.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using FilmForumWebAPI.Models.Dtos.Film;
 using FilmForumWebAPI.Models;
+using FilmForumWebAPI.Models.Dtos.FilmDtos;
 
 namespace FilmForumWebAPI.Services;
 
@@ -25,11 +25,9 @@ public class FilmService : IFilmService
         Film? film = await _filmCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
         return film is not null ? new GetFilmDto(film) : null;
     }
+
     public async Task<List<GetFilmDto>> GetAllAsync()
-    {
-        List<Film> films = await _filmCollection.Find(_ => true).ToListAsync();
-        return films.Select(x => new GetFilmDto(x)).ToList();
-    }
+        => await _filmCollection.Find(_ => true).ToListAsync() is IEnumerable<Film> films ? films.Select(x => new GetFilmDto(x)).ToList() : new();
 
     public async Task CreateAsync(CreateFilmDto createFilmDto) => await _filmCollection.InsertOneAsync(new(createFilmDto));
 

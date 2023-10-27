@@ -1,4 +1,5 @@
-﻿using FilmForumWebAPI.Models.Dtos.User;
+﻿
+using FilmForumWebAPI.Models.Dtos.UserDtos;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 

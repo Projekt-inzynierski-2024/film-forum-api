@@ -1,3 +1,3 @@
-﻿namespace FilmForumWebAPI.Models.Dtos.User;
+﻿namespace FilmForumWebAPI.Models.Dtos.UserDtos;
 
 public record UserCreatedDto(string Username, string Email);
