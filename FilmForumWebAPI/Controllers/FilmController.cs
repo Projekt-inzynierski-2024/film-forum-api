@@ -1,6 +1,7 @@
 ﻿using FilmForumWebAPI.Models.Dtos.Film;
 using FilmForumWebAPI.Models.Entities;
 using FilmForumWebAPI.Services.Interfaces;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FilmForumWebAPI.Controllers;
@@ -10,15 +11,22 @@ namespace FilmForumWebAPI.Controllers;
 public class FilmController : ControllerBase
 {
     private readonly IFilmService _filmService;
+    private readonly IValidator<CreateFilmDto> _createFilmValidator;
 
-    public FilmController(IFilmService filmService)
+    public FilmController(IFilmService filmService, IValidator<CreateFilmDto> createFilmValidator)
     {
         _filmService = filmService;
+        _createFilmValidator = createFilmValidator;
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateFilmDto createFilmDto)
     {
+        if (!_createFilmValidator.Validate(createFilmDto).IsValid)
+        {
+            return BadRequest("Invalid film data");
+        }
+
         await _filmService.CreateAsync(createFilmDto);
         return Ok();
     }

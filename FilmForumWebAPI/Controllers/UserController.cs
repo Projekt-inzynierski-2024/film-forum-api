@@ -9,6 +9,9 @@ namespace FilmForumWebAPI.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
+    private readonly IValidator<CreateUserDto> _createUserValidator;
+    private readonly IUserService _userService;
+
     public UserController(IValidator<CreateUserDto> createUserValidator,
                           IUserService userService)
     {
@@ -16,12 +19,14 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    private readonly IValidator<CreateUserDto> _createUserValidator;
-    private readonly IUserService _userService;
-
     [HttpPost("/register")]
     public async Task<IActionResult> Register([FromBody] CreateUserDto createUserDto)
     {
+        if (!_createUserValidator.Validate(createUserDto).IsValid)
+        {
+            return BadRequest("Invalid user data");
+        }
+
         if (await _userService.UserWithEmailExistsAsync(createUserDto.Email))
         {
             return BadRequest("Email already exists");
@@ -52,10 +57,7 @@ public class UserController : ControllerBase
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
-    {
-        GetUserDto? user = await _userService.GetUserAsync(id);
-        return user is not null ? Ok(user) : NotFound($"User not found");
-    }
+        => await _userService.GetUserAsync(id) is GetUserDto user ? Ok(user) : NotFound($"User not found");
 
     [HttpPut("/change-password{id}")]
     public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto changePasswordDto)

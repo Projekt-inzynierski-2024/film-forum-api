@@ -45,7 +45,7 @@ public class Program
         #region Validators
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(); // register validators
-        builder.Services.AddFluentValidationAutoValidation(); //auto validation
+        //builder.Services.AddFluentValidationAutoValidation(); //auto validation
 
         #endregion Validators
 
