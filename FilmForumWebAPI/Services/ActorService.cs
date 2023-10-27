@@ -27,7 +27,9 @@ public class ActorService : IActorService
     public async Task<GetActorDto?> GetAsync(string id)
         => await _actorCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Actor actor ? new(actor) : null;
 
-    public async Task UpdateAsync(string id, CreateActorDto createActorDto) => await _actorCollection.ReplaceOneAsync(x => x.Id == id, new(createActorDto));
+    public async Task UpdateAsync(string id, CreateActorDto createActorDto)
+        => await _actorCollection.ReplaceOneAsync(x => x.Id == id, new(createActorDto));
 
-    public async Task RemoveAsync(string id) => await _actorCollection.DeleteOneAsync(x => x.Id == id);
+    public async Task RemoveAsync(string id)
+        => await _actorCollection.DeleteOneAsync(x => x.Id == id);
 }

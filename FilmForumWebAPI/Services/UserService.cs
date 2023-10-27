@@ -28,10 +28,8 @@ public class UserService : IUserService
         => await _usersDatabaseContext.Users.AnyAsync(user => user.Email == email);
 
     public async Task<GetUserDto?> GetUserAsync(int id)
-    {
-        User? user = await _usersDatabaseContext.Users.FirstOrDefaultAsync(x => x.Id == id);       
-        return user is not null ? new GetUserDto(user.Id, user.Username, user.Email) : null;
-    }
+        => await _usersDatabaseContext.Users.FirstOrDefaultAsync(x => x.Id == id) is User user ? new GetUserDto(user.Id, user.Username, user.Email) : null;
+    
 
     public async Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto)
          => await _usersDatabaseContext.Users.Where(x => x.Id == id)

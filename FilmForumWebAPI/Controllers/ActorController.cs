@@ -27,7 +27,7 @@ public class ActorController : ControllerBase
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
-        => await _actorService.GetAsync(id) is GetActorDto actor ? Ok(actor) : NotFound($"Film not found");
+        => await _actorService.GetAsync(id) is GetActorDto actor ? Ok(actor) : NotFound($"Actor not found");
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, [FromBody] CreateActorDto createActorDto)
