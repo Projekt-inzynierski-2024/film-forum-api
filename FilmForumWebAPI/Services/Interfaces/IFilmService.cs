@@ -1,13 +1,12 @@
 ﻿using FilmForumWebAPI.Models.Dtos.Film;
-using FilmForumWebAPI.Models.Entities;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IFilmService
 {
-    Task<List<Film>> GetAllAsync();
+    Task<List<GetFilmDto>> GetAllAsync();
 
-    Task<Film?> GetAsync(string id);
+    Task<GetFilmDto?> GetAsync(string id);
 
     Task CreateAsync(CreateFilmDto createFilmDto);
 

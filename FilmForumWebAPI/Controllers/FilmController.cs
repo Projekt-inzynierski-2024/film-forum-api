@@ -29,7 +29,7 @@ public class FilmController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        Film? film = await _filmService.GetAsync(id);
+        GetFilmDto? film = await _filmService.GetAsync(id);
         return film is not null ? Ok(film) : NotFound($"Film not found");
     }
 

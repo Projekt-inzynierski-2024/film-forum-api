@@ -1,4 +1,3 @@
-using FilmForumWebAPI.Models;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services;
@@ -7,6 +6,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FilmForumWebAPI.Models;
 
 namespace FilmForumWebAPI;
 

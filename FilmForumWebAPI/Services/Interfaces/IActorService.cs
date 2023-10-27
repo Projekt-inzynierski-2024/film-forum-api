@@ -4,6 +4,9 @@ namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IActorService
 {
-    Task<GetActorDto> GetActorAsync(int id);
-    Task<int> CreateActorAsync(CreateActorDto createActorDto);
+    Task<int> CreateAsync(CreateActorDto createActorDto);
+
+    Task<GetActorDto?> GetAsync(string id);
+
+    Task<List<GetActorDto>> GetAllAsync();
 }
