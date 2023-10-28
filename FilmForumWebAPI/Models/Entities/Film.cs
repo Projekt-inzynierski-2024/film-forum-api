@@ -22,4 +22,7 @@ public class Film : BaseMongoDatabaseEntity
 
     [BsonElement("description")]
     public string Description { get; set; } = string.Empty;
+
+    [BsonElement("isMovie")]
+    public bool IsMovie { get; set; } = true;
 }
