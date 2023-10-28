@@ -7,6 +7,9 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FilmForumWebAPI.Models;
+using Serilog;
+using Microsoft.AspNetCore.Mvc.Filters;
+using FilmForumWebAPI.Middlewares;
 
 namespace FilmForumWebAPI;
 
@@ -17,6 +20,10 @@ public class Program
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+
+        #region Logging
+        builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+        #endregion Logging
 
         #region Database
 
@@ -49,7 +56,8 @@ public class Program
 
         #endregion Validators
 
-        builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+        builder.Services.AddControllers()
+        .ConfigureApiBehaviorOptions(options =>
         {
             options.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.GetValidationErrorsMessagesAsString());
         });
@@ -59,6 +67,8 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         WebApplication app = builder.Build();
+
+        app.UseMiddleware<RequestExceptionMiddleware>();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
