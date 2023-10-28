@@ -1,15 +1,13 @@
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
+using FilmForumWebAPI.Middlewares;
+using FilmForumWebAPI.Models;
 using FilmForumWebAPI.Services;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FilmForumWebAPI.Models;
 using Serilog;
-using Microsoft.AspNetCore.Mvc.Filters;
-using FilmForumWebAPI.Middlewares;
 
 namespace FilmForumWebAPI;
 
@@ -22,15 +20,14 @@ public class Program
         // Add services to the container.
 
         #region Logging
+
         builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+
         #endregion Logging
 
         #region Database
 
-        builder.Services.AddDbContext<UsersDatabaseContext>(options =>
-        {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("UsersDbConnection"));
-        });
+        builder.Services.AddDbContext<UsersDatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersDbConnection")));
 
         builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection("FilmForumMongoDatabase"));
         //builder.Services.AddSingleton<IFilmService, FilmService>();
@@ -57,10 +54,7 @@ public class Program
         #endregion Validators
 
         builder.Services.AddControllers()
-        .ConfigureApiBehaviorOptions(options =>
-        {
-            options.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.GetValidationErrorsMessagesAsString());
-        });
+        .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.GetValidationErrorsMessagesAsString()));
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

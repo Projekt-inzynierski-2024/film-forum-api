@@ -1,10 +1,26 @@
+using FilmForumWebAPI.Models.Dtos.EpisodeDtos;
 using FilmForumWebAPI.Models.Entities.BaseEntities;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace FilmForumWebAPI.Models.Entities;
 
-public class Episode: BaseMongoDatabaseEntity
+public class Episode : BaseMongoDatabaseEntity
 {
+    public Episode()
+    {
+    }
+
+    public Episode(CreateEpisodeDto createEpisodeDto)
+    {
+        Title = createEpisodeDto.Title;
+        Description = createEpisodeDto.Description;
+        EpisodeNumber = createEpisodeDto.EpisodeNumber;
+        SeasonNumber = createEpisodeDto.SeasonNumber;
+        Length = createEpisodeDto.Length;
+        Year = createEpisodeDto.Year;
+        FilmId = createEpisodeDto.FilmId;
+    }
+
     [BsonElement("title")]
     public string Title { get; set; } = string.Empty;
 

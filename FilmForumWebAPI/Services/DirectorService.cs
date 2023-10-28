@@ -18,7 +18,7 @@ public class DirectorService : IDirectorService
 
         IMongoDatabase mongoDatabase = mongoClient.GetDatabase(mongoDatabaseSettings.Value.DatabaseName);
 
-        _directorCollection = mongoDatabase.GetCollection<Director>(mongoDatabaseSettings.Value.ActorsCollectionName);
+        _directorCollection = mongoDatabase.GetCollection<Director>(mongoDatabaseSettings.Value.DirectorsCollectionName);
     }
     public async Task CreateAsync(CreateDirectorDto createDirectorDto) => await _directorCollection.InsertOneAsync(new(createDirectorDto));
 
