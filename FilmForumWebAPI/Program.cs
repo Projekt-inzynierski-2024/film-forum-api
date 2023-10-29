@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Middlewares;
@@ -27,7 +28,20 @@ public class Program
 
         #region Logging
 
-        builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            String filePath = "%appdata%";
+            filePath = $"{System.Environment.GetEnvironmentVariable("HOME")}/Documents/projinz/logs/film-forum.log";
+            builder.Host.UseSerilog((hostContext, services, configuration) => {
+                configuration.WriteTo.Console();
+                configuration.WriteTo.File(filePath);
+            });
+        }
+        else
+        {
+            builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+        }
 
         #endregion Logging
 
