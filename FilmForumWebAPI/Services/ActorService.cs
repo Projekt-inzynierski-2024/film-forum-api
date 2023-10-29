@@ -1,8 +1,7 @@
-﻿using FilmForumWebAPI.Models;
+﻿using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Models.Dtos.ActorDtos;
 using FilmForumWebAPI.Models.Entities;
 using FilmForumWebAPI.Services.Interfaces;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services;
@@ -11,16 +10,13 @@ public class ActorService : IActorService
 {
     private readonly IMongoCollection<Actor> _actorCollection;
 
-    public ActorService(IOptions<FilmForumMongoDatabaseSettings> mongoDatabaseSettings)
+    public ActorService(FilmsDatabaseContext filmsDatabaseContext)
     {
-        MongoClient mongoClient = new(mongoDatabaseSettings.Value.ConnectionString);
-
-        IMongoDatabase mongoDatabase = mongoClient.GetDatabase(mongoDatabaseSettings.Value.DatabaseName);
-
-        _actorCollection = mongoDatabase.GetCollection<Actor>(mongoDatabaseSettings.Value.ActorsCollectionName);
+        _actorCollection = filmsDatabaseContext.ActorCollection;
     }
+
     public async Task CreateAsync(CreateActorDto createActorDto) => await _actorCollection.InsertOneAsync(new(createActorDto));
-  
+
     public async Task<List<GetActorDto>> GetAllAsync()
         => await _actorCollection.Find(_ => true).ToListAsync() is IEnumerable<Actor> list ? list.Select(x => new GetActorDto(x)).ToList() : new();
 

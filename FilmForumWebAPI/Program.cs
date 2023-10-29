@@ -19,6 +19,12 @@ public class Program
 
         // Add services to the container.
 
+        #region Configuration
+
+        builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection("FilmForumMongoDatabase"));
+
+        #endregion Configuration
+
         #region Logging
 
         builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
@@ -28,9 +34,7 @@ public class Program
         #region Database
 
         builder.Services.AddDbContext<UsersDatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersDbConnection")));
-
-        builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection("FilmForumMongoDatabase"));
-        //builder.Services.AddSingleton<IFilmService, FilmService>();
+        builder.Services.AddScoped<FilmsDatabaseContext>();
 
         #endregion Database
 
@@ -49,7 +53,6 @@ public class Program
         #region Validators
 
         builder.Services.AddValidatorsFromAssemblyContaining<Program>(); // register validators
-        //builder.Services.AddFluentValidationAutoValidation(); //auto validation
 
         #endregion Validators
 

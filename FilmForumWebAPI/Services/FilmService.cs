@@ -1,9 +1,8 @@
-﻿using FilmForumWebAPI.Services.Interfaces;
-using FilmForumWebAPI.Models.Entities;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using FilmForumWebAPI.Models;
+﻿using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Models.Dtos.FilmDtos;
+using FilmForumWebAPI.Models.Entities;
+using FilmForumWebAPI.Services.Interfaces;
+using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services;
 
@@ -11,13 +10,9 @@ public class FilmService : IFilmService
 {
     private readonly IMongoCollection<Film> _filmCollection;
 
-    public FilmService(IOptions<FilmForumMongoDatabaseSettings> mongoDatabaseSettings)
+    public FilmService(FilmsDatabaseContext filmsDatabaseContext)
     {
-        MongoClient mongoClient = new(mongoDatabaseSettings.Value.ConnectionString);
-
-        IMongoDatabase mongoDatabase = mongoClient.GetDatabase(mongoDatabaseSettings.Value.DatabaseName);
-
-        _filmCollection = mongoDatabase.GetCollection<Film>(mongoDatabaseSettings.Value.FilmsCollectionName);
+        _filmCollection = filmsDatabaseContext.FilmCollection;
     }
 
     public async Task<GetFilmDto?> GetAsync(string id)
@@ -29,9 +24,9 @@ public class FilmService : IFilmService
     public async Task CreateAsync(CreateFilmDto createFilmDto)
         => await _filmCollection.InsertOneAsync(new(createFilmDto));
 
-    public async Task UpdateAsync(string id, CreateFilmDto updatedFilm) 
+    public async Task UpdateAsync(string id, CreateFilmDto updatedFilm)
         => await _filmCollection.ReplaceOneAsync(x => x.Id == id, new(updatedFilm));
 
-    public async Task RemoveAsync(string id) 
+    public async Task RemoveAsync(string id)
         => await _filmCollection.DeleteOneAsync(x => x.Id == id);
 }

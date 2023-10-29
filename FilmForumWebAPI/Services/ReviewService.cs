@@ -1,10 +1,8 @@
-﻿using FilmForumWebAPI.Models.Dtos.EpisodeDtos;
-using FilmForumWebAPI.Models.Entities;
-using FilmForumWebAPI.Models;
-using FilmForumWebAPI.Services.Interfaces;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+﻿using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Models.Dtos.ReviewDtos;
+using FilmForumWebAPI.Models.Entities;
+using FilmForumWebAPI.Services.Interfaces;
+using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services;
 
@@ -12,13 +10,9 @@ public class ReviewService : IReviewService
 {
     private readonly IMongoCollection<Review> _reviewCollection;
 
-    public ReviewService(IOptions<FilmForumMongoDatabaseSettings> mongoDatabaseSettings)
+    public ReviewService(FilmsDatabaseContext filmsDatabaseContext)
     {
-        MongoClient mongoClient = new(mongoDatabaseSettings.Value.ConnectionString);
-
-        IMongoDatabase mongoDatabase = mongoClient.GetDatabase(mongoDatabaseSettings.Value.DatabaseName);
-
-        _reviewCollection = mongoDatabase.GetCollection<Review>(mongoDatabaseSettings.Value.EpisodesCollectionName);
+        _reviewCollection = filmsDatabaseContext.ReviewCollection;
     }
 
     public async Task CreateAsync(CreateReviewDto createReviewDto) => await _reviewCollection.InsertOneAsync(new(createReviewDto));

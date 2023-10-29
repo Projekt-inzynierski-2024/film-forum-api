@@ -1,8 +1,7 @@
-﻿using FilmForumWebAPI.Models;
+﻿using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Models.Dtos.EpisodeDtos;
 using FilmForumWebAPI.Models.Entities;
 using FilmForumWebAPI.Services.Interfaces;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services;
@@ -11,13 +10,9 @@ public class EpisodeService : IEpisodeService
 {
     private readonly IMongoCollection<Episode> _episodeCollection;
 
-    public EpisodeService(IOptions<FilmForumMongoDatabaseSettings> mongoDatabaseSettings)
+    public EpisodeService(FilmsDatabaseContext filmsDatabaseContext)
     {
-        MongoClient mongoClient = new(mongoDatabaseSettings.Value.ConnectionString);
-
-        IMongoDatabase mongoDatabase = mongoClient.GetDatabase(mongoDatabaseSettings.Value.DatabaseName);
-
-        _episodeCollection = mongoDatabase.GetCollection<Episode>(mongoDatabaseSettings.Value.EpisodesCollectionName);
+        _episodeCollection = filmsDatabaseContext.EpisodeCollection;
     }
 
     public async Task CreateAsync(CreateEpisodeDto createEpisodeDto) => await _episodeCollection.InsertOneAsync(new(createEpisodeDto));
