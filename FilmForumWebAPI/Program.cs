@@ -1,4 +1,6 @@
 using System.Runtime.InteropServices;
+using FilmForumWebAPI.Authorization;
+using FilmForumWebAPI.Authorization.Interfaces;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Middlewares;
@@ -61,6 +63,7 @@ public class Program
         builder.Services.AddScoped<IPasswordService, PasswordService>();
         builder.Services.AddScoped<IReviewService, ReviewService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IJwtService, JwtService>();
 
         #endregion Services
 
