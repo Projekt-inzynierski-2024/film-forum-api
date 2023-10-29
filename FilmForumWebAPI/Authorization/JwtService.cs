@@ -15,18 +15,19 @@ public class JwtService : IJwtService
         {
             throw new ArgumentNullException(nameof(user));
         }
-        var claims = new List<Claim>
+
+        List<Claim> claims = new()
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, roles[0])
         };
         
         if(roles?.Any() == true)
         {
-            var rolesToClaims = roles.Select(role => new Claim(ClaimTypes.Role, role));
+            IEnumerable<Claim> rolesToClaims = roles.Select(role => new Claim(ClaimTypes.Role, role));
+            claims.AddRange(rolesToClaims);
         }
 
         SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes("superSecretKey"));
