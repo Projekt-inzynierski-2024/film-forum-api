@@ -17,8 +17,8 @@ public class DirectorService : IDirectorService
 
     public async Task CreateAsync(CreateDirectorDto createDirectorDto) => await _directorCollection.InsertOneAsync(new(createDirectorDto));
 
-    public async Task<List<GetDirectorDto>> GetAllAsync() =>
-        await _directorCollection.Find(_ => true).ToListAsync() is IEnumerable<Director> directors ? directors.Select(x => new GetDirectorDto(x)).ToList() : new();
+    public async Task<List<GetDirectorDto>> GetAllAsync()
+        => await _directorCollection.Find(_ => true).ToListAsync() is IEnumerable<Director> directors ? directors.Select(x => new GetDirectorDto(x)).ToList() : new();
 
     public async Task<GetDirectorDto?> GetAsync(string id)
         => await _directorCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Director director ? new(director) : null;

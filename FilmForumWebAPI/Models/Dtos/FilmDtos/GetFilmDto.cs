@@ -1,8 +1,10 @@
-﻿namespace FilmForumWebAPI.Models.Dtos.FilmDtos;
+﻿using FilmForumWebAPI.Models.Entities;
+
+namespace FilmForumWebAPI.Models.Dtos.FilmDtos;
 
 public class GetFilmDto
 {
-    public GetFilmDto(Entities.Film film)
+    public GetFilmDto(Film film)
     {
         Id = film.Id;
         Title = film.Title;
