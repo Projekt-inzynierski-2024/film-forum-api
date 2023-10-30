@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmForumWebAPI", "FilmForumWebAPI\FilmForumWebAPI.csproj", "{A398188A-1CAA-43A4-8D8A-FDB3CF7B08B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmForumWebAPI", "src\FilmForumWebAPI\FilmForumWebAPI.csproj", "{A398188A-1CAA-43A4-8D8A-FDB3CF7B08B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmForumWebAPI.UnitTests", "FilmForumWebAPI.UnitTests\FilmForumWebAPI.UnitTests.csproj", "{DFC49A7B-B12D-4100-8373-A4D21F1E0363}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmForumWebAPI.UnitTests", "tests\FilmForumWebAPI.UnitTests\FilmForumWebAPI.UnitTests.csproj", "{DFC49A7B-B12D-4100-8373-A4D21F1E0363}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B8BDCC10-3030-4917-8C17-DC20FD98FA39}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0C9FA177-CC59-415A-8ACC-D58F2E429308}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PasswordManager", "PasswordManager\PasswordManager.csproj", "{3335B796-BFFB-40EF-B150-3D278DBD4A95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PasswordManager", "src\PasswordManager\PasswordManager.csproj", "{3335B796-BFFB-40EF-B150-3D278DBD4A95}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PasswordManager.UnitTests", "PasswordManager.UnitTests\PasswordManager.UnitTests.csproj", "{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PasswordManager.UnitTests", "tests\PasswordManager.UnitTests\PasswordManager.UnitTests.csproj", "{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationManager", "AuthenticationManager\AuthenticationManager.csproj", "{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationManager", "src\AuthenticationManager\AuthenticationManager.csproj", "{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationManager.UnitTests", "AuthenticationManager.UnitTests\AuthenticationManager.UnitTests.csproj", "{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationManager.UnitTests", "tests\AuthenticationManager.UnitTests\AuthenticationManager.UnitTests.csproj", "{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmForumModels", "FilmForumModels\FilmForumModels.csproj", "{EE7034BA-1858-4126-B5E9-E8A41F6F19D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmForumModels", "src\FilmForumModels\FilmForumModels.csproj", "{EE7034BA-1858-4126-B5E9-E8A41F6F19D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
