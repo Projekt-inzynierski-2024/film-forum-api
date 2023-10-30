@@ -1,7 +1,12 @@
-﻿using FilmForumWebAPI.Services;
-using FluentAssertions;
+﻿using FluentAssertions;
+using PasswordManager.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FilmForumWebAPI.UnitTests.Services;
+namespace PasswordManager.UnitTests.Services;
 
 public class PasswordServiceTests
 {

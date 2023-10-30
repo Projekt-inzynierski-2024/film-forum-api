@@ -11,7 +11,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Runtime.InteropServices;
+using PasswordManager.Extensions;
 
 namespace FilmForumWebAPI;
 
@@ -56,11 +56,11 @@ public class Program
 
         #region Services
 
+        builder.Services.AddPasswordManager();
         builder.Services.AddScoped<IActorService, ActorService>();
         builder.Services.AddScoped<IDirectorService, DirectorService>();
         builder.Services.AddScoped<IEpisodeService, EpisodeService>();
         builder.Services.AddScoped<IFilmService, FilmService>();
-        builder.Services.AddScoped<IPasswordService, PasswordService>();
         builder.Services.AddScoped<IReviewService, ReviewService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IJwtService, JwtService>();

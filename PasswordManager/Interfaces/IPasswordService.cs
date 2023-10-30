@@ -1,4 +1,4 @@
-﻿namespace FilmForumWebAPI.Services.Interfaces;
+﻿namespace PasswordManager.Interfaces;
 
 public interface IPasswordService
 {
