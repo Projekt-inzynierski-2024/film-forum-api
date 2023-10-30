@@ -2,6 +2,7 @@
 using FilmForumModels.Entities;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Services.Interfaces;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services;
@@ -9,17 +10,40 @@ namespace FilmForumWebAPI.Services;
 public class FilmService : IFilmService
 {
     private readonly IMongoCollection<Film> _filmCollection;
+    private readonly IAsyncCursor<Film> _filmCursor;
 
     public FilmService(FilmsDatabaseContext filmsDatabaseContext)
     {
         _filmCollection = filmsDatabaseContext.FilmCollection;
+
+        BsonDocument[] pipeline = new BsonDocument[]
+        {
+            new BsonDocument
+            (
+                "$lookup", new BsonDocument
+                {
+                    { "from",         "episode"  },
+                    { "foreignField", "filmId"   },
+                    { "localField",   "_id"      },
+                    { "as",           "episodes" },
+                }
+            )
+        };
+
+        _filmCursor = _filmCollection.Aggregate<Film>(pipeline);
     }
 
     public async Task<GetFilmDto?> GetAsync(string id)
         => await _filmCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Film film ? new(film) : null;
 
+    public async Task<GetDetailedFilmDto?> GetDetailedAsync(string id)
+        => await _filmCursor.ToListAsync().ContinueWith(filmsTask => filmsTask.Result.Find(x => x.Id == id)) is Film film ? new(film) : null;
+
     public async Task<List<GetFilmDto>> GetAllAsync()
         => await _filmCollection.Find(_ => true).ToListAsync() is IEnumerable<Film> films ? films.Select(x => new GetFilmDto(x)).ToList() : new();
+
+    public async Task<List<GetDetailedFilmDto>> GetDetailedAllAsync()
+       => await _filmCursor.ToListAsync() is IEnumerable<Film> films ? films.Select(x => new GetDetailedFilmDto(x)).ToList() : new();
 
     public async Task CreateAsync(CreateFilmDto createFilmDto)
         => await _filmCollection.InsertOneAsync(new(createFilmDto));
