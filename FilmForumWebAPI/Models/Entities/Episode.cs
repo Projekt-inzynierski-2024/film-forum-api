@@ -1,5 +1,6 @@
 using FilmForumWebAPI.Models.Dtos.EpisodeDtos;
 using FilmForumWebAPI.Models.Entities.BaseEntities;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace FilmForumWebAPI.Models.Entities;
@@ -40,5 +41,6 @@ public class Episode : BaseMongoDatabaseEntity
     public int Year { get; set; } = 2023;
 
     [BsonElement("filmId")]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string FilmId { get; set; } = string.Empty;
 }
