@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationManager", "Au
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationManager.UnitTests", "AuthenticationManager.UnitTests\AuthenticationManager.UnitTests.csproj", "{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmForumModels", "FilmForumModels\FilmForumModels.csproj", "{EE7034BA-1858-4126-B5E9-E8A41F6F19D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE7034BA-1858-4126-B5E9-E8A41F6F19D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE7034BA-1858-4126-B5E9-E8A41F6F19D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE7034BA-1858-4126-B5E9-E8A41F6F19D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE7034BA-1858-4126-B5E9-E8A41F6F19D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8} = {0C9FA177-CC59-415A-8ACC-D58F2E429308}
 		{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94} = {B8BDCC10-3030-4917-8C17-DC20FD98FA39}
 		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E} = {0C9FA177-CC59-415A-8ACC-D58F2E429308}
+		{EE7034BA-1858-4126-B5E9-E8A41F6F19D1} = {B8BDCC10-3030-4917-8C17-DC20FD98FA39}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {67474F8F-1DCC-4935-B7F0-EEC98C551789}
