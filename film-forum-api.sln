@@ -11,9 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B8BDCC10-303
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0C9FA177-CC59-415A-8ACC-D58F2E429308}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PasswordManager", "PasswordManager\PasswordManager.csproj", "{3335B796-BFFB-40EF-B150-3D278DBD4A95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PasswordManager", "PasswordManager\PasswordManager.csproj", "{3335B796-BFFB-40EF-B150-3D278DBD4A95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PasswordManager.UnitTests", "PasswordManager.UnitTests\PasswordManager.UnitTests.csproj", "{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PasswordManager.UnitTests", "PasswordManager.UnitTests\PasswordManager.UnitTests.csproj", "{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationManager", "AuthenticationManager\AuthenticationManager.csproj", "{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationManager.UnitTests", "AuthenticationManager.UnitTests\AuthenticationManager.UnitTests.csproj", "{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,14 @@ Global
 		{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +58,8 @@ Global
 		{DFC49A7B-B12D-4100-8373-A4D21F1E0363} = {0C9FA177-CC59-415A-8ACC-D58F2E429308}
 		{3335B796-BFFB-40EF-B150-3D278DBD4A95} = {B8BDCC10-3030-4917-8C17-DC20FD98FA39}
 		{FEB83BBC-FFBF-4CC2-8337-E8EAF26015F8} = {0C9FA177-CC59-415A-8ACC-D58F2E429308}
+		{792A3A38-9F9D-4FBD-83FD-3E7B79DC1E94} = {B8BDCC10-3030-4917-8C17-DC20FD98FA39}
+		{44DB55DF-0212-4AC9-B27A-76C59D0FE39E} = {0C9FA177-CC59-415A-8ACC-D58F2E429308}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {67474F8F-1DCC-4935-B7F0-EEC98C551789}
