@@ -11,6 +11,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Runtime.InteropServices;
 
 namespace FilmForumWebAPI;
 
@@ -30,12 +31,11 @@ public class Program
 
         #region Logging
 
-
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            String filePath = "%appdata%";
-            filePath = $"{System.Environment.GetEnvironmentVariable("HOME")}/Documents/projinz/logs/film-forum.log";
-            builder.Host.UseSerilog((hostContext, services, configuration) => {
+            string filePath = $"{Environment.GetEnvironmentVariable("HOME")}/Documents/projinz/logs/film-forum.log";
+            builder.Host.UseSerilog((hostContext, services, configuration) =>
+            {
                 configuration.WriteTo.Console();
                 configuration.WriteTo.File(filePath);
             });
