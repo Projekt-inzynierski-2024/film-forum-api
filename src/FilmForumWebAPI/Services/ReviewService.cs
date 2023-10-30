@@ -1,6 +1,6 @@
-﻿using FilmForumWebAPI.Database;
-using FilmForumWebAPI.Models.Dtos.ReviewDtos;
-using FilmForumWebAPI.Models.Entities;
+﻿using FilmForumModels.Dtos.ReviewDtos;
+using FilmForumModels.Entities;
+using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Services.Interfaces;
 using MongoDB.Driver;
 

@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos.EpisodeDtos;
+﻿using FilmForumModels.Dtos.EpisodeDtos;
 using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

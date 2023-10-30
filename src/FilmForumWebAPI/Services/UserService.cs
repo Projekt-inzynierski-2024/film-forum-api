@@ -1,6 +1,6 @@
-﻿using FilmForumWebAPI.Database;
-using FilmForumWebAPI.Models.Dtos.UserDtos;
-using FilmForumWebAPI.Models.Entities;
+﻿using FilmForumModels.Dtos.UserDtos;
+using FilmForumModels.Entities;
+using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Interfaces;
@@ -30,7 +30,6 @@ public class UserService : IUserService
 
     public async Task<GetUserDto?> GetUserAsync(int id)
         => await _usersDatabaseContext.Users.FirstOrDefaultAsync(x => x.Id == id) is User user ? new GetUserDto(user.Id, user.Username, user.Email) : null;
-    
 
     public async Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto)
          => await _usersDatabaseContext.Users.Where(x => x.Id == id)

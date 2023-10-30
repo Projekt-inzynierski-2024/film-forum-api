@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Entities;
+﻿using FilmForumModels.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilmForumWebAPI.Database;

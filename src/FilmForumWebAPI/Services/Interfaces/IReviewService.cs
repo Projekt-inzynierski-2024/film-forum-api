@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos.ReviewDtos;
+﻿using FilmForumModels.Dtos.ReviewDtos;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 

@@ -1,17 +1,16 @@
-using System.Runtime.InteropServices;
-using FilmForumWebAPI.Authorization;
-using FilmForumWebAPI.Authorization.Interfaces;
+using AuthenticationManager.Extensions;
+using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Middlewares;
-using FilmForumWebAPI.Models;
 using FilmForumWebAPI.Services;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using PasswordManager.Extensions;
+using Serilog;
+using System.Runtime.InteropServices;
 
 namespace FilmForumWebAPI;
 
@@ -56,6 +55,7 @@ public class Program
 
         #region Services
 
+        builder.Services.AddAuthenticationManager();
         builder.Services.AddPasswordManager();
         builder.Services.AddScoped<IActorService, ActorService>();
         builder.Services.AddScoped<IDirectorService, DirectorService>();
@@ -63,7 +63,6 @@ public class Program
         builder.Services.AddScoped<IFilmService, FilmService>();
         builder.Services.AddScoped<IReviewService, ReviewService>();
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IJwtService, JwtService>();
 
         #endregion Services
 

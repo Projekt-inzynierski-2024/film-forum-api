@@ -1,5 +1,5 @@
-﻿using FilmForumWebAPI.Extensions;
-using FilmForumWebAPI.Models.Dtos.UserDtos;
+﻿using FilmForumModels.Dtos.UserDtos;
+using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;

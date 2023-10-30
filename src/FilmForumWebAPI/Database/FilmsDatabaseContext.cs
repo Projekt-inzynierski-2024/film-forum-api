@@ -1,5 +1,5 @@
-﻿using FilmForumWebAPI.Models;
-using FilmForumWebAPI.Models.Entities;
+﻿using FilmForumModels.Entities;
+using FilmForumModels.Models.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -24,5 +24,4 @@ public class FilmsDatabaseContext
     public IMongoCollection<Episode> EpisodeCollection { get; private set; }
     public IMongoCollection<Film> FilmCollection { get; private set; }
     public IMongoCollection<Review> ReviewCollection { get; private set; }
-
 }

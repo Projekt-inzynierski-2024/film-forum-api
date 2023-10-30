@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos.EpisodeDtos;
+﻿using FilmForumModels.Dtos.EpisodeDtos;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 

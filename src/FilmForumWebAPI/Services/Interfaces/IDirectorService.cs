@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Dtos.DirectorDtos;
+﻿using FilmForumModels.Dtos.DirectorDtos;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 

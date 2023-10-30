@@ -5,7 +5,6 @@ namespace AuthenticationManager.UnitTests
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuthenticationManager\AuthenticationManager.csproj" />
+    <ProjectReference Include="..\FilmForumModels\FilmForumModels.csproj" />
     <ProjectReference Include="..\PasswordManager\PasswordManager.csproj" />
   </ItemGroup>
 

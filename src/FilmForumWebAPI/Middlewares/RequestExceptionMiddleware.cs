@@ -1,4 +1,4 @@
-﻿using FilmForumWebAPI.Models.Errors;
+﻿using FilmForumModels.Models.Errors;
 using System.Net;
 
 namespace FilmForumWebAPI.Middlewares;
