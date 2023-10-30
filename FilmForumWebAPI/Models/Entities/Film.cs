@@ -26,7 +26,7 @@ public class Film : BaseMongoDatabaseEntity
     [BsonElement("isMovie")]
     public bool IsMovie { get; set; } = true;
 
-    // TODO: ignore on save
     [BsonElement("episodes")]
-    public List<Episode> Episodes = new List<Episode>();
+    [BsonIgnoreIfNull]
+    public List<Episode>? Episodes = null;
 }
