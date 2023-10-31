@@ -11,14 +11,17 @@ namespace FilmForumWebAPI.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly IValidator<CreateUserDto> _createUserValidator;
     private readonly IUserService _userService;
+    private readonly IValidator<CreateUserDto> _createUserValidator;
+    private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
 
-    public UserController(IValidator<CreateUserDto> createUserValidator,
-                          IUserService userService)
+    public UserController(IUserService userService,
+                          IValidator<CreateUserDto> createUserValidator,
+                          IValidator<ChangePasswordDto> changePasswordValidator)
     {
-        _createUserValidator = createUserValidator;
         _userService = userService;
+        _createUserValidator = createUserValidator;
+        _changePasswordValidator = changePasswordValidator;
     }
 
     [HttpPost("/register")]

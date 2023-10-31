@@ -1,3 +1,10 @@
-﻿namespace FilmForumModels.Dtos.UserDtos;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record ChangeEmailDto(string Email);
+namespace FilmForumModels.Dtos.UserDtos;
+
+public class ChangeEmailDto
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
+}
