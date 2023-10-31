@@ -56,9 +56,9 @@ public class UserController : ControllerBase
             return NotFound("User not found");
         }
 
-        var result = await _userService.LogInAsync(logInDto);
+        string result = await _userService.LogInAsync(logInDto);
 
-        return Ok();
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

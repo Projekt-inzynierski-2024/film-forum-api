@@ -18,5 +18,5 @@ public interface IUserService
 
     Task<int> ChangeEmailAsync(int id, string email);
 
-    Task<bool> LogInAsync(LogInDto logInDto);
+    Task<string> LogInAsync(LogInDto logInDto);
 }

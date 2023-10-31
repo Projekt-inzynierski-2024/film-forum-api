@@ -1,8 +1,11 @@
-﻿using FilmForumModels.Dtos.UserDtos;
+﻿using AuthenticationManager.Interfaces;
+using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Entities;
+using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using PasswordManager.Interfaces;
 
 namespace FilmForumWebAPI.Services;
@@ -11,12 +14,17 @@ public class UserService : IUserService
 {
     private readonly UsersDatabaseContext _usersDatabaseContext;
     private readonly IPasswordService _passwordService;
-
+    private readonly IJwtService _jwtService;
+    private readonly IOptions<JwtDetails> _jwtDetails;
     public UserService(UsersDatabaseContext usersDatabaseContext,
-                       IPasswordService passwordService)
+                       IPasswordService passwordService,
+                       IJwtService jwtService,
+                       IOptions<JwtDetails> jwtDetails)
     {
         _usersDatabaseContext = usersDatabaseContext;
         _passwordService = passwordService;
+        _jwtService = jwtService;
+        _jwtDetails = jwtDetails;
     }
 
     public async Task<bool> UserWithIdExistsAsync(int id)
@@ -54,17 +62,19 @@ public class UserService : IUserService
         return new UserCreatedDto(createUserDto.Username, createUserDto.Email);
     }
 
-    public async Task<bool> LogInAsync(LogInDto logInDto)
+    public async Task<string> LogInAsync(LogInDto logInDto)
     {
         User? user = await _usersDatabaseContext.Users.FirstOrDefaultAsync(x => x.Email == logInDto.Email);
         if (user == null)
         {
-            return false;
+            return string.Empty;
         }
-        if (_passwordService.VerifyPassword(logInDto.Password, user.Password))
+        if (!_passwordService.VerifyPassword(logInDto.Password, user.Password))
         {
-            return true;
+            return string.Empty;
         }
-        throw new NotImplementedException();
+
+        //Roles will be moved to database
+        return _jwtService.GenerateToken(user, new List<string>() { "Admin", "Moderator", "User" }, _jwtDetails.Value);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AuthenticationManager.Interfaces;
 using FilmForumModels.Entities;
+using FilmForumModels.Models.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,9 +17,10 @@ public class JwtService : IJwtService
     /// </summary>
     /// <param name="user">User who has successfully signed in</param>
     /// <param name="roles">User's roles necessary for authorization</param>
+    /// <param name="options">Jwt details</param>
     /// <returns>JSON Web Token</returns>
     /// <exception cref="ArgumentNullException">When <paramref name="user"/> is null</exception>
-    public string GenerateToken(User user, IEnumerable<string>? roles)
+    public string GenerateToken(User user, IEnumerable<string>? roles, JwtDetails options)
     {
         if (user is null)
         {
@@ -39,12 +41,13 @@ public class JwtService : IJwtService
             claims.AddRange(rolesToClaims);
         }
 
-        SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes("superSecretKey"));
+        SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(options.SecretKey));
         SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
-        DateTime expires = DateTime.Now.AddMinutes(Convert.ToDouble(60 * 24));
+        DateTime expires = DateTime.Now.AddMinutes(Convert.ToDouble(options.LifetimeInMinutes) * 24 * 7);
 
-        JwtSecurityToken token = new(issuer: "FilmForumWebAPI",
-                                     audience: "FilmForumWebAPI",
+        //FilmForumWebAPI
+        JwtSecurityToken token = new(issuer: options.Issuer,
+                                     audience: options.Audience,
                                      claims: claims,
                                      expires: expires,
                                      signingCredentials: creds);

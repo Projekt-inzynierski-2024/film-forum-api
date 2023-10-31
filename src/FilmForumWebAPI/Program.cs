@@ -25,6 +25,7 @@ public class Program
         #region Configuration
 
         builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection("FilmForumMongoDatabase"));
+        builder.Services.Configure<JwtDetails>(builder.Configuration.GetSection("JwtDetails"));
 
         #endregion Configuration
 
@@ -55,7 +56,6 @@ public class Program
 
         #region Services
 
-        builder.Services.AddAuthenticationManager();
         builder.Services.AddPasswordManager();
         builder.Services.AddScoped<IActorService, ActorService>();
         builder.Services.AddScoped<IDirectorService, DirectorService>();
@@ -79,6 +79,9 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddAuthorization();
+        builder.Services.AddAuthenticationManager(builder.Configuration.GetSection("JwtDetails").Get<JwtDetails>()!);
+
         WebApplication app = builder.Build();
 
         app.UseMiddleware<RequestExceptionMiddleware>();
@@ -91,6 +94,8 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+
+        app.UseAuthentication();
 
         app.UseAuthorization();
 
