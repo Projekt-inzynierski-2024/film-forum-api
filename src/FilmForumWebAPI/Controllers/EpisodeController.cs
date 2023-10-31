@@ -25,9 +25,16 @@ public class EpisodeController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _episodeService.GetAllAsync());
 
+    [HttpGet("details")]
+    public async Task<IActionResult> GetDetailedAll() => Ok(await _episodeService.GetDetailedAllAsync());
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
         => await _episodeService.GetAsync(id) is GetEpisodeDto episode ? Ok(episode) : NotFound($"Episode not found");
+
+    [HttpGet("{id}/details")]
+    public async Task<IActionResult> GetDetailedById(string id)
+        => await _episodeService.GetDetailedAsync(id) is GetDetailedEpisodeDto episode ? Ok(episode) : NotFound($"Episode not found");
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, [FromBody] CreateEpisodeDto createEpisodeDto)

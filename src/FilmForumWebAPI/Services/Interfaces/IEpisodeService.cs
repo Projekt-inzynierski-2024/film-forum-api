@@ -8,7 +8,11 @@ public interface IEpisodeService
 
     Task<List<GetEpisodeDto>> GetAllAsync();
 
+    Task<List<GetDetailedEpisodeDto>> GetDetailedAllAsync();
+
     Task<GetEpisodeDto?> GetAsync(string id);
+
+    Task<GetDetailedEpisodeDto?> GetDetailedAsync(string id);
 
     Task UpdateAsync(string id, CreateEpisodeDto createEpisodeDto);
 
