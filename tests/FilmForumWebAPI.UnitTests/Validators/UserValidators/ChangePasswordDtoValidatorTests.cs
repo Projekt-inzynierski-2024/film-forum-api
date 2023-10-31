@@ -2,17 +2,12 @@
 using FilmForumWebAPI.Validators.UserValidators;
 using FluentValidation;
 using FluentValidation.TestHelper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilmForumWebAPI.UnitTests.Validators.UserValidators;
 
 public class ChangePasswordDtoValidatorTests
 {
-    readonly IValidator<ChangePasswordDto> _validator = new ChangePasswordDtoValidator();
+    private readonly IValidator<ChangePasswordDto> _validator = new ChangePasswordDtoValidator();
 
     [Fact]
     public void Validate_ForValidData_PassValidation()
@@ -36,7 +31,7 @@ public class ChangePasswordDtoValidatorTests
 
     public static IEnumerable<object[]> InvalidPasswords()
     {
-        yield return new object[] { "" , "" };
+        yield return new object[] { "", "" };
         yield return new object[] { null!, "Password123@!" };
         yield return new object[] { "", "Password123@!" };
         yield return new object[] { "Password123!@", null! };
