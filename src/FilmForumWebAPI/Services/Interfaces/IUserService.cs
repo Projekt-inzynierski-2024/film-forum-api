@@ -10,6 +10,8 @@ public interface IUserService
 
     Task<bool> UserWithEmailExistsAsync(string email);
 
+    Task<List<GetUserDto>> GetAllAsync();
+
     Task<GetUserDto?> GetUserAsync(int id);
 
     Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto);

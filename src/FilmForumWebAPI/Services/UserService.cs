@@ -36,6 +36,9 @@ public class UserService : IUserService
     public async Task<bool> UserWithEmailExistsAsync(string email)
         => await _usersDatabaseContext.Users.AnyAsync(user => user.Email == email);
 
+    public async Task<List<GetUserDto>> GetAllAsync()
+        => await _usersDatabaseContext.Users.ToListAsync() is IEnumerable<User> users ? users.Select(x => new GetUserDto(x.Id, x.Username, x.Email)).ToList() : new();
+
     public async Task<GetUserDto?> GetUserAsync(int id)
         => await _usersDatabaseContext.Users.FirstOrDefaultAsync(x => x.Id == id) is User user ? new GetUserDto(user.Id, user.Username, user.Email) : null;
 

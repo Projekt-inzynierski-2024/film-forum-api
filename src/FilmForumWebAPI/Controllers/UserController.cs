@@ -61,6 +61,10 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAll() => Ok(await _userService.GetAllAsync());
+
+    //[Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
         => await _userService.GetUserAsync(id) is GetUserDto user ? Ok(user) : NotFound($"User not found");

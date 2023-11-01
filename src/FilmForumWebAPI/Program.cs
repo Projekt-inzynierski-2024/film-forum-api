@@ -6,8 +6,10 @@ using FilmForumWebAPI.Middlewares;
 using FilmForumWebAPI.Services;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using PasswordManager.Extensions;
 using Serilog;
 using System.Runtime.InteropServices;
@@ -77,7 +79,33 @@ public class Program
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "FilmForumWebAPI", Version = "v1" });
+            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter JWT",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+            });
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Id = JwtBearerDefaults.AuthenticationScheme,
+                            Type = ReferenceType.SecurityScheme,
+                        },
+                    },
+                    Array.Empty<string>()
+                }
+            });
+        });
 
         builder.Services.AddAuthorization();
         builder.Services.AddAuthenticationManager(builder.Configuration.GetSection("JwtDetails").Get<JwtDetails>()!);
