@@ -3,7 +3,9 @@ using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FilmForumWebAPI.Controllers;
 
@@ -61,17 +63,21 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _userService.GetAllAsync());
 
-    //[Authorize]
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
         => await _userService.GetUserAsync(id) is GetUserDto user ? Ok(user) : NotFound($"User not found");
 
-    [HttpPut("/change-password{id}")]
-    public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto changePasswordDto)
+    [Authorize(Roles = "User")]
+    [HttpPut("/change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
+        
         if (!await _userService.UserWithIdExistsAsync(id))
         {
             return NotFound("User not found");
@@ -82,14 +88,15 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("/change-email{id}")]
-    public async Task<IActionResult> ChangeEmail(int id, [FromBody] ChangeEmailDto changeEmailDto)
+    [Authorize(Roles = "User")]
+    [HttpPut("/change-email")]
+    public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailDto changeEmailDto)
     {
         if (await _userService.UserWithEmailExistsAsync(changeEmailDto.Email))
         {
             return NotFound("Email already exists");
         }
-
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
         int result = await _userService.ChangeEmailAsync(id, changeEmailDto.Email);
 
         return NoContent();

@@ -62,7 +62,10 @@ public class UserService : IUserService
         await _usersDatabaseContext.Users.AddAsync(user);
         await _usersDatabaseContext.SaveChangesAsync();
 
-        return new UserCreatedDto(createUserDto.Username, createUserDto.Email);
+        User? createdUser = _usersDatabaseContext.Users.FirstOrDefault(x => x.Username == createUserDto.Username);
+        string token = _jwtService.GenerateToken(createdUser!, new List<string>() { "Admin", "Moderator", "User" }, _jwtDetails.Value);
+
+        return new UserCreatedDto(createUserDto.Username, createUserDto.Email, token);
     }
 
     public async Task<string> LogInAsync(LogInDto logInDto)
