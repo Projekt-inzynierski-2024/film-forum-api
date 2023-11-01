@@ -16,15 +16,18 @@ public class UserService : IUserService
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
     private readonly IOptions<JwtDetails> _jwtDetails;
+    private readonly IRoleService _rolesService;
     public UserService(UsersDatabaseContext usersDatabaseContext,
                        IPasswordService passwordService,
                        IJwtService jwtService,
-                       IOptions<JwtDetails> jwtDetails)
+                       IOptions<JwtDetails> jwtDetails,
+                       IRoleService rolesService)
     {
         _usersDatabaseContext = usersDatabaseContext;
         _passwordService = passwordService;
         _jwtService = jwtService;
         _jwtDetails = jwtDetails;
+        _rolesService = rolesService;
     }
 
     public async Task<bool> UserWithIdExistsAsync(int id)
@@ -80,7 +83,8 @@ public class UserService : IUserService
             return string.Empty;
         }
 
-        //Roles will be moved to database
-        return _jwtService.GenerateToken(user, new List<string>() { "Admin", "Moderator", "User" }, _jwtDetails.Value);
+        List<string> roles = await _rolesService.GetUserRolesNamesAsync(user.Id);
+
+        return _jwtService.GenerateToken(user, roles, _jwtDetails.Value);
     }
 }

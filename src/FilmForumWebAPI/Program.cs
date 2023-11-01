@@ -65,6 +65,7 @@ public class Program
         builder.Services.AddScoped<IFilmService, FilmService>();
         builder.Services.AddScoped<IReviewService, ReviewService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IRoleService, RoleService>();
 
         #endregion Services
 
