@@ -1,11 +1,11 @@
 ﻿using AuthenticationManager.Interfaces;
+using EmailSender.Factories.Email;
+using EmailSender.Factories.Email.Interfaces;
 using EmailSender.Interfaces;
 using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Models.Email;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Extensions;
-using FilmForumWebAPI.Factories.Email;
-using FilmForumWebAPI.Factories.Email.Interfaces;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;

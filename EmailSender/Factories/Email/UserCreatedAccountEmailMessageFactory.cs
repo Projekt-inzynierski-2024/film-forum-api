@@ -1,7 +1,7 @@
-﻿using FilmForumModels.Models.Email;
-using FilmForumWebAPI.Factories.Email.Interfaces;
+﻿using EmailSender.Factories.Email.Interfaces;
+using FilmForumModels.Models.Email;
 
-namespace FilmForumWebAPI.Factories.Email;
+namespace EmailSender.Factories.Email;
 
 public class UserCreatedAccountEmailMessageFactory : IEmailMessageFactory
 {

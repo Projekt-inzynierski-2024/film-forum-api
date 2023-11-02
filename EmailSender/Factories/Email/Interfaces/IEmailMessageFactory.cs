@@ -1,6 +1,6 @@
 ﻿using FilmForumModels.Models.Email;
 
-namespace FilmForumWebAPI.Factories.Email.Interfaces;
+namespace EmailSender.Factories.Email.Interfaces;
 
 public interface IEmailMessageFactory
 {
