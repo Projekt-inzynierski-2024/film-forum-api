@@ -15,6 +15,12 @@ public class Film : BaseMongoDatabaseEntity
     {
         Title = createFilmDto.Title;
         Description = createFilmDto.Description;
+        IsMovie = createFilmDto.IsMovie;
+    }
+
+    public Film(string id, CreateFilmDto createFilmDto): this(createFilmDto)
+    {
+        Id = id;
     }
 
     [BsonElement("title")]

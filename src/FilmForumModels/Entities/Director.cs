@@ -17,6 +17,11 @@ public class Director : BaseMongoDatabaseEntity
         Description = createDirectorDto.Description;
     }
 
+    public Director(String id, CreateDirectorDto createDirectorDto): this(createDirectorDto)
+    {
+        Id = id;
+    }
+
     [BsonElement("name")]
     public string Name { get; set; } = string.Empty;
 

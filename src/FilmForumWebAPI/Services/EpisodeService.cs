@@ -48,6 +48,16 @@ public class EpisodeService : IEpisodeService
                     { "localField",   "actorIds" },
                     { "as",           "actors" },
                 }
+            ),
+            new BsonDocument
+            (
+                "$lookup", new BsonDocument
+                {
+                    { "from",         "review" },
+                    { "foreignField", "episodeId" },
+                    { "localField",   "_id" },
+                    { "as",           "reviews" },
+                }
             )
         };
 
@@ -69,7 +79,7 @@ public class EpisodeService : IEpisodeService
         => await _detailedEpisodeCursor.ToListAsync().ContinueWith(episodeTask => episodeTask.Result.Find(x => x.Id == id)) is Episode episode ? new(episode) : null;
 
     public async Task UpdateAsync(string id, CreateEpisodeDto createEpisodeDto)
-        => await _episodeCollection.ReplaceOneAsync(x => x.Id == id, new(createEpisodeDto));
+        => await _episodeCollection.ReplaceOneAsync(x => x.Id == id, new(id, createEpisodeDto));
 
     public async Task RemoveAsync(string id)
         => await _episodeCollection.DeleteOneAsync(x => x.Id == id);

@@ -11,4 +11,7 @@ public class CreateFilmDto
     [Required]
     [MaxLength(500, ErrorMessage = "Description can't have more than 500 characters")]
     public string Description { get; set; } = string.Empty;
+
+    [Required]
+    public bool IsMovie { get; set; } = false;
 }
