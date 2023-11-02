@@ -71,16 +71,16 @@ public class UserService : IUserService
         return new UserCreatedDto(createUserDto.Username, createUserDto.Email, token);
     }
 
-    public async Task<string> LogInAsync(LogInDto logInDto)
+    public async Task<string?> LogInAsync(LogInDto logInDto)
     {
         User? user = await _usersDatabaseContext.Users.FirstOrDefaultAsync(x => x.Email == logInDto.Email);
         if (user == null)
         {
-            return string.Empty;
+            return null;
         }
         if (!_passwordService.VerifyPassword(logInDto.Password, user.Password))
         {
-            return string.Empty;
+            return null;
         }
 
         List<string> roles = await _rolesService.GetUserRolesNamesAsync(user.Id);

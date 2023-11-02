@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PasswordManager.Extensions;
+using EmailSender.Extensions;
 using Serilog;
 using System.Runtime.InteropServices;
 
@@ -66,7 +67,7 @@ public class Program
         builder.Services.AddScoped<IReviewService, ReviewService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IRoleService, RoleService>();
-
+        builder.Services.AddEmailSender();
         #endregion Services
 
         #region Validators

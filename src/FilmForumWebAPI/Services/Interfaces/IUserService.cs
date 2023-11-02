@@ -20,5 +20,5 @@ public interface IUserService
 
     Task<int> ChangeEmailAsync(int id, string email);
 
-    Task<string> LogInAsync(LogInDto logInDto);
+    Task<string?> LogInAsync(LogInDto logInDto);
 }

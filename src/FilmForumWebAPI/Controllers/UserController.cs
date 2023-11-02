@@ -1,4 +1,5 @@
-﻿using FilmForumModels.Dtos.UserDtos;
+﻿using AuthenticationManager.Interfaces;
+using FilmForumModels.Dtos.UserDtos;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
@@ -16,14 +17,16 @@ public class UserController : ControllerBase
     private readonly IUserService _userService;
     private readonly IValidator<CreateUserDto> _createUserValidator;
     private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
-
+    private readonly IJwtService _jwtService;
     public UserController(IUserService userService,
                           IValidator<CreateUserDto> createUserValidator,
-                          IValidator<ChangePasswordDto> changePasswordValidator)
+                          IValidator<ChangePasswordDto> changePasswordValidator,
+                          IJwtService jwtService)
     {
         _userService = userService;
         _createUserValidator = createUserValidator;
         _changePasswordValidator = changePasswordValidator;
+        _jwtService = jwtService;
     }
 
     [HttpPost("/register")]
@@ -60,7 +63,7 @@ public class UserController : ControllerBase
 
         string result = await _userService.LogInAsync(logInDto);
 
-        return Ok(result);
+        return !string.IsNullOrWhiteSpace(result) ? Ok(result) : BadRequest("Invalid credentials");
     }
 
     [Authorize(Roles = "Admin")]
