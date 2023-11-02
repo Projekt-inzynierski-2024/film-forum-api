@@ -28,7 +28,27 @@ public class EpisodeService : IEpisodeService
                     { "as",           "film" },
                 }
             ),
-            new BsonDocument("$unwind", "$film")
+            new BsonDocument("$unwind", "$film"),
+            new BsonDocument
+            (
+                "$lookup", new BsonDocument
+                {
+                    { "from",         "director" },
+                    { "foreignField", "_id" },
+                    { "localField",   "directorIds" },
+                    { "as",           "directors" },
+                }
+            ),
+            new BsonDocument
+            (
+                "$lookup", new BsonDocument
+                {
+                    { "from",         "actor" },
+                    { "foreignField", "_id" },
+                    { "localField",   "actorIds" },
+                    { "as",           "actors" },
+                }
+            )
         };
 
         _detailedEpisodeCursor = _episodeCollection.Aggregate<Episode>(pipeline);

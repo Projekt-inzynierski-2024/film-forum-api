@@ -44,6 +44,22 @@ public class Episode : BaseMongoDatabaseEntity
     [BsonRepresentation(BsonType.ObjectId)]
     public string FilmId { get; set; } = string.Empty;
 
+    [BsonElement("directorIds")]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public List<string> DirectorIds { get; set; } = new List<string>();
+
+    [BsonElement("directors")]
+    [BsonIgnoreIfNull]
+    public List<Director>? Directors { get; private set; } = null;
+
+    [BsonElement("actorIds")]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public List<string> ActorIds { get; set; } = new List<string>();
+
+    [BsonElement("actors")]
+    [BsonIgnoreIfNull]
+    public List<Actor>? Actors { get; private set; } = null;
+
     [BsonElement("film")]
     [BsonIgnoreIfNull]
     public Film? Film { get; private set; } = null;

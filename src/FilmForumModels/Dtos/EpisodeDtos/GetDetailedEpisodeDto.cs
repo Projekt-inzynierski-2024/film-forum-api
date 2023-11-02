@@ -1,4 +1,6 @@
-﻿using FilmForumModels.Dtos.FilmDtos;
+﻿using FilmForumModels.Dtos.ActorDtos;
+using FilmForumModels.Dtos.DirectorDtos;
+using FilmForumModels.Dtos.FilmDtos;
 using FilmForumModels.Entities;
 
 namespace FilmForumModels.Dtos.EpisodeDtos;
@@ -15,6 +17,8 @@ public class GetDetailedEpisodeDto
         Length = episode.Length;
         Year = episode.Year;
         Film = new GetFilmDto(episode.Film ?? new());
+        Directors = episode.Directors?.Select(d => new GetDirectorDto(d)).ToList() ?? new();
+        Actors = episode.Actors?.Select(a => new GetActorDto(a)).ToList() ?? new();
     }
 
     public string Id { get; set; }
@@ -32,4 +36,8 @@ public class GetDetailedEpisodeDto
     public int Year { get; set; } = 2023;
 
     public GetFilmDto Film { get; }
+
+    public List<GetDirectorDto> Directors { get; }
+
+    public List<GetActorDto> Actors { get; }
 }

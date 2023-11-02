@@ -14,6 +14,8 @@ public class GetEpisodeDto
         Length = episode.Length;
         Year = episode.Year;
         FilmId = episode.FilmId;
+        DirectorIds = episode.DirectorIds;
+        ActorIds = episode.ActorIds;
     }
 
     public string Id { get; set; }
@@ -31,4 +33,8 @@ public class GetEpisodeDto
     public int Year { get; set; } = 2023;
 
     public string FilmId { get; set; } = string.Empty;
+
+    public List<string> DirectorIds { get; set; } = new List<string>();
+
+    public List<string> ActorIds { get; set; } = new List<string>();
 }
