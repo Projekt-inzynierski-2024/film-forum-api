@@ -43,4 +43,8 @@ public class Episode : BaseMongoDatabaseEntity
     [BsonElement("filmId")]
     [BsonRepresentation(BsonType.ObjectId)]
     public string FilmId { get; set; } = string.Empty;
+
+    [BsonElement("film")]
+    [BsonIgnoreIfNull]
+    public Film? Film { get; private set; } = null;
 }
