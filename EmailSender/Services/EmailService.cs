@@ -10,7 +10,7 @@ namespace EmailSender.Services;
 
 public class EmailService : IEmailService
 {
-    public async Task SendEmailAsync(EmailMessage emailMessage, EmailSenderDetails emailSenderDetails)
+    public async Task SendEmailAsync(IEmailMessage emailMessage, EmailSenderDetails emailSenderDetails)
     {
         MimeMessage emailToSend = new()
         {

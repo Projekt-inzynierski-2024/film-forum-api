@@ -1,8 +1,11 @@
 ﻿using AuthenticationManager.Interfaces;
 using EmailSender.Interfaces;
 using FilmForumModels.Dtos.UserDtos;
+using FilmForumModels.Models.Email;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Extensions;
+using FilmForumWebAPI.Factories.Email;
+using FilmForumWebAPI.Factories.Email.Interfaces;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
@@ -17,6 +20,7 @@ namespace FilmForumWebAPI.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
+    private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
     private readonly IValidator<CreateUserDto> _createUserValidator;
     private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
@@ -24,13 +28,15 @@ public class UserController : ControllerBase
     private readonly IEmailService _emailService;
     private readonly EmailSenderDetails _emailSenderDetails;
 
-    public UserController(IUserService userService,
+    public UserController(ILogger<UserController> logger,
+                          IUserService userService,
                           IValidator<CreateUserDto> createUserValidator,
                           IValidator<ChangePasswordDto> changePasswordValidator,
                           IJwtService jwtService,
                           IEmailService emailService,
                           IOptions<EmailSenderDetails> emailSenderDetails)
     {
+        _logger = logger;
         _userService = userService;
         _createUserValidator = createUserValidator;
         _changePasswordValidator = changePasswordValidator;
@@ -59,6 +65,19 @@ public class UserController : ControllerBase
         }
 
         UserCreatedDto result = await _userService.CreateUserAsync(createUserDto);
+
+        IEmailMessageFactory emailMessageFactory = new UserCreatedAccountEmailMessageFactory();
+        IEmailMessage emailMessage = emailMessageFactory.Create(result.Email);
+
+        //We use try-catch block here as user should be created even if there is a problem with sending welcome e-mail
+        try
+        {
+            await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while sending welcome email");
+        }
 
         return Created(nameof(GetById), result);
     }
