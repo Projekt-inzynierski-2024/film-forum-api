@@ -31,4 +31,10 @@ public class CreateEpisodeDto
     [Required]
     [MaxLength(10000, ErrorMessage = "Film id can't have more than 10000 characters")]
     public string FilmId { get; set; } = string.Empty;
+
+    [Required]
+    public List<string> DirectorIds { get; set; } = new List<string>();
+
+    [Required]
+    public List<string> ActorIds { get; set; } = new List<string>();
 }
