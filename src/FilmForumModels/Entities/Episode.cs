@@ -20,6 +20,13 @@ public class Episode : BaseMongoDatabaseEntity
         Length = createEpisodeDto.Length;
         Year = createEpisodeDto.Year;
         FilmId = createEpisodeDto.FilmId;
+        DirectorIds = createEpisodeDto.DirectorIds;
+        ActorIds = createEpisodeDto.ActorIds;
+    }
+
+    public Episode(string id, CreateEpisodeDto createEpisodeDto): this(createEpisodeDto)
+    {
+        Id = id;
     }
 
     [BsonElement("title")]
@@ -63,4 +70,8 @@ public class Episode : BaseMongoDatabaseEntity
     [BsonElement("film")]
     [BsonIgnoreIfNull]
     public Film? Film { get; private set; } = null;
+
+    [BsonElement("reviews")]
+    [BsonIgnoreIfNull]
+    public List<Review>? Reviews { get; private set; } = null;
 }

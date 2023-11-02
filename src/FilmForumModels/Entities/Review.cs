@@ -1,5 +1,6 @@
 ﻿using FilmForumModels.Dtos.ReviewDtos;
 using FilmForumModels.Entities.BaseEntities;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace FilmForumModels.Entities;
@@ -18,10 +19,16 @@ public class Review : BaseMongoDatabaseEntity
         Comment = createReviewDto.Comment;
     }
 
+    public Review(string id, CreateReviewDto createReviewDto): this(createReviewDto)
+    {
+        Id = id;
+    }
+
     [BsonElement("userId")]
     public string UserId { get; set; } = string.Empty;
 
     [BsonElement("episodeId")]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string EpisodeId { get; set; } = string.Empty;
 
     [BsonElement("rate")]
