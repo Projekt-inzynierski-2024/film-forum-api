@@ -1,11 +1,14 @@
 ﻿using AuthenticationManager.Interfaces;
+using EmailSender.Interfaces;
 using FilmForumModels.Dtos.UserDtos;
+using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace FilmForumWebAPI.Controllers;
@@ -18,15 +21,22 @@ public class UserController : ControllerBase
     private readonly IValidator<CreateUserDto> _createUserValidator;
     private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
     private readonly IJwtService _jwtService;
+    private readonly IEmailService _emailService;
+    private readonly EmailSenderDetails _emailSenderDetails;
+
     public UserController(IUserService userService,
                           IValidator<CreateUserDto> createUserValidator,
                           IValidator<ChangePasswordDto> changePasswordValidator,
-                          IJwtService jwtService)
+                          IJwtService jwtService,
+                          IEmailService emailService,
+                          IOptions<EmailSenderDetails> emailSenderDetails)
     {
         _userService = userService;
         _createUserValidator = createUserValidator;
         _changePasswordValidator = changePasswordValidator;
         _jwtService = jwtService;
+        _emailService = emailService;
+        _emailSenderDetails = emailSenderDetails.Value;
     }
 
     [HttpPost("/register")]
@@ -61,7 +71,7 @@ public class UserController : ControllerBase
             return NotFound("User not found");
         }
 
-        string result = await _userService.LogInAsync(logInDto);
+        string? result = await _userService.LogInAsync(logInDto);
 
         return !string.IsNullOrWhiteSpace(result) ? Ok(result) : BadRequest("Invalid credentials");
     }
@@ -80,7 +90,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
-        
+
         if (!await _userService.UserWithIdExistsAsync(id))
         {
             return NotFound("User not found");

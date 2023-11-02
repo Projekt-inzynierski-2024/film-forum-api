@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FilmForumModels.Models.Email;
+using FilmForumModels.Models.Settings;
 
-namespace EmailSender.Interfaces
+namespace EmailSender.Interfaces;
+
+public interface IEmailService
 {
-    public interface IEmailService
-    {
-    }
+    Task SendEmailAsync(EmailMessage emailMessage, EmailSenderDetails emailSenderDetails);
 }
