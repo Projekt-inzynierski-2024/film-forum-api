@@ -38,6 +38,7 @@ public class ChangePasswordDtoValidatorTests
         yield return new object[] { "Password123!@", "" };
     }
 
+    //More password tests in PasswordValidatorTests.cs
     [Theory]
     [MemberData(nameof(InvalidPasswords))]
     public void Validate_ForInvalidPasswords_FailValidation(string password, string confirmPassword)

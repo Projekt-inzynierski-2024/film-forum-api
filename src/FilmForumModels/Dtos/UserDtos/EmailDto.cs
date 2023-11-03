@@ -2,7 +2,7 @@
 
 namespace FilmForumModels.Dtos.UserDtos;
 
-public class ChangeEmailDto
+public class EmailDto
 {
     [Required]
     [EmailAddress]

@@ -1,4 +1,5 @@
 ﻿using FilmForumModels.Dtos.UserDtos;
+using FilmForumModels.Models.Password;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 
@@ -21,4 +22,10 @@ public interface IUserService
     Task<int> ChangeEmailAsync(int id, string email);
 
     Task<string?> LogInAsync(LogInDto logInDto);
+
+    Task<int> UpdatePasswordResetTokenAsync(string email, PasswordResetTokenWithExpirationDate passwordResetTokenWithExpiration);
+
+    Task<ValidateResetPasswordTokenResult> ValidateResetPasswordToken(string resetPasswordToken);
+
+    Task<int> ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
 }

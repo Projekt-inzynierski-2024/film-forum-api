@@ -4,6 +4,7 @@ using EmailSender.Factories.Email.Interfaces;
 using EmailSender.Interfaces;
 using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Models.Email;
+using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
@@ -12,6 +13,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using PasswordManager.Interfaces;
 using System.Security.Claims;
 
 namespace FilmForumWebAPI.Controllers;
@@ -27,6 +29,8 @@ public class UserController : ControllerBase
     private readonly IJwtService _jwtService;
     private readonly IEmailService _emailService;
     private readonly EmailSenderDetails _emailSenderDetails;
+    private readonly IPasswordResetTokenService _passwordResetTokenService;
+    private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
 
     public UserController(ILogger<UserController> logger,
                           IUserService userService,
@@ -34,7 +38,9 @@ public class UserController : ControllerBase
                           IValidator<ChangePasswordDto> changePasswordValidator,
                           IJwtService jwtService,
                           IEmailService emailService,
-                          IOptions<EmailSenderDetails> emailSenderDetails)
+                          IOptions<EmailSenderDetails> emailSenderDetails,
+                          IPasswordResetTokenService passwordResetTokenService,
+                          IValidator<ResetPasswordDto> resetPasswordValidator)
     {
         _logger = logger;
         _userService = userService;
@@ -43,6 +49,8 @@ public class UserController : ControllerBase
         _jwtService = jwtService;
         _emailService = emailService;
         _emailSenderDetails = emailSenderDetails.Value;
+        _passwordResetTokenService = passwordResetTokenService;
+        _resetPasswordValidator = resetPasswordValidator;
     }
 
     [HttpPost("/register")]
@@ -122,15 +130,58 @@ public class UserController : ControllerBase
 
     [Authorize(Roles = "User")]
     [HttpPut("/change-email")]
-    public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailDto changeEmailDto)
+    public async Task<IActionResult> ChangeEmail([FromBody] EmailDto emailDto)
     {
-        if (await _userService.UserWithEmailExistsAsync(changeEmailDto.Email))
+        if (await _userService.UserWithEmailExistsAsync(emailDto.Email))
         {
-            return NotFound("Email already exists");
+            return Conflict("Email already exists");
         }
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
-        int result = await _userService.ChangeEmailAsync(id, changeEmailDto.Email);
+        int result = await _userService.ChangeEmailAsync(id, emailDto.Email);
 
         return NoContent();
+    }
+
+    [HttpPost("/password-reset-token")]
+    public async Task<IActionResult> SendPasswordResetToken([FromBody] EmailDto emailDto)
+    {
+        if(!await _userService.UserWithEmailExistsAsync(emailDto.Email))
+        {
+            return NotFound("User not found");
+        }
+
+        PasswordResetTokenWithExpirationDate tokenWithExpirationDate = _passwordResetTokenService.CreatePasswordResetTokenWithExpirationDate();
+        await _userService.UpdatePasswordResetTokenAsync(emailDto.Email, tokenWithExpirationDate);
+
+        IEmailMessageFactory emailMessageFactory = new UserResetPasswordEmailMessageFactory();
+        IEmailMessage emailMessage = emailMessageFactory.Create(emailDto.Email, body: $"Your token to reset password: {tokenWithExpirationDate.Token}. The token expires {tokenWithExpirationDate.ExpirationDate}");      
+        await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails);
+
+        return Ok("Token was successfully sent. Check your e-mail.");
+    }
+
+    [HttpPost("/password-reset")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+    {
+        ValidationResult validation = _resetPasswordValidator.Validate(resetPasswordDto);
+        if (!validation.IsValid)
+        {
+            return BadRequest(validation.Errors.GetMessagesAsString());
+        }
+
+        if (!await _userService.UserWithEmailExistsAsync(resetPasswordDto.Email))
+        {
+            return NotFound("User not found");
+        }
+
+        ValidateResetPasswordTokenResult validateResetPasswordTokenResult = await _userService.ValidateResetPasswordToken(resetPasswordDto.ResetPasswordToken);
+        if(!validateResetPasswordTokenResult.IsValid)
+        {
+            return BadRequest(validateResetPasswordTokenResult.Message);
+        }
+
+        await _userService.ResetPasswordAsync(resetPasswordDto);
+
+        return Ok("New password has been set");
     }
 }
