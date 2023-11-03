@@ -1,7 +1,7 @@
-﻿using FilmForumModels.Dtos.ReviewDtos;
-using FilmForumModels.Dtos.ActorDtos;
+﻿using FilmForumModels.Dtos.ActorDtos;
 using FilmForumModels.Dtos.DirectorDtos;
 using FilmForumModels.Dtos.FilmDtos;
+using FilmForumModels.Dtos.ReviewDtos;
 using FilmForumModels.Entities;
 
 namespace FilmForumModels.Dtos.EpisodeDtos;
@@ -20,7 +20,7 @@ public class GetDetailedEpisodeDto
         Film = new GetFilmDto(episode.Film ?? new());
         Directors = episode.Directors?.Select(d => new GetDirectorDto(d)).ToList() ?? new();
         Actors = episode.Actors?.Select(a => new GetActorDto(a)).ToList() ?? new();
-        Reviews = episode.Reviews?.Select(r => new GetReviewDto(r)).ToList() ?? new ();
+        Reviews = episode.Reviews?.Select(r => new GetReviewDto(r)).ToList() ?? new();
     }
 
     public string Id { get; set; }

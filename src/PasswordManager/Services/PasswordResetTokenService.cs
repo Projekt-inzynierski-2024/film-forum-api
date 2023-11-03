@@ -1,7 +1,7 @@
-﻿using PasswordManager.Interfaces;
-using System.Security.Cryptography;
+﻿using FilmForumModels.Models.Exceptions;
 using FilmForumModels.Models.Password;
-using FilmForumModels.Models.Exceptions;
+using PasswordManager.Interfaces;
+using System.Security.Cryptography;
 
 namespace PasswordManager.Services;
 

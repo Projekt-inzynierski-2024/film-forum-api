@@ -19,7 +19,7 @@ public class Review : BaseMongoDatabaseEntity
         Comment = createReviewDto.Comment;
     }
 
-    public Review(string id, CreateReviewDto createReviewDto): this(createReviewDto)
+    public Review(string id, CreateReviewDto createReviewDto) : this(createReviewDto)
     {
         Id = id;
     }

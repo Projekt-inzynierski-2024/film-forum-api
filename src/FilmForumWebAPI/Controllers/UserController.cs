@@ -145,7 +145,7 @@ public class UserController : ControllerBase
     [HttpPost("/password-reset-token")]
     public async Task<IActionResult> SendPasswordResetToken([FromBody] EmailDto emailDto)
     {
-        if(!await _userService.UserWithEmailExistsAsync(emailDto.Email))
+        if (!await _userService.UserWithEmailExistsAsync(emailDto.Email))
         {
             return NotFound("User not found");
         }
@@ -154,7 +154,7 @@ public class UserController : ControllerBase
         await _userService.UpdatePasswordResetTokenAsync(emailDto.Email, tokenWithExpirationDate);
 
         IEmailMessageFactory emailMessageFactory = new UserResetPasswordEmailMessageFactory();
-        IEmailMessage emailMessage = emailMessageFactory.Create(emailDto.Email, body: $"Your token to reset password: {tokenWithExpirationDate.Token}. The token expires {tokenWithExpirationDate.ExpirationDate}");      
+        IEmailMessage emailMessage = emailMessageFactory.Create(emailDto.Email, body: $"Your token to reset password: {tokenWithExpirationDate.Token}. The token expires {tokenWithExpirationDate.ExpirationDate}");
         await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails);
 
         return Ok("Token was successfully sent. Check your e-mail.");
@@ -175,7 +175,7 @@ public class UserController : ControllerBase
         }
 
         ValidateResetPasswordTokenResult validateResetPasswordTokenResult = await _userService.ValidateResetPasswordToken(resetPasswordDto.ResetPasswordToken);
-        if(!validateResetPasswordTokenResult.IsValid)
+        if (!validateResetPasswordTokenResult.IsValid)
         {
             return BadRequest(validateResetPasswordTokenResult.Message);
         }

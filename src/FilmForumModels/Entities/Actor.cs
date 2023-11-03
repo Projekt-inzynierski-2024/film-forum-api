@@ -17,7 +17,7 @@ public class Actor : BaseMongoDatabaseEntity
         Description = createActorDto.Description;
     }
 
-    public Actor(string id, CreateActorDto createActorDto): this(createActorDto)
+    public Actor(string id, CreateActorDto createActorDto) : this(createActorDto)
     {
         Id = id;
     }

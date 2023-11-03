@@ -8,6 +8,7 @@ namespace FilmForumWebAPI.Controllers;
 public class RolesController : ControllerBase
 {
     private readonly IRoleService _rolesService;
+
     public RolesController(IRoleService roleService)
     {
         _rolesService = roleService;

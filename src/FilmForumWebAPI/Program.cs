@@ -1,4 +1,5 @@
 using AuthenticationManager.Extensions;
+using EmailSender.Extensions;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
@@ -11,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PasswordManager.Extensions;
-using EmailSender.Extensions;
 using Serilog;
 using System.Runtime.InteropServices;
 
@@ -69,6 +69,7 @@ public class Program
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IRoleService, RoleService>();
         builder.Services.AddEmailSender();
+
         #endregion Services
 
         #region Validators

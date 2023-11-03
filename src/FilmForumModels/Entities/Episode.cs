@@ -24,7 +24,7 @@ public class Episode : BaseMongoDatabaseEntity
         ActorIds = createEpisodeDto.ActorIds;
     }
 
-    public Episode(string id, CreateEpisodeDto createEpisodeDto): this(createEpisodeDto)
+    public Episode(string id, CreateEpisodeDto createEpisodeDto) : this(createEpisodeDto)
     {
         Id = id;
     }
