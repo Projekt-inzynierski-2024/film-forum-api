@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationManager.UnitT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmForumModels", "src\FilmForumModels\FilmForumModels.csproj", "{EE7034BA-1858-4126-B5E9-E8A41F6F19D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSender", "EmailSender\EmailSender.csproj", "{E6B22EFA-AC93-4344-9AE4-777B5FB52AB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSender", "src\EmailSender\EmailSender.csproj", "{E6B22EFA-AC93-4344-9AE4-777B5FB52AB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

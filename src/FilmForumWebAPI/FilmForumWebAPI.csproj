@@ -21,8 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EmailSender\EmailSender.csproj" />
+    <ProjectReference Include="..\EmailSender\EmailSender.csproj" />
     <ProjectReference Include="..\AuthenticationManager\AuthenticationManager.csproj" />
+    <ProjectReference Include="..\EmailSender\EmailSender.csproj" />
     <ProjectReference Include="..\FilmForumModels\FilmForumModels.csproj" />
     <ProjectReference Include="..\PasswordManager\PasswordManager.csproj" />
   </ItemGroup>
