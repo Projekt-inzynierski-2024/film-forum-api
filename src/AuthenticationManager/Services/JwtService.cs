@@ -19,17 +19,20 @@ public class JwtService : IJwtService
     /// <param name="roles">User's roles necessary for authorization</param>
     /// <param name="options">Jwt details</param>
     /// <returns>JSON Web Token</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="user"/> is null</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="user"/> or <paramref name="options"/> is null</exception>
     public string GenerateToken(User user, IEnumerable<string>? roles, JwtDetails options)
     {
         if (user is null)
         {
             throw new ArgumentNullException(nameof(user));
         }
+        if (options == null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
 
         List<Claim> claims = new()
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Email, user.Email),
@@ -43,7 +46,7 @@ public class JwtService : IJwtService
 
         SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(options.SecretKey));
         SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
-        DateTime expires = DateTime.Now.AddMinutes(Convert.ToDouble(options.LifetimeInMinutes) * 24 * 7);
+        DateTime expires = DateTime.Now.AddMinutes(Convert.ToDouble(options.LifetimeInMinutes));
 
         //FilmForumWebAPI
         JwtSecurityToken token = new(issuer: options.Issuer,
