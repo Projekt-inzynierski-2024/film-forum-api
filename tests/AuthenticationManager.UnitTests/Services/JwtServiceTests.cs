@@ -24,7 +24,7 @@ public class JwtServiceTests
 
     [Theory]
     [MemberData(nameof(Roles))]
-    public void GenerateToken_ForValidData_ReturnsToken(IEnumerable<string> userRoles)
+    public void GenerateToken_ForValidData_ReturnsToken(IEnumerable<string>? userRoles)
     {
         //Arrange
         User user = new()
@@ -34,7 +34,7 @@ public class JwtServiceTests
             Email = "user@email.com",
             Password = "fdfsfsdsajd22321#@#!@#adsad#@#!Dasdaasdas2#@!",
         };
-        IEnumerable<string> roles = userRoles;
+        IEnumerable<string>? roles = userRoles;
         JwtDetails options = new()
         {
             SecretKey = "SuperSecretKey11233233sADSA42432123DASDSAD323123DAD",
@@ -58,12 +58,24 @@ public class JwtServiceTests
         string token = _jwtService.GenerateToken(user, roles, options);
 
         //Assert
+        token.Should().NotBeNullOrEmpty();
+
         ClaimsPrincipal claimsPrincipal = new JwtSecurityTokenHandler().ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
 
-        token.Should().NotBeNullOrEmpty();
         claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)!.Value.Should().Be(user.Id.ToString());
         claimsPrincipal.FindFirst(ClaimTypes.Name)!.Value.Should().Be(user.Username);
         claimsPrincipal.FindFirst(ClaimTypes.Email)!.Value.Should().Be(user.Email);
+
+        //Roles can be null or empty for example when using [Authorize] attribute without roles
+        IEnumerable<Claim> rolesFromToken = claimsPrincipal.FindAll(x => x.Type == ClaimTypes.Role);
+        if (roles is null || !roles.Any())
+        {
+            rolesFromToken.Should().BeEmpty();
+        }
+        else
+        {
+            rolesFromToken.Select(x => x.Value).Should().BeEquivalentTo(roles);
+        }      
     }
 
     [Fact]

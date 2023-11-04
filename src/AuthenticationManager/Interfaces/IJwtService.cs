@@ -5,5 +5,5 @@ namespace AuthenticationManager.Interfaces;
 
 public interface IJwtService
 {
-    public string GenerateToken(User user, IEnumerable<string> roles, JwtDetails options);
+    public string GenerateToken(User user, IEnumerable<string>? roles, JwtDetails options);
 }
