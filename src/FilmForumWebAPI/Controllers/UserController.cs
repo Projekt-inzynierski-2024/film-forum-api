@@ -31,7 +31,7 @@ public class UserController : ControllerBase
     private readonly EmailSenderDetails _emailSenderDetails;
     private readonly IPasswordResetTokenService _passwordResetTokenService;
     private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
-
+    private readonly IUserDiagnosticsService _userDiagnosticsService;
     public UserController(ILogger<UserController> logger,
                           IUserService userService,
                           IValidator<CreateUserDto> createUserValidator,
@@ -40,7 +40,8 @@ public class UserController : ControllerBase
                           IEmailService emailService,
                           IOptions<EmailSenderDetails> emailSenderDetails,
                           IPasswordResetTokenService passwordResetTokenService,
-                          IValidator<ResetPasswordDto> resetPasswordValidator)
+                          IValidator<ResetPasswordDto> resetPasswordValidator,
+                          IUserDiagnosticsService userDiagnosticsService)
     {
         _logger = logger;
         _userService = userService;
@@ -51,6 +52,7 @@ public class UserController : ControllerBase
         _emailSenderDetails = emailSenderDetails.Value;
         _passwordResetTokenService = passwordResetTokenService;
         _resetPasswordValidator = resetPasswordValidator;
+        _userDiagnosticsService = userDiagnosticsService;
     }
 
     [HttpPost("/register")]
@@ -73,6 +75,8 @@ public class UserController : ControllerBase
         }
 
         UserCreatedDto result = await _userService.CreateUserAsync(createUserDto);
+        
+        await _userDiagnosticsService.CreateAsync(result.Id);
 
         IEmailMessageFactory emailMessageFactory = new UserCreatedAccountEmailMessageFactory();
         IEmailMessage emailMessage = emailMessageFactory.Create(result.Email);
@@ -178,7 +182,7 @@ public class UserController : ControllerBase
             return NotFound("User not found");
         }
 
-        ValidateResetPasswordTokenResult validateResetPasswordTokenResult = await _userService.ValidateResetPasswordToken(resetPasswordDto.ResetPasswordToken);
+        ValidateResetPasswordTokenResult validateResetPasswordTokenResult = await _userService.ValidateResetPasswordTokenAsync(resetPasswordDto.ResetPasswordToken);
         if (!validateResetPasswordTokenResult.IsValid)
         {
             return BadRequest(validateResetPasswordTokenResult.Message);

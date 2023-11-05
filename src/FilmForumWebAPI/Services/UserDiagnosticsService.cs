@@ -13,7 +13,7 @@ public class UserDiagnosticsService : IUserDiagnosticsService
         _usersDatabaseContext = usersDatabaseContext;
     }
 
-    public async Task Create(int userId)
+    public async Task CreateAsync(int userId)
     {
         await _usersDatabaseContext.UserDiagnostics.AddAsync(new UserDiagnostics(userId));
         await _usersDatabaseContext.SaveChangesAsync();

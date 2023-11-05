@@ -2,6 +2,6 @@
 {
     public interface IUserDiagnosticsService
     {
-        public Task Create(int userId);
+        public Task CreateAsync(int userId);
     }
 }

@@ -27,7 +27,7 @@ public interface IUserService
 
     Task<int> UpdatePasswordResetTokenAsync(string email, PasswordResetTokenWithExpirationDate passwordResetTokenWithExpiration);
 
-    Task<ValidateResetPasswordTokenResult> ValidateResetPasswordToken(string resetPasswordToken);
+    Task<ValidateResetPasswordTokenResult> ValidateResetPasswordTokenAsync(string resetPasswordToken);
 
     Task<int> ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
 }

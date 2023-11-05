@@ -33,7 +33,7 @@ public class UserService : IUserService
     }
 
     public async Task<bool> UserWithIdExistsAsync(int id)
-      => await _usersDatabaseContext.Users.AsNoTracking().AnyAsync(user => user.Id == id);
+        => await _usersDatabaseContext.Users.AsNoTracking().AnyAsync(user => user.Id == id);
 
     public async Task<bool> UserWithUsernameExistsAsync(string username)
         => await _usersDatabaseContext.Users.AsNoTracking().AnyAsync(user => user.Username == username);
@@ -83,7 +83,7 @@ public class UserService : IUserService
         User? createdUser = _usersDatabaseContext.Users.FirstOrDefault(x => x.Username == createUserDto.Username);
         string token = _jwtService.GenerateToken(createdUser!, new List<string>() { "Admin", "Moderator", "User" }, _jwtDetails.Value);
 
-        return new UserCreatedDto(createUserDto.Username, createUserDto.Email, token);
+        return new UserCreatedDto(user.Id, createUserDto.Username, createUserDto.Email, token);
     }
 
     public async Task<string?> LogInAsync(LogInDto logInDto)
@@ -103,7 +103,7 @@ public class UserService : IUserService
         return _jwtService.GenerateToken(user, roles, _jwtDetails.Value);
     }
 
-    public async Task<ValidateResetPasswordTokenResult> ValidateResetPasswordToken(string resetPasswordToken)
+    public async Task<ValidateResetPasswordTokenResult> ValidateResetPasswordTokenAsync(string resetPasswordToken)
     {
         User? user = await _usersDatabaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.RecoverPasswordToken == resetPasswordToken);
         if (user is null)
