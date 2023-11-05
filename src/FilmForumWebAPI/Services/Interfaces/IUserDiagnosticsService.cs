@@ -8,4 +8,9 @@ public interface IUserDiagnosticsService
 
     Task UpdateLastSuccessfullSignInAsync(int userId);
 
+    Task UpdateLastUsernameChangeAsync(int userId);
+
+    Task UpdateLastEmailChangeAsync(int userId);
+
+    Task UpdateLastPasswordChangeAsync(int userId);
 }

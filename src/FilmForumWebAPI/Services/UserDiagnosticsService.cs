@@ -34,4 +34,16 @@ public class UserDiagnosticsService : IUserDiagnosticsService
     public async Task UpdateLastSuccessfullSignInAsync(int userId)
         => await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == userId)
                                                       .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastSuccessfullSignIn, DateTime.UtcNow));
+
+    public async Task UpdateLastUsernameChangeAsync(int userId)
+       => await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == userId)
+                                                     .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastUsernameChange, DateTime.UtcNow));
+
+    public async Task UpdateLastEmailChangeAsync(int userId)
+       => await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == userId)
+                                                     .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastEmailChange, DateTime.UtcNow));
+
+    public async Task UpdateLastPasswordChangeAsync(int userId)
+       => await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == userId)
+                                                     .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastPasswordChange, DateTime.UtcNow));
 }
