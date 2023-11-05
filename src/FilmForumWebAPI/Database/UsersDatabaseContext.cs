@@ -12,4 +12,5 @@ public class UsersDatabaseContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<UserToRole> UsersToRoles { get; set; }
     public DbSet<Role> Roles { get; set; }
+    public DbSet<UserDiagnostics> UserDiagnostics { get; set; }
 }
