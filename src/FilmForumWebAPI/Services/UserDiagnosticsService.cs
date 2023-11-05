@@ -15,7 +15,7 @@ public class UserDiagnosticsService : IUserDiagnosticsService
 
     public async Task Create(int userId)
     {
-        await _usersDatabaseContext.UserDiagnostics.AddAsync(new UserDiagnostics() { UserId = userId });
+        await _usersDatabaseContext.UserDiagnostics.AddAsync(new UserDiagnostics(userId));
         await _usersDatabaseContext.SaveChangesAsync();
     }
 }
