@@ -86,7 +86,7 @@ public class UserService : IUserService
         return new UserCreatedDto(user.Id, createUserDto.Username, createUserDto.Email, token);
     }
 
-    public async Task<string?> LogInAsync(LogInDto logInDto)
+    public async Task<UserSignedInDto?> LogInAsync(LogInDto logInDto)
     {
         User? user = await _usersDatabaseContext.Users.FirstOrDefaultAsync(x => x.Email == logInDto.Email);
         if (user == null)
@@ -99,8 +99,9 @@ public class UserService : IUserService
         }
 
         List<string> roles = await _rolesService.GetUserRolesNamesAsync(user.Id);
+        string token = _jwtService.GenerateToken(user, roles, _jwtDetails.Value);
 
-        return _jwtService.GenerateToken(user, roles, _jwtDetails.Value);
+        return new UserSignedInDto(user.Id, user.Username, token);
     }
 
     public async Task<ValidateResetPasswordTokenResult> ValidateResetPasswordTokenAsync(string resetPasswordToken)

@@ -23,7 +23,7 @@ public interface IUserService
     
     Task<int> ChangeUsernameAsync(int id, string username);
 
-    Task<string?> LogInAsync(LogInDto logInDto);
+    Task<UserSignedInDto?> LogInAsync(LogInDto logInDto);
 
     Task<int> UpdatePasswordResetTokenAsync(string email, PasswordResetTokenWithExpirationDate passwordResetTokenWithExpiration);
 

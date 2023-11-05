@@ -30,4 +30,8 @@ public class UserDiagnosticsService : IUserDiagnosticsService
                                                                                                .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastFailedSignIn, DateTime.UtcNow));
                                                 }
                                             });
+
+    public async Task UpdateLastSuccessfullSignInAsync(int userId)
+        => await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == userId)
+                                                      .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastSuccessfullSignIn, DateTime.UtcNow));
 }

@@ -103,14 +103,16 @@ public class UserController : ControllerBase
             return NotFound("User not found");
         }
 
-        string? result = await _userService.LogInAsync(logInDto);
-        if (string.IsNullOrWhiteSpace(result))
+        if (await _userService.LogInAsync(logInDto) is UserSignedInDto result)
+        {
+            await _userDiagnosticsService.UpdateLastSuccessfullSignInAsync(result.Id);
+            return Ok(result);
+        }
+        else
         {
             await _userDiagnosticsService.UpdateLastFailedSignInAsync(logInDto.Email);
-            return BadRequest("Invalid credentials");
+            return BadRequest("Invalid credentials");         
         }
-
-        return Ok(result);
     }
 
     [Authorize(Roles = "Admin")]
