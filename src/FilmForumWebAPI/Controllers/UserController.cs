@@ -117,14 +117,8 @@ public class UserController : ControllerBase
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
-
-        if (!await _userService.UserWithIdExistsAsync(id))
-        {
-            return NotFound("User not found");
-        }
-
         int result = await _userService.ChangePasswordAsync(id, changePasswordDto);
-
+       
         return NoContent();
     }
 
@@ -139,6 +133,16 @@ public class UserController : ControllerBase
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
         int result = await _userService.ChangeEmailAsync(id, emailDto.Email);
 
+        return NoContent();
+    }
+
+    [Authorize(Roles = "User")]
+    [HttpPut("/change-username")]
+    public async Task<IActionResult> ChangeUsername([FromBody] UsernameDto usernameDto)
+    {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
+        int result = await _userService.ChangeUsernameAsync(id, usernameDto.Username);
+      
         return NoContent();
     }
 

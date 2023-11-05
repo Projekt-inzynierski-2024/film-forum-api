@@ -59,6 +59,10 @@ public class UserService : IUserService
         => await _usersDatabaseContext.Users.Where(x => x.Id == id)
                                       .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Email, email));
 
+    public async Task<int> ChangeUsernameAsync(int id, string username)
+        => await _usersDatabaseContext.Users.Where(x => x.Id == id)
+                                      .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.Username, username));
+
     public async Task<int> UpdatePasswordResetTokenAsync(string email, PasswordResetTokenWithExpirationDate passwordResetTokenWithExpiration)
         => await _usersDatabaseContext.Users.Where(x => x.Email == email)
                                       .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.RecoverPasswordToken, passwordResetTokenWithExpiration.Token)

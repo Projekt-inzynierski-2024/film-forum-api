@@ -20,6 +20,8 @@ public interface IUserService
     Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto);
 
     Task<int> ChangeEmailAsync(int id, string email);
+    
+    Task<int> ChangeUsernameAsync(int id, string username);
 
     Task<string?> LogInAsync(LogInDto logInDto);
 
