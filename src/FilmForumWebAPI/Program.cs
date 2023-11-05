@@ -68,6 +68,7 @@ public class Program
         builder.Services.AddScoped<IReviewService, ReviewService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IRoleService, RoleService>();
+        builder.Services.AddScoped<IUserDiagnosticsService, UserDiagnosticsService>();
         builder.Services.AddEmailSender();
 
         #endregion Services
