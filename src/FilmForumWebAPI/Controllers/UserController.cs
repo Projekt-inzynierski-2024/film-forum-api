@@ -32,6 +32,7 @@ public class UserController : ControllerBase
     private readonly IPasswordResetTokenService _passwordResetTokenService;
     private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
     private readonly IUserDiagnosticsService _userDiagnosticsService;
+
     public UserController(ILogger<UserController> logger,
                           IUserService userService,
                           IValidator<CreateUserDto> createUserValidator,
@@ -75,7 +76,7 @@ public class UserController : ControllerBase
         }
 
         UserCreatedDto result = await _userService.CreateUserAsync(createUserDto);
-        
+
         await _userDiagnosticsService.CreateAsync(result.Id);
 
         IEmailMessageFactory emailMessageFactory = new UserCreatedAccountEmailMessageFactory();
@@ -103,8 +104,13 @@ public class UserController : ControllerBase
         }
 
         string? result = await _userService.LogInAsync(logInDto);
+        if (string.IsNullOrWhiteSpace(result))
+        {
+            await _userDiagnosticsService.UpdateLastFailedSignInAsync(logInDto.Email);
+            return BadRequest("Invalid credentials");
+        }
 
-        return !string.IsNullOrWhiteSpace(result) ? Ok(result) : BadRequest("Invalid credentials");
+        return Ok(result);
     }
 
     [Authorize(Roles = "Admin")]
@@ -122,7 +128,7 @@ public class UserController : ControllerBase
     {
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
         int result = await _userService.ChangePasswordAsync(id, changePasswordDto);
-       
+
         return NoContent();
     }
 
@@ -146,7 +152,7 @@ public class UserController : ControllerBase
     {
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
         int result = await _userService.ChangeUsernameAsync(id, usernameDto.Username);
-      
+
         return NoContent();
     }
 
