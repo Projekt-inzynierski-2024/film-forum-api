@@ -22,6 +22,9 @@ public class DirectorController : ControllerBase
         return Ok();
     }
 
+    [HttpGet("search/{query}")]
+    public async Task<IActionResult> SearchAll(string query) => Ok(await _directorService.SearchAllAsync(query));
+
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _directorService.GetAllAsync());
 

@@ -4,6 +4,8 @@ namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IFilmService
 {
+    Task<List<GetFilmDto>> SearchAllAsync(string query);
+
     Task<List<GetFilmDto>> GetAllAsync();
 
     Task<List<GetDetailedFilmDto>> GetDetailedAllAsync();

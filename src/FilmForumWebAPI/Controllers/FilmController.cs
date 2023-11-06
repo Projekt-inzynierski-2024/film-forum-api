@@ -25,6 +25,9 @@ public class FilmController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _filmService.GetAllAsync());
 
+    [HttpGet("search/{query}")]
+    public async Task<IActionResult> SearchAll(string query) => Ok(await _filmService.SearchAllAsync(query));
+
     [HttpGet("details")]
     public async Task<IActionResult> GetDetailedAll() => Ok(await _filmService.GetDetailedAllAsync());
 
