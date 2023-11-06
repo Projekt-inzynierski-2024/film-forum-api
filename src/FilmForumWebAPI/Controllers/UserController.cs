@@ -128,7 +128,12 @@ public class UserController : ControllerBase
     [HttpPut("/change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
-        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
+        ValidationResult validation = _changePasswordValidator.Validate(changePasswordDto);
+        if (!validation.IsValid)
+        {
+            return BadRequest(validation.Errors.GetMessagesAsString());
+        }
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
         await _userService.ChangePasswordAsync(id, changePasswordDto);
         await _userDiagnosticsService.UpdateLastPasswordChangeAsync(id);
 
@@ -143,7 +148,7 @@ public class UserController : ControllerBase
         {
             return Conflict("Email already exists");
         }
-        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
         await _userService.ChangeEmailAsync(id, emailDto.Email);
         await _userDiagnosticsService.UpdateLastEmailChangeAsync(id);
 
@@ -154,7 +159,11 @@ public class UserController : ControllerBase
     [HttpPut("/change-username")]
     public async Task<IActionResult> ChangeUsername([FromBody] UsernameDto usernameDto)
     {
-        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
+        if (await _userService.UserWithUsernameExistsAsync(usernameDto.Username))
+        {
+            return Conflict("User already exists");
+        }
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
         await _userService.ChangeUsernameAsync(id, usernameDto.Username);
         await _userDiagnosticsService.UpdateLastUsernameChangeAsync(id);
 
