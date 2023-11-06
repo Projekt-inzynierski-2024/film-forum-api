@@ -111,7 +111,7 @@ public class UserController : ControllerBase
         else
         {
             await _userDiagnosticsService.UpdateLastFailedSignInAsync(logInDto.Email);
-            return BadRequest("Invalid credentials");         
+            return BadRequest("Invalid credentials");
         }
     }
 
@@ -129,7 +129,8 @@ public class UserController : ControllerBase
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
-        int result = await _userService.ChangePasswordAsync(id, changePasswordDto);
+        await _userService.ChangePasswordAsync(id, changePasswordDto);
+        await _userDiagnosticsService.UpdateLastPasswordChangeAsync(id);
 
         return NoContent();
     }
@@ -143,7 +144,8 @@ public class UserController : ControllerBase
             return Conflict("Email already exists");
         }
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
-        int result = await _userService.ChangeEmailAsync(id, emailDto.Email);
+        await _userService.ChangeEmailAsync(id, emailDto.Email);
+        await _userDiagnosticsService.UpdateLastEmailChangeAsync(id);
 
         return NoContent();
     }
@@ -153,7 +155,8 @@ public class UserController : ControllerBase
     public async Task<IActionResult> ChangeUsername([FromBody] UsernameDto usernameDto)
     {
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!);
-        int result = await _userService.ChangeUsernameAsync(id, usernameDto.Username);
+        await _userService.ChangeUsernameAsync(id, usernameDto.Username);
+        await _userDiagnosticsService.UpdateLastUsernameChangeAsync(id);
 
         return NoContent();
     }
