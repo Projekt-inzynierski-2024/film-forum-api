@@ -7,8 +7,9 @@ namespace FilmForumWebAPI.UnitTests.Extensions;
 public class ValidationFailureExtensionTests
 {
     [Fact]
-    public void GetMessagesAsString_ForEmptyList_ReturnEmptyString()
+    public void GetMessagesAsString_ForEmptyList_ReturnsMessagesAsString()
     {
+        //Arrange
         string NameErrorMessage = "Name was null";
         string SecondNameErrorMessage = "Second name was null";
         string EmailErrorMessage = "Email has less than 6 characters";
@@ -33,7 +34,7 @@ public class ValidationFailureExtensionTests
     public void GetMessagesAsString_ForEmptyFailureList_ReturnsEmptyString()
     {
         //Act
-        string result = ValidationFailureExtension.GetMessagesAsString(Enumerable.Empty<ValidationFailure>());
+        string result = Enumerable.Empty<ValidationFailure>().GetMessagesAsString();
 
         //Assert
         result.Should().BeEmpty();
@@ -42,8 +43,10 @@ public class ValidationFailureExtensionTests
     [Fact]
     public void GetMessagesAsString_ForNullArguments_ThrowArgumentNullException()
     {
+        List<ValidationFailure> validationFailures = null!;
+
         //Act
-        Func<string> action = () => ValidationFailureExtension.GetMessagesAsString(null!);
+        Func<string> action = validationFailures.GetMessagesAsString;
 
         //Assert
         action.Should().Throw<ArgumentNullException>();
