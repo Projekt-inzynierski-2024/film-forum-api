@@ -1,4 +1,5 @@
 ﻿using FilmForumWebAPI.Validators;
+using FluentAssertions;
 using FluentValidation;
 using FluentValidation.TestHelper;
 
@@ -53,5 +54,15 @@ public class PasswordValidatorTests
         TestValidationResult<string> result = _validator.TestValidate(password);
 
         result.ShouldHaveAnyValidationError();
+    }
+
+    [Fact]
+    public void Validate_ForNullPassword_ThrowsArgumentNullException()
+    {
+        //Act
+        Func<TestValidationResult<string>> action = () => _validator.TestValidate(null!);
+
+        //Assert
+        action.Should().Throw<ArgumentNullException>();
     }
 }
