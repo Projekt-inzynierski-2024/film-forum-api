@@ -4,6 +4,8 @@ namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IDirectorService
 {
+    Task<List<GetDirectorDto>> SearchAllAsync(string query);
+
     Task CreateAsync(CreateDirectorDto createDirectorDto);
 
     Task<List<GetDirectorDto>> GetAllAsync();

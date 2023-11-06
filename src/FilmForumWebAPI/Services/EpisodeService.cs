@@ -64,6 +64,9 @@ public class EpisodeService : IEpisodeService
         _detailedEpisodeCursor = _episodeCollection.Aggregate<Episode>(pipeline);
     }
 
+    public async Task<List<GetEpisodeDto>> SearchAllAsync(string query)
+        => await _episodeCollection.Find(x => x.Title.ToUpper().Contains(query.ToUpper())).ToListAsync() is IEnumerable<Episode> episodes ? episodes.Select(x => new GetEpisodeDto(x)).ToList() : new();
+
     public async Task CreateAsync(CreateEpisodeDto createEpisodeDto) => await _episodeCollection.InsertOneAsync(new(createEpisodeDto));
 
     public async Task<List<GetEpisodeDto>> GetAllAsync()

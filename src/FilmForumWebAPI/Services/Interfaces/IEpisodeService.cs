@@ -4,6 +4,8 @@ namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IEpisodeService
 {
+    Task<List<GetEpisodeDto>> SearchAllAsync(string query);
+
     Task CreateAsync(CreateEpisodeDto createEpisodeDto);
 
     Task<List<GetEpisodeDto>> GetAllAsync();

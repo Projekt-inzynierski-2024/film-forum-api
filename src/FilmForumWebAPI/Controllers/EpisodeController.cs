@@ -22,6 +22,9 @@ public class EpisodeController : ControllerBase
         return Ok();
     }
 
+    [HttpGet("search/{query}")]
+    public async Task<IActionResult> SearchAll(string query) => Ok(await _episodeService.SearchAllAsync(query));
+
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _episodeService.GetAllAsync());
 
