@@ -98,11 +98,6 @@ public class UserController : ControllerBase
     [HttpPost("/login")]
     public async Task<IActionResult> Login([FromBody] LogInDto logInDto)
     {
-        if (!await _userService.UserWithEmailExistsAsync(logInDto.Email))
-        {
-            return NotFound("User not found");
-        }
-
         if (await _userService.LogInAsync(logInDto) is UserSignedInDto result)
         {
             await _userDiagnosticsService.UpdateLastSuccessfullSignInAsync(result.Id);
