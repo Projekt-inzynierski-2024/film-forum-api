@@ -22,6 +22,9 @@ public class ActorController : ControllerBase
         return Ok();
     }
 
+    [HttpGet("search/{query}")]
+    public async Task<IActionResult> SearchAll(string query) => Ok(await _actorService.SearchAllAsync(query));
+
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _actorService.GetAllAsync());
 

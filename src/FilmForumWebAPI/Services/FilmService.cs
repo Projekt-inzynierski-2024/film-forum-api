@@ -33,6 +33,9 @@ public class FilmService : IFilmService
         _detailedFilmCursor = _filmCollection.Aggregate<Film>(pipeline);
     }
 
+    public async Task<List<GetFilmDto>> SearchAllAsync(string query)
+        => await _filmCollection.Find(x => x.Title.ToUpper().Contains(query.ToUpper())).ToListAsync() is IEnumerable<Film> films ? films.Select(x => new GetFilmDto(x)).ToList() : new();
+
     public async Task<GetFilmDto?> GetAsync(string id)
         => await _filmCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Film film ? new(film) : null;
 

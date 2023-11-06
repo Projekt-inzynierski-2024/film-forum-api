@@ -15,6 +15,9 @@ public class ActorService : IActorService
         _actorCollection = filmsDatabaseContext.ActorCollection;
     }
 
+    public async Task<List<GetActorDto>> SearchAllAsync(string query)
+        => await _actorCollection.Find(x => (x.Name + " " + x.Surname).ToUpper().Contains(query.ToUpper())).ToListAsync() is IEnumerable<Actor> list ? list.Select(x => new GetActorDto(x)).ToList() : new();
+
     public async Task CreateAsync(CreateActorDto createActorDto) => await _actorCollection.InsertOneAsync(new(createActorDto));
 
     public async Task<List<GetActorDto>> GetAllAsync()
