@@ -8,6 +8,7 @@ using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
+using FilmForumWebAPI.Validators.UserValidators;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
@@ -32,6 +33,8 @@ public class UserController : ControllerBase
     private readonly IPasswordResetTokenService _passwordResetTokenService;
     private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
     private readonly IUserDiagnosticsService _userDiagnosticsService;
+    private readonly AdminDetails _adminDetails;
+    private readonly IValidator<CreateAdminDto> _createAdminValidator;
 
     public UserController(ILogger<UserController> logger,
                           IUserService userService,
@@ -42,7 +45,9 @@ public class UserController : ControllerBase
                           IOptions<EmailSenderDetails> emailSenderDetails,
                           IPasswordResetTokenService passwordResetTokenService,
                           IValidator<ResetPasswordDto> resetPasswordValidator,
-                          IUserDiagnosticsService userDiagnosticsService)
+                          IUserDiagnosticsService userDiagnosticsService,
+                          IOptions<AdminDetails> adminDetails,
+                          IValidator<CreateAdminDto> createAdminValidator)
     {
         _logger = logger;
         _userService = userService;
@@ -54,6 +59,47 @@ public class UserController : ControllerBase
         _passwordResetTokenService = passwordResetTokenService;
         _resetPasswordValidator = resetPasswordValidator;
         _userDiagnosticsService = userDiagnosticsService;
+        _adminDetails = adminDetails.Value;
+        _createAdminValidator = createAdminValidator;
+    }
+
+    [HttpPost("/register-admin")]
+    public async Task<IActionResult> RegisterAdmin([FromBody] CreateAdminDto createAdminDto)
+    {
+        ValidationResult validation = _createAdminValidator.Validate(createAdminDto);
+        if (!validation.IsValid)
+        {
+            return BadRequest(validation.Errors.GetMessagesAsString());
+        }
+
+        if (await _userService.UserWithEmailExistsAsync(createAdminDto.Email))
+        {
+            return BadRequest("Email already exists");
+        }
+
+        if (await _userService.UserWithUsernameExistsAsync(createAdminDto.Username))
+        {
+            return BadRequest("Username already exists");
+        }
+
+        UserCreatedDto result = await _userService.CreateUserAsync(createAdminDto);
+
+        await _userDiagnosticsService.CreateAsync(result.Id);
+
+        IEmailMessageFactory emailMessageFactory = new UserCreatedAccountEmailMessageFactory();
+        IEmailMessage emailMessage = emailMessageFactory.Create(result.Email);
+
+        //We use try-catch block here as user should be created even if there is a problem with sending welcome e-mail
+        try
+        {
+            await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while sending welcome email");
+        }
+
+        return Created(nameof(GetById), result);
     }
 
     [HttpPost("/register")]

@@ -30,6 +30,7 @@ public class Program
         builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection("FilmForumMongoDatabase"));
         builder.Services.Configure<JwtDetails>(builder.Configuration.GetSection("JwtDetails"));
         builder.Services.Configure<EmailSenderDetails>(builder.Configuration.GetSection("EmailSenderDetails"));
+        builder.Services.Configure<AdminDetails>(builder.Configuration.GetSection("AdminDetails"));
 
         #endregion Configuration
 
