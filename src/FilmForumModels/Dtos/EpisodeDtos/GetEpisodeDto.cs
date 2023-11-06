@@ -28,7 +28,7 @@ public class GetEpisodeDto
 
     public int SeasonNumber { get; set; } = 0;
 
-    public float Length { get; set; } = 0.0f;
+    public int Length { get; set; } = 0;
 
     public int Year { get; set; } = 2023;
 

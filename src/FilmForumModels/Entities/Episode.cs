@@ -42,7 +42,7 @@ public class Episode : BaseMongoDatabaseEntity
     public int SeasonNumber { get; set; } = 0;
 
     [BsonElement("length")]
-    public float Length { get; set; } = 0.0f;
+    public int Length { get; set; } = 0;
 
     [BsonElement("year")]
     public int Year { get; set; } = 2023;

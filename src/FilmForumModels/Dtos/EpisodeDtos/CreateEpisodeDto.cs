@@ -21,8 +21,8 @@ public class CreateEpisodeDto
     public int SeasonNumber { get; set; } = 0;
 
     [Required]
-    [Range(0, int.MaxValue, ErrorMessage = "Length can't be bigger than 3.4 x 10^38")]
-    public float Length { get; set; } = 0.0f;
+    [Range(0, int.MaxValue, ErrorMessage = "Season number can't be bigger than 2147483647")]
+    public int Length { get; set; } = 0;
 
     [Required]
     [Range(0, int.MaxValue, ErrorMessage = "Year number can't be bigger than 2147483647")]
