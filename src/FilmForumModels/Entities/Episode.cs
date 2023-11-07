@@ -30,16 +30,20 @@ public class Episode : BaseMongoDatabaseEntity
     }
 
     [BsonElement("title")]
-    public string Title { get; set; } = string.Empty;
+    [BsonIgnoreIfNull]
+    public string? Title { get; set; } = null;
 
     [BsonElement("description")]
-    public string Description { get; set; } = string.Empty;
+    [BsonIgnoreIfNull]
+    public string? Description { get; set; } = null;
 
     [BsonElement("episodeNumber")]
-    public int EpisodeNumber { get; set; } = 0;
+    [BsonIgnoreIfNull]
+    public int? EpisodeNumber { get; set; } = null;
 
     [BsonElement("seasonNumber")]
-    public int SeasonNumber { get; set; } = 0;
+    [BsonIgnoreIfNull]
+    public int? SeasonNumber { get; set; } = null;
 
     [BsonElement("length")]
     public int Length { get; set; } = 0;

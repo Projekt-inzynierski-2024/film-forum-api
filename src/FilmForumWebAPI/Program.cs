@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using PasswordManager.Extensions;
 using Serilog;
 using System.Runtime.InteropServices;
+using System.Text.Json.Serialization;
 
 namespace FilmForumWebAPI;
 
@@ -81,6 +82,7 @@ public class Program
         #endregion Validators
 
         builder.Services.AddControllers()
+        .AddJsonOptions(options => options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
         .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.GetValidationErrorsMessagesAsString()));
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

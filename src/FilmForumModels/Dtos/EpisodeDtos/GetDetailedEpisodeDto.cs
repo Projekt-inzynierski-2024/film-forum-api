@@ -25,13 +25,13 @@ public class GetDetailedEpisodeDto
 
     public string Id { get; set; }
 
-    public string Title { get; set; } = string.Empty;
+    public string? Title { get; set; } = null;
 
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; } = null;
 
-    public int EpisodeNumber { get; set; } = 0;
+    public int? EpisodeNumber { get; set; } = null;
 
-    public int SeasonNumber { get; set; } = 0;
+    public int? SeasonNumber { get; set; } = null;
 
     public int Length { get; set; } = 0;
 
