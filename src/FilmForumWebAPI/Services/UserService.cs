@@ -1,6 +1,7 @@
 ﻿using AuthenticationManager.Interfaces;
 using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Entities;
+using FilmForumModels.Models.Enums;
 using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Database;
@@ -126,7 +127,7 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="createUserDto">Details to create new user: email, username, password</param>
     /// <returns><see cref="UserCreatedDto"/> instance with details about created user</returns>
-    public async Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto)
+    public async Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto, RoleEnum userRole)
     {
         User user = new()
         {
@@ -139,7 +140,11 @@ public class UserService : IUserService
         await _usersDatabaseContext.SaveChangesAsync();
 
         User? createdUser = _usersDatabaseContext.Users.FirstOrDefault(x => x.Username == createUserDto.Username);
-        string token = _jwtService.GenerateToken(createdUser!, new List<string>() { "Admin", "Moderator", "User" }, _jwtDetails.Value);
+        
+        List<RoleEnum> roles = _rolesService.PrepareRolesForUser(userRole);
+        await _rolesService.ChangeUserRolesAsync(createdUser!.Id, roles);
+       
+        string token = _jwtService.GenerateToken(createdUser!, roles.Select(x => x.ToString()), _jwtDetails.Value);
 
         return new UserCreatedDto(user.Id, createUserDto.Username, createUserDto.Email, token);
     }

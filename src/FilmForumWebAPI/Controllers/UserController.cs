@@ -4,6 +4,7 @@ using EmailSender.Factories.Email.Interfaces;
 using EmailSender.Interfaces;
 using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Models.Email;
+using FilmForumModels.Models.Enums;
 using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Extensions;
@@ -82,7 +83,7 @@ public class UserController : ControllerBase
             return BadRequest("Username already exists");
         }
 
-        UserCreatedDto result = await _userService.CreateUserAsync(createAdminDto);
+        UserCreatedDto result = await _userService.CreateUserAsync(createAdminDto, RoleEnum.Admin);
 
         await _userDiagnosticsService.CreateAsync(result.Id);
 
@@ -121,7 +122,7 @@ public class UserController : ControllerBase
             return BadRequest("Username already exists");
         }
 
-        UserCreatedDto result = await _userService.CreateUserAsync(createUserDto);
+        UserCreatedDto result = await _userService.CreateUserAsync(createUserDto, RoleEnum.User);
 
         await _userDiagnosticsService.CreateAsync(result.Id);
 

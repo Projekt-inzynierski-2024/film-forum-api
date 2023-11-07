@@ -1,4 +1,5 @@
 ﻿using FilmForumModels.Dtos.UserDtos;
+using FilmForumModels.Models.Enums;
 using FilmForumModels.Models.Password;
 
 namespace FilmForumWebAPI.Services.Interfaces;
@@ -15,7 +16,7 @@ public interface IUserService
 
     Task<GetUserDto?> GetUserAsync(int id);
 
-    Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto);
+    Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto, RoleEnum roleEnum);
 
     Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto);
 
