@@ -29,6 +29,12 @@ public class RequestLogService : IRequestLogService
     public async Task<GetRequestLogDto?> GetAsync(int id)
         => await _usersDatabaseContext.RequestLogs.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id) is RequestLog requestLog ? new GetRequestLogDto(requestLog) : null;
 
-    public async Task RemoveAsync(int id)
+    public async Task<List<GetRequestLogDto>> GetUserAllRequestsLogsAsync(int userId)
+        => await _usersDatabaseContext.RequestLogs.AsNoTracking().Where(x => x.UserId == userId).Select(x => new GetRequestLogDto(x)).ToListAsync();
+
+    public async Task<int> RemoveAsync(int id)
         => await _usersDatabaseContext.RequestLogs.Where(x => x.Id == id).ExecuteDeleteAsync();
+
+    public async Task<int> RemoveUserRequestsLogsAsync(int userId)
+        => await _usersDatabaseContext.RequestLogs.Where(x => x.UserId == userId).ExecuteDeleteAsync();
 }

@@ -10,5 +10,9 @@ public interface IRequestLogService
 
     Task<GetRequestLogDto?> GetAsync(int id);
 
-    Task RemoveAsync(int id);
+    Task<List<GetRequestLogDto>> GetUserAllRequestsLogsAsync(int userId);
+
+    Task<int> RemoveAsync(int id);
+
+    Task<int> RemoveUserRequestsLogsAsync(int userId);
 }

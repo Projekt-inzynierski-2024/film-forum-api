@@ -9,7 +9,6 @@ using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
-using FilmForumWebAPI.Validators.UserValidators;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;

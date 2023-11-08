@@ -11,18 +11,14 @@ public class RequestMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<RequestMiddleware> _logger;
-    private readonly IRequestLogService _requestLogService;
-
     public RequestMiddleware(RequestDelegate next,
-                             ILogger<RequestMiddleware> logger,
-                             IRequestLogService requestLogService)
+                             ILogger<RequestMiddleware> logger)
     {
         _next = next;
         _logger = logger;
-        _requestLogService = requestLogService;
     }
 
-    public async Task InvokeAsync(HttpContext httpContext)
+    public async Task InvokeAsync(HttpContext httpContext, IRequestLogService _requestLogService)
     {
         try
         {
