@@ -140,10 +140,10 @@ public class UserService : IUserService
         await _usersDatabaseContext.SaveChangesAsync();
 
         User? createdUser = _usersDatabaseContext.Users.FirstOrDefault(x => x.Username == createUserDto.Username);
-        
+
         List<RoleEnum> roles = _rolesService.PrepareRolesForUser(userRole);
         await _rolesService.ChangeUserRolesAsync(createdUser!.Id, roles);
-       
+
         string token = _jwtService.GenerateToken(createdUser!, roles.Select(x => x.ToString()), _jwtDetails);
 
         return new UserCreatedDto(user.Id, createUserDto.Username, createUserDto.Email, token);

@@ -11,6 +11,7 @@ public class RequestMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<RequestMiddleware> _logger;
+
     public RequestMiddleware(RequestDelegate next,
                              ILogger<RequestMiddleware> logger)
     {

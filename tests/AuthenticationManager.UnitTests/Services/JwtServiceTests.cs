@@ -75,7 +75,7 @@ public class JwtServiceTests
         else
         {
             rolesFromToken.Select(x => x.Value).Should().BeEquivalentTo(roles);
-        }      
+        }
     }
 
     [Fact]

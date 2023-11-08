@@ -34,7 +34,7 @@ public class UserDiagnosticsService : IUserDiagnosticsService
         => await _usersDatabaseContext.Users.FirstOrDefaultAsync(user => user.Email == userEmail)
                                             .ContinueWith(async task =>
                                             {
-                                                if(task?.Result?.Id is int userId)
+                                                if (task?.Result?.Id is int userId)
                                                 {
                                                     await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == userId)
                                                                                                .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastFailedSignIn, DateTime.UtcNow));

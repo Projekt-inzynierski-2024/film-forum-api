@@ -6,7 +6,8 @@ namespace FilmForumModels.Entities;
 [Table("user_to_role")]
 public class UserToRole : BaseMsSqlDatabaseEntity
 {
-    public UserToRole() { }
+    public UserToRole()
+    { }
 
     public UserToRole(int roleId, int userId)
     {

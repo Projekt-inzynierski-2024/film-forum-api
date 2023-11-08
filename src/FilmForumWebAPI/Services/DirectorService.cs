@@ -14,6 +14,7 @@ public class DirectorService : IDirectorService
     {
         _directorCollection = filmsDatabaseContext.DirectorCollection;
     }
+
     public async Task<List<GetDirectorDto>> SearchAllAsync(string query)
         => await _directorCollection.Find(x => (x.Name + " " + x.Surname).ToUpper().Contains(query.ToUpper())).ToListAsync() is IEnumerable<Director> list ? list.Select(x => new GetDirectorDto(x)).ToList() : new();
 
