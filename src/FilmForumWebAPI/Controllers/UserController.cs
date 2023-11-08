@@ -82,7 +82,7 @@ public class UserController : ControllerBase
             return BadRequest("Username already exists");
         }
 
-        UserCreatedDto result = await _userService.CreateUserAsync(createAdminDto, RoleEnum.Admin);
+        UserCreatedDto result = await _userService.CreateUserAsync(createAdminDto, UserRole.Admin);
 
         await _userDiagnosticsService.CreateAsync(result.Id);
 
@@ -121,7 +121,7 @@ public class UserController : ControllerBase
             return BadRequest("Username already exists");
         }
 
-        UserCreatedDto result = await _userService.CreateUserAsync(createUserDto, RoleEnum.User);
+        UserCreatedDto result = await _userService.CreateUserAsync(createUserDto, UserRole.User);
 
         await _userDiagnosticsService.CreateAsync(result.Id);
 
@@ -149,11 +149,9 @@ public class UserController : ControllerBase
             await _userDiagnosticsService.UpdateLastSuccessfullSignInAsync(result.Id);
             return Ok(result);
         }
-        else
-        {
-            await _userDiagnosticsService.UpdateLastFailedSignInAsync(logInDto.Email);
-            return BadRequest("Invalid credentials");
-        }
+
+        await _userDiagnosticsService.UpdateLastFailedSignInAsync(logInDto.Email);
+        return BadRequest("Invalid credentials");
     }
 
     [Authorize(Roles = "Admin")]

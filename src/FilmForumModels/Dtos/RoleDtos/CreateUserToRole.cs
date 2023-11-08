@@ -2,4 +2,4 @@
 
 namespace FilmForumModels.Dtos.RoleDtos;
 
-public record CreateUserToRole(RoleEnum Role, int UserId);
+public record CreateUserToRole(UserRole Role, int UserId);

@@ -127,7 +127,7 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="createUserDto">Details to create new user: email, username, password</param>
     /// <returns><see cref="UserCreatedDto"/> instance with details about created user</returns>
-    public async Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto, RoleEnum userRole)
+    public async Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto, UserRole userMainRole)
     {
         User user = new()
         {
@@ -141,7 +141,7 @@ public class UserService : IUserService
 
         User? createdUser = _usersDatabaseContext.Users.FirstOrDefault(x => x.Username == createUserDto.Username);
 
-        List<RoleEnum> roles = _rolesService.PrepareRolesForUser(userRole);
+        List<UserRole> roles = _rolesService.PrepareUserRolesToSaveInDatabase(userMainRole);
         await _rolesService.ChangeUserRolesAsync(createdUser!.Id, roles);
 
         string token = _jwtService.GenerateToken(createdUser!, roles.Select(x => x.ToString()), _jwtDetails);

@@ -9,7 +9,7 @@ public interface IRoleService
 
     Task<List<GetUserRoleDto>> GetUserRolesAsync(int userId);
 
-    Task ChangeUserRolesAsync(int userId, IEnumerable<RoleEnum> roleEnums);
+    Task ChangeUserRolesAsync(int userId, IEnumerable<UserRole> roles);
 
-    List<RoleEnum> PrepareRolesForUser(RoleEnum roleEnum);
+    List<UserRole> PrepareUserRolesToSaveInDatabase(UserRole userMainRole);
 }
