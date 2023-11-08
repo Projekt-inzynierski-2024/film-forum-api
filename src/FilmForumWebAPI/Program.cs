@@ -71,6 +71,7 @@ public class Program
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IRoleService, RoleService>();
         builder.Services.AddScoped<IUserDiagnosticsService, UserDiagnosticsService>();
+        builder.Services.AddScoped<IRequestLogService, RequestLogService>();
         builder.Services.AddEmailSender();
 
         #endregion Services
@@ -120,7 +121,7 @@ public class Program
 
         WebApplication app = builder.Build();
 
-        app.UseMiddleware<RequestExceptionMiddleware>();
+        app.UseMiddleware<RequestMiddleware>();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())

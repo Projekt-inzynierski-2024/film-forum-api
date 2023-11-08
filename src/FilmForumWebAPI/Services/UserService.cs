@@ -17,7 +17,7 @@ public class UserService : IUserService
     private readonly UsersDatabaseContext _usersDatabaseContext;
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
-    private readonly IOptions<JwtDetails> _jwtDetails;
+    private readonly JwtDetails _jwtDetails;
     private readonly IRoleService _rolesService;
 
     public UserService(UsersDatabaseContext usersDatabaseContext,
@@ -29,7 +29,7 @@ public class UserService : IUserService
         _usersDatabaseContext = usersDatabaseContext;
         _passwordService = passwordService;
         _jwtService = jwtService;
-        _jwtDetails = jwtDetails;
+        _jwtDetails = jwtDetails.Value;
         _rolesService = rolesService;
     }
 
@@ -62,7 +62,7 @@ public class UserService : IUserService
     /// </summary>
     /// <returns>List of users existing in database or new empty list if there aren't any users in database</returns>
     public async Task<List<GetUserDto>> GetAllAsync()
-        => await _usersDatabaseContext.Users.AsNoTracking().ToListAsync() is IEnumerable<User> users ? users.Select(x => new GetUserDto(x.Id, x.Username, x.Email)).ToList() : new();
+        => await _usersDatabaseContext.Users.AsNoTracking().Select(x => new GetUserDto(x)).ToListAsync();
 
     /// <summary>
     /// Gets user with given id from database
@@ -70,7 +70,7 @@ public class UserService : IUserService
     /// <param name="id">User's id</param>
     /// <returns>User instance if user was found, otherwise null</returns>
     public async Task<GetUserDto?> GetUserAsync(int id)
-        => await _usersDatabaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id) is User user ? new GetUserDto(user.Id, user.Username, user.Email) : null;
+        => await _usersDatabaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id) is User user ? new GetUserDto(user) : null;
 
     /// <summary>
     /// Changes user's password
@@ -144,7 +144,7 @@ public class UserService : IUserService
         List<RoleEnum> roles = _rolesService.PrepareRolesForUser(userRole);
         await _rolesService.ChangeUserRolesAsync(createdUser!.Id, roles);
        
-        string token = _jwtService.GenerateToken(createdUser!, roles.Select(x => x.ToString()), _jwtDetails.Value);
+        string token = _jwtService.GenerateToken(createdUser!, roles.Select(x => x.ToString()), _jwtDetails);
 
         return new UserCreatedDto(user.Id, createUserDto.Username, createUserDto.Email, token);
     }
@@ -167,7 +167,7 @@ public class UserService : IUserService
         }
 
         List<string> roles = await _rolesService.GetUserRolesNamesAsync(user.Id);
-        string token = _jwtService.GenerateToken(user, roles, _jwtDetails.Value);
+        string token = _jwtService.GenerateToken(user, roles, _jwtDetails);
 
         return new UserSignedInDto(user.Id, user.Username, token);
     }
