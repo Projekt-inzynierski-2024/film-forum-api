@@ -1,4 +1,5 @@
 ﻿using FilmForumModels.Dtos.EpisodeDtos;
+using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 
@@ -16,7 +17,7 @@ public interface IEpisodeService
 
     Task<GetDetailedEpisodeDto?> GetDetailedAsync(string id);
 
-    Task UpdateAsync(string id, CreateEpisodeDto createEpisodeDto);
+    Task<ReplaceOneResult> UpdateAsync(string id, CreateEpisodeDto createEpisodeDto);
 
     Task RemoveAsync(string id);
 }

@@ -1,4 +1,5 @@
 ﻿using FilmForumModels.Dtos.DirectorDtos;
+using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 
@@ -12,7 +13,7 @@ public interface IDirectorService
 
     Task<GetDirectorDto?> GetAsync(string id);
 
-    Task UpdateAsync(string id, CreateDirectorDto createDirectorDto);
+    Task<ReplaceOneResult> UpdateAsync(string id, CreateDirectorDto createDirectorDto);
 
     Task RemoveAsync(string id);
 }

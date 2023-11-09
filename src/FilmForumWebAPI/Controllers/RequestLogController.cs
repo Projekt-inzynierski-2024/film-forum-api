@@ -19,8 +19,7 @@ public class RequestLogController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
-        => Ok(await _requestLogService.GetAllAsync());
+    public async Task<IActionResult> GetAll() => Ok(await _requestLogService.GetAllAsync());
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
@@ -36,12 +35,17 @@ public class RequestLogController : ControllerBase
     public async Task<IActionResult> RemoveAsync(int id)
     {
         await _requestLogService.RemoveAsync(id);
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("user-request-logs/{userId}")]
     public async Task<IActionResult> RemoveUserRequestsLogs(int userId)
-        => !await _userService.UserWithIdExistsAsync(userId)
-           ? NotFound("User not found")
-           : Ok(await _requestLogService.RemoveUserRequestsLogsAsync(userId));
+    {
+        if (!await _userService.UserWithIdExistsAsync(userId))
+        {
+            return NotFound("User not found");
+        }
+        await _requestLogService.RemoveUserRequestsLogsAsync(userId);
+        return NoContent();
+    }
 }

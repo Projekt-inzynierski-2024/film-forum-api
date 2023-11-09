@@ -1,4 +1,5 @@
 ﻿using FilmForumModels.Dtos.FilmDtos;
+using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 
@@ -16,7 +17,7 @@ public interface IFilmService
 
     Task CreateAsync(CreateFilmDto createFilmDto);
 
-    Task UpdateAsync(string id, CreateFilmDto updatedFilm);
+    Task<ReplaceOneResult> UpdateAsync(string id, CreateFilmDto updatedFilm);
 
     Task RemoveAsync(string id);
 }

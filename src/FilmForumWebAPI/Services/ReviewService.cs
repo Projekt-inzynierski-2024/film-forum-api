@@ -23,7 +23,7 @@ public class ReviewService : IReviewService
     public async Task<GetReviewDto?> GetAsync(string id)
         => await _reviewCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Review review ? new(review) : null;
 
-    public async Task UpdateAsync(string id, CreateReviewDto createReviewDto)
+    public async Task<ReplaceOneResult> UpdateAsync(string id, CreateReviewDto createReviewDto)
         => await _reviewCollection.ReplaceOneAsync(x => x.Id == id, new(id, createReviewDto));
 
     public async Task RemoveAsync(string id)

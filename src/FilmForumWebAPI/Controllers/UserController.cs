@@ -227,7 +227,7 @@ public class UserController : ControllerBase
         return Ok("Token was successfully sent. Check your e-mail.");
     }
 
-    [HttpPost("/password-reset")]
+    [HttpPut("/password-reset")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
     {
         ValidationResult validation = _resetPasswordValidator.Validate(resetPasswordDto);
@@ -249,6 +249,6 @@ public class UserController : ControllerBase
 
         await _userService.ResetPasswordAsync(resetPasswordDto);
 
-        return Ok("New password has been set");
+        return NoContent();
     }
 }

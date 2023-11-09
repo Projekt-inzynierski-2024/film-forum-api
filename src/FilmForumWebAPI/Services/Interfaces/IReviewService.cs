@@ -1,4 +1,5 @@
 ﻿using FilmForumModels.Dtos.ReviewDtos;
+using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Services.Interfaces;
 
@@ -10,7 +11,7 @@ public interface IReviewService
 
     Task<GetReviewDto?> GetAsync(string id);
 
-    Task UpdateAsync(string id, CreateReviewDto createReviewDto);
+    Task<ReplaceOneResult> UpdateAsync(string id, CreateReviewDto createReviewDto);
 
     Task RemoveAsync(string id);
 }

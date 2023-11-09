@@ -1,6 +1,7 @@
 ﻿using FilmForumModels.Dtos.EpisodeDtos;
 using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 
 namespace FilmForumWebAPI.Controllers;
 
@@ -19,7 +20,7 @@ public class EpisodeController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateEpisodeDto createEpisodeDto)
     {
         await _episodeService.CreateAsync(createEpisodeDto);
-        return Ok();
+        return Created(nameof(GetById), createEpisodeDto);
     }
 
     [HttpGet("search/{query}")]
@@ -42,14 +43,14 @@ public class EpisodeController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, [FromBody] CreateEpisodeDto createEpisodeDto)
     {
-        await _episodeService.UpdateAsync(id, createEpisodeDto);
-        return Ok();
+        ReplaceOneResult result = await _episodeService.UpdateAsync(id, createEpisodeDto);
+        return result.IsModifiedCountAvailable && result.ModifiedCount > 0 ? NoContent() : NotFound($"Episode not found");
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Remove(string id)
     {
         await _episodeService.RemoveAsync(id);
-        return Ok();
+        return NoContent();
     }
 }

@@ -26,7 +26,7 @@ public class DirectorService : IDirectorService
     public async Task<GetDirectorDto?> GetAsync(string id)
         => await _directorCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Director director ? new(director) : null;
 
-    public async Task UpdateAsync(string id, CreateDirectorDto createDirectorDto)
+    public async Task<ReplaceOneResult> UpdateAsync(string id, CreateDirectorDto createDirectorDto)
         => await _directorCollection.ReplaceOneAsync(x => x.Id == id, new(id, createDirectorDto));
 
     public async Task RemoveAsync(string id)

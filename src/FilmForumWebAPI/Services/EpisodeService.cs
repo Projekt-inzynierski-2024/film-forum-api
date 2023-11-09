@@ -81,7 +81,7 @@ public class EpisodeService : IEpisodeService
     public async Task<GetDetailedEpisodeDto?> GetDetailedAsync(string id)
         => await _detailedEpisodeCursor.ToListAsync().ContinueWith(episodeTask => episodeTask.Result.Find(x => x.Id == id)) is Episode episode ? new(episode) : null;
 
-    public async Task UpdateAsync(string id, CreateEpisodeDto createEpisodeDto)
+    public async Task<ReplaceOneResult> UpdateAsync(string id, CreateEpisodeDto createEpisodeDto)
         => await _episodeCollection.ReplaceOneAsync(x => x.Id == id, new(id, createEpisodeDto));
 
     public async Task RemoveAsync(string id)
