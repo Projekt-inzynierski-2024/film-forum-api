@@ -1,8 +1,11 @@
 ﻿using FilmForumModels.Models.Enums;
 using FilmForumModels.Models.Exceptions;
+using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Services;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace FilmForumWebAPI.UnitTests.Services;
 
@@ -20,7 +23,9 @@ public class RoleServiceTests
     public void PrepareUserRolesToSaveInDatabase_ForGivenMainRole_ReturnsProperRoles(UserRole userMainRole, List<UserRole> expected)
     {
         // Arrange
-        IRoleService _roleService = new RoleService(null!);
+        DbContextOptions<UsersDatabaseContext> options = new();
+        Mock<UsersDatabaseContext> _usersDatabaseContextMock = new(options);
+        RoleService _roleService = new(_usersDatabaseContextMock.Object);
 
         // Act
         List<UserRole> result = _roleService.PrepareUserRolesToSaveInDatabase(userMainRole);
@@ -33,7 +38,9 @@ public class RoleServiceTests
     public void PrepareUserRolesToSaveInDatabase_ForInvalidRoleName_ThrowsInvalidRoleNameException()
     {
         // Arrange
-        IRoleService _roleService = new RoleService(null!);
+        DbContextOptions<UsersDatabaseContext> options = new();
+        Mock<UsersDatabaseContext> _usersDatabaseContextMock = new(options);
+        RoleService _roleService = new(_usersDatabaseContextMock.Object);
 
         // Act
         Func<List<UserRole>> action = () => _roleService.PrepareUserRolesToSaveInDatabase((UserRole)99999);

@@ -190,7 +190,7 @@ public class UserService : IUserService
         }
         if (!user.RecoverPasswordTokenExpiration.HasValue || user.RecoverPasswordTokenExpiration.Value.ToUniversalTime() < DateTime.UtcNow)
         {
-            return new ValidateResetPasswordTokenResult(false, "Rest password token is empty or expired");
+            return new ValidateResetPasswordTokenResult(false, "Reset password token is empty or expired");
         }
         return new ValidateResetPasswordTokenResult(true, "Valid token");
     }
