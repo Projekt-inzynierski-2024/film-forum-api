@@ -5,5 +5,5 @@ namespace EmailSender.Interfaces;
 
 public interface IEmailService
 {
-    Task SendEmailAsync(IEmailMessage emailMessage, EmailSenderDetails emailSenderDetails);
+    Task SendEmailAsync(IEmailMessage emailMessage, EmailSenderDetails emailSenderDetails, SmtpSettings smtpSettings);
 }

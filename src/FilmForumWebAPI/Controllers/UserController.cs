@@ -11,6 +11,7 @@ using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
+using MailKit.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -29,6 +30,7 @@ public class UserController : ControllerBase
     private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
     private readonly IJwtService _jwtService;
     private readonly IEmailService _emailService;
+    private readonly SmtpSettings _smtpSettings;
     private readonly EmailSenderDetails _emailSenderDetails;
     private readonly IPasswordResetTokenService _passwordResetTokenService;
     private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
@@ -42,6 +44,7 @@ public class UserController : ControllerBase
                           IValidator<ChangePasswordDto> changePasswordValidator,
                           IJwtService jwtService,
                           IEmailService emailService,
+                          IOptions<SmtpSettings> smtpSettings,
                           IOptions<EmailSenderDetails> emailSenderDetails,
                           IPasswordResetTokenService passwordResetTokenService,
                           IValidator<ResetPasswordDto> resetPasswordValidator,
@@ -55,6 +58,7 @@ public class UserController : ControllerBase
         _changePasswordValidator = changePasswordValidator;
         _jwtService = jwtService;
         _emailService = emailService;
+        _smtpSettings = smtpSettings.Value;
         _emailSenderDetails = emailSenderDetails.Value;
         _passwordResetTokenService = passwordResetTokenService;
         _resetPasswordValidator = resetPasswordValidator;
@@ -92,7 +96,7 @@ public class UserController : ControllerBase
         //We use try-catch block here as user should be created even if there is a problem with sending welcome e-mail
         try
         {
-            await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails);
+            await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails, _smtpSettings);
         }
         catch (Exception exception)
         {
@@ -131,7 +135,7 @@ public class UserController : ControllerBase
         //We use try-catch block here as user should be created even if there is a problem with sending welcome e-mail
         try
         {
-            await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails);
+            await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails, _smtpSettings);
         }
         catch (Exception exception)
         {
@@ -222,7 +226,7 @@ public class UserController : ControllerBase
 
         IEmailMessageFactory emailMessageFactory = new UserResetPasswordEmailMessageFactory();
         IEmailMessage emailMessage = emailMessageFactory.Create(emailDto.Email, body: $"Your token to reset password: {tokenWithExpirationDate.Token}. The token expires {tokenWithExpirationDate.ExpirationDate}");
-        await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails);
+        await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails, _smtpSettings);
 
         return Ok("Token was successfully sent. Check your e-mail.");
     }

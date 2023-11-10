@@ -2,7 +2,6 @@
 using FilmForumModels.Models.Email;
 using FilmForumModels.Models.Settings;
 using MailKit.Net.Smtp;
-using MailKit.Security;
 using MimeKit;
 using MimeKit.Text;
 
@@ -10,7 +9,7 @@ namespace EmailSender.Services;
 
 public class EmailService : IEmailService
 {
-    public async Task SendEmailAsync(IEmailMessage emailMessage, EmailSenderDetails emailSenderDetails)
+    public async Task SendEmailAsync(IEmailMessage emailMessage, EmailSenderDetails emailSenderDetails, SmtpSettings smtpSettings)
     {
         MimeMessage emailToSend = new()
         {
@@ -21,7 +20,7 @@ public class EmailService : IEmailService
         emailToSend.Body = new TextPart(TextFormat.Html) { Text = emailMessage.Body };
 
         using SmtpClient smtp = new();
-        await smtp.ConnectAsync("smtp-mail.outlook.com", 587, SecureSocketOptions.StartTls);
+        await smtp.ConnectAsync(smtpSettings.Host, smtpSettings.Port, smtpSettings.SecureSocketOptions);
         await smtp.AuthenticateAsync(emailSenderDetails.Email, emailSenderDetails.Password);
         await smtp.SendAsync(emailToSend);
         await smtp.DisconnectAsync(true);
