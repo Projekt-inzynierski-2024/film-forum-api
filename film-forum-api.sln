@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmForumModels", "src\Film
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailSender", "src\EmailSender\EmailSender.csproj", "{E6B22EFA-AC93-4344-9AE4-777B5FB52AB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSender.IntegrationTests", "EmailSender.IntegrationTests\EmailSender.IntegrationTests.csproj", "{D0A76C00-C138-4166-BB19-1ADB2271C6F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSender.IntegrationTests", "tests\EmailSender.IntegrationTests\EmailSender.IntegrationTests.csproj", "{D0A76C00-C138-4166-BB19-1ADB2271C6F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

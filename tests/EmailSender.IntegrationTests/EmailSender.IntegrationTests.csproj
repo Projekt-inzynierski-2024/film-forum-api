@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\EmailSender\EmailSender.csproj" />
+    <ProjectReference Include="..\..\src\EmailSender\EmailSender.csproj" />
   </ItemGroup>
 
 </Project>

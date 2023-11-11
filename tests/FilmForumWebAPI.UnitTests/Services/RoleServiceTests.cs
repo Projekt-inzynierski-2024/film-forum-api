@@ -2,7 +2,6 @@
 using FilmForumModels.Models.Exceptions;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Services;
-using FilmForumWebAPI.Services.Interfaces;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;

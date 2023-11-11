@@ -8,7 +8,7 @@ using FluentAssertions;
 using MailKit.Security;
 using System.Net.Sockets;
 
-namespace EmailSender.IntegrationTests;
+namespace EmailSender.IntegrationTests.Services;
 
 public class EmailServiceTests
 {
