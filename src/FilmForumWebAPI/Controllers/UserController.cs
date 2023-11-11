@@ -77,12 +77,12 @@ public class UserController : ControllerBase
 
         if (await _userService.UserWithEmailExistsAsync(createAdminDto.Email))
         {
-            return BadRequest("Email already exists");
+            return Conflict("Email already exists");
         }
 
         if (await _userService.UserWithUsernameExistsAsync(createAdminDto.Username))
         {
-            return BadRequest("Username already exists");
+            return Conflict("Username already exists");
         }
 
         UserCreatedDto result = await _userService.CreateAsync(createAdminDto, UserRole.Admin);
@@ -116,12 +116,12 @@ public class UserController : ControllerBase
 
         if (await _userService.UserWithEmailExistsAsync(createUserDto.Email))
         {
-            return BadRequest("Email already exists");
+            return Conflict("Email already exists");
         }
 
         if (await _userService.UserWithUsernameExistsAsync(createUserDto.Username))
         {
-            return BadRequest("Username already exists");
+            return Conflict("Username already exists");
         }
 
         UserCreatedDto result = await _userService.CreateAsync(createUserDto, UserRole.User);

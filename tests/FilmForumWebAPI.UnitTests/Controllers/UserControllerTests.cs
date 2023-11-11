@@ -52,7 +52,7 @@ public class UserControllerTests
     }
 
     [Fact]
-    public async Task CreateAdmin_ForProperData_CreatesAdmin()
+    public async Task RegisterAdmin_ForValidData_CreatesAdmin()
     {
         // Arrange
         CreateAdminDto createAdminDto = new("NewAdmin", "myadminemail@mail.com", "AdminStrongPassword123", "AdminStrongPassword123", "SuperSecretKey");
@@ -70,11 +70,10 @@ public class UserControllerTests
     }
 
     [Fact]
-    public async Task CreateAdmin_ForInvalidData_ReturnsBadRequest()
+    public async Task RegisterAdmin_ForInvalidData_ReturnsBadRequest()
     {
         // Arrange
         _createAdminDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateAdminDto>())).Returns(new ValidationResult() { Errors = new() {new ValidationFailure("Name", "Name was null") } });
-        _userServiceMock.Setup(x => x.CreateAsync(It.IsAny<CreateAdminDto>(), It.IsAny<UserRole>())).ReturnsAsync(It.IsAny<UserCreatedDto>());
 
         // Act
         IActionResult result = await _userController.RegisterAdmin(It.IsAny<CreateAdminDto>());
@@ -84,7 +83,37 @@ public class UserControllerTests
     }
 
     [Fact]
-    public async Task CreateUser_ForProperData_CreatesUser()
+    public async Task RegisterAdmin_ForExistingEmail_ReturnsConflict()
+    {
+        // Arrange
+        Mock<CreateAdminDto> createAdminDtoMock = new("", "", "", "", "");
+        _createAdminDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateAdminDto>())).Returns(new ValidationResult());
+        _userServiceMock.Setup(x => x.UserWithEmailExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        // Act
+        IActionResult result = await _userController.RegisterAdmin(createAdminDtoMock.Object);
+
+        // Assert
+        result.Should().BeOfType<ConflictObjectResult>();
+    }
+
+    [Fact]
+    public async Task RegisterAdmin_ForExistingUsername_ReturnsConflict()
+    {
+        // Arrange
+        Mock<CreateAdminDto> createAdminDtoMock = new("", "", "", "", "");
+        _createAdminDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateAdminDto>())).Returns(new ValidationResult());
+        _userServiceMock.Setup(x => x.UserWithUsernameExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        // Act
+        IActionResult result = await _userController.RegisterAdmin(createAdminDtoMock.Object);
+
+        // Assert
+        result.Should().BeOfType<ConflictObjectResult>();
+    }
+
+    [Fact]
+    public async Task Register_ForValidData_CreatesUser()
     {
         // Arrange
         CreateUserDto createUserDto = new("NewUser", "myemail@mail.com", "StrongPassword123", "StrongPassword123");
@@ -99,5 +128,48 @@ public class UserControllerTests
         CreatedResult createdResult = result.Should().BeOfType<CreatedResult>().Subject;
         createdResult.Location.Should().Be(nameof(UserController.GetById));
         createdResult.Value.Should().Be(userCreatedDto);
+    }
+
+    [Fact]
+    public async Task Register_ForInvalidData_ReturnsBadRequest()
+    {
+        // Arrange
+        _createUserDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateUserDto>())).Returns(new ValidationResult() { Errors = new() { new ValidationFailure("Name", "Name was null") } });
+
+        // Act
+        IActionResult result = await _userController.Register(It.IsAny<CreateUserDto>());
+
+        // Assert
+        result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task Register_ForExistingEmail_ReturnsConflict()
+    {
+        // Arrange
+        Mock<CreateUserDto> createUserDtoMock = new("", "", "", "");
+        _createUserDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateUserDto>())).Returns(new ValidationResult());
+        _userServiceMock.Setup(x => x.UserWithEmailExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        // Act
+        IActionResult result = await _userController.Register(createUserDtoMock.Object);
+
+        // Assert
+        result.Should().BeOfType<ConflictObjectResult>();
+    }
+
+    [Fact]
+    public async Task Register_ForExistingUsername_ReturnsConflict()
+    {
+        // Arrange
+        Mock<CreateUserDto> createUserDtoMock = new("", "", "", "");
+        _createUserDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateUserDto>())).Returns(new ValidationResult());
+        _userServiceMock.Setup(x => x.UserWithUsernameExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        // Act
+        IActionResult result = await _userController.Register(createUserDtoMock.Object);
+
+        // Assert
+        result.Should().BeOfType<ConflictObjectResult>();
     }
 }
