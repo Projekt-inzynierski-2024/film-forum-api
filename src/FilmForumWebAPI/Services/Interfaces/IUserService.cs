@@ -14,9 +14,10 @@ public interface IUserService
 
     Task<List<GetUserDto>> GetAllAsync();
 
-    Task<GetUserDto?> GetUserAsync(int id);
+    Task<GetUserDto?> GetAsync(int id);
 
-    Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto, UserRole userMainRole);
+    Task<UserCreatedDto> CreateAsync(CreateUserDto createUserDto, UserRole userMainRole);
+    Task<int> RemoveAsync(int id);
 
     Task<int> ChangePasswordAsync(int id, ChangePasswordDto changePasswordDto);
 

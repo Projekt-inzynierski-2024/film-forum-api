@@ -86,7 +86,7 @@ public class UserController : ControllerBase
             return BadRequest("Username already exists");
         }
 
-        UserCreatedDto result = await _userService.CreateUserAsync(createAdminDto, UserRole.Admin);
+        UserCreatedDto result = await _userService.CreateAsync(createAdminDto, UserRole.Admin);
 
         await _userDiagnosticsService.CreateAsync(result.Id);
 
@@ -125,7 +125,7 @@ public class UserController : ControllerBase
             return BadRequest("Username already exists");
         }
 
-        UserCreatedDto result = await _userService.CreateUserAsync(createUserDto, UserRole.User);
+        UserCreatedDto result = await _userService.CreateAsync(createUserDto, UserRole.User);
 
         await _userDiagnosticsService.CreateAsync(result.Id);
 
@@ -165,7 +165,7 @@ public class UserController : ControllerBase
     [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
-        => await _userService.GetUserAsync(id) is GetUserDto user ? Ok(user) : NotFound($"User not found");
+        => await _userService.GetAsync(id) is GetUserDto user ? Ok(user) : NotFound($"User not found");
 
     [Authorize(Roles = "User")]
     [HttpPut("/change-password")]
@@ -252,6 +252,31 @@ public class UserController : ControllerBase
         }
 
         await _userService.ResetPasswordAsync(resetPasswordDto);
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        if (!await _userService.UserWithIdExistsAsync(id))
+        {
+            return NotFound("User not found");
+        }
+
+        await _userService.RemoveAsync(id);
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Admin,Moderator,User")]
+    [HttpDelete()]
+    public async Task<IActionResult> Delete()
+    {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
+
+        await _userService.RemoveAsync(id);
 
         return NoContent();
     }

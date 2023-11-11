@@ -69,7 +69,7 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="id">User's id</param>
     /// <returns>User instance if user was found, otherwise null</returns>
-    public async Task<GetUserDto?> GetUserAsync(int id)
+    public async Task<GetUserDto?> GetAsync(int id)
         => await _usersDatabaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id) is User user ? new GetUserDto(user) : null;
 
     /// <summary>
@@ -127,7 +127,7 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="createUserDto">Details to create new user: email, username, password</param>
     /// <returns><see cref="UserCreatedDto"/> instance with details about created user</returns>
-    public async Task<UserCreatedDto> CreateUserAsync(CreateUserDto createUserDto, UserRole userMainRole)
+    public async Task<UserCreatedDto> CreateAsync(CreateUserDto createUserDto, UserRole userMainRole)
     {
         User user = new()
         {
@@ -148,6 +148,14 @@ public class UserService : IUserService
 
         return new UserCreatedDto(user.Id, createUserDto.Username, createUserDto.Email, token);
     }
+
+    /// <summary>
+    /// Deletes user with given id from database
+    /// </summary>
+    /// <param name="id">User's id</param>
+    /// <returns>The total number of rows deleted in the database</returns>
+    public async Task<int> RemoveAsync(int id)
+        => await _usersDatabaseContext.Users.Where(x => x.Id == id).ExecuteDeleteAsync();
 
     /// <summary>
     /// Logs in user with given email and password
