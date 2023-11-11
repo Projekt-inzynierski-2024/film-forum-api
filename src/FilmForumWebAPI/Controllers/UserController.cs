@@ -11,7 +11,6 @@ using FilmForumWebAPI.Extensions;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
-using MailKit.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -26,30 +25,30 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
-    private readonly IValidator<CreateUserDto> _createUserValidator;
-    private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
-    private readonly IJwtService _jwtService;
+    private readonly IUserDiagnosticsService _userDiagnosticsService;
     private readonly IEmailService _emailService;
+    private readonly IJwtService _jwtService;
+    private readonly IPasswordResetTokenService _passwordResetTokenService;
     private readonly SmtpSettings _smtpSettings;
     private readonly EmailSenderDetails _emailSenderDetails;
-    private readonly IPasswordResetTokenService _passwordResetTokenService;
-    private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
-    private readonly IUserDiagnosticsService _userDiagnosticsService;
     private readonly AdminDetails _adminDetails;
+    private readonly IValidator<CreateUserDto> _createUserValidator;
+    private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
+    private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
     private readonly IValidator<CreateAdminDto> _createAdminValidator;
 
     public UserController(ILogger<UserController> logger,
                           IUserService userService,
-                          IValidator<CreateUserDto> createUserValidator,
-                          IValidator<ChangePasswordDto> changePasswordValidator,
-                          IJwtService jwtService,
+                          IUserDiagnosticsService userDiagnosticsService,
                           IEmailService emailService,
+                          IJwtService jwtService,
+                          IPasswordResetTokenService passwordResetTokenService,
                           IOptions<SmtpSettings> smtpSettings,
                           IOptions<EmailSenderDetails> emailSenderDetails,
-                          IPasswordResetTokenService passwordResetTokenService,
-                          IValidator<ResetPasswordDto> resetPasswordValidator,
-                          IUserDiagnosticsService userDiagnosticsService,
                           IOptions<AdminDetails> adminDetails,
+                          IValidator<CreateUserDto> createUserValidator,
+                          IValidator<ResetPasswordDto> resetPasswordValidator,
+                          IValidator<ChangePasswordDto> changePasswordValidator,
                           IValidator<CreateAdminDto> createAdminValidator)
     {
         _logger = logger;
