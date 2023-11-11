@@ -57,11 +57,11 @@ public class UserControllerTests
         // Arrange
         CreateAdminDto createAdminDto = new("NewAdmin", "myadminemail@mail.com", "AdminStrongPassword123", "AdminStrongPassword123", "SuperSecretKey");
         UserCreatedDto userCreatedDto = new(1, "NewAdmin", "myadminemail@mail.com", "jwttokenreturned123");
-        _createUserDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateUserDto>())).Returns(new ValidationResult());
+        _createAdminDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateAdminDto>())).Returns(new ValidationResult());
         _userServiceMock.Setup(x => x.CreateAsync(It.IsAny<CreateAdminDto>(), It.IsAny<UserRole>())).ReturnsAsync(userCreatedDto);
 
         // Act
-        IActionResult result = await _userController.Register(createAdminDto);
+        IActionResult result = await _userController.RegisterAdmin(createAdminDto);
 
         // Assert
         CreatedResult createdResult = result.Should().BeOfType<CreatedResult>().Subject;
