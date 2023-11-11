@@ -9,7 +9,7 @@ namespace EmailSender.Services;
 
 public class EmailService : IEmailService
 {
-    public async Task SendEmailAsync(IEmailMessage emailMessage, EmailSenderDetails emailSenderDetails, SmtpSettings smtpSettings)
+    public async Task<string> SendEmailAsync(IEmailMessage emailMessage, EmailSenderDetails emailSenderDetails, SmtpSettings smtpSettings)
     {
         MimeMessage emailToSend = new()
         {
@@ -22,7 +22,8 @@ public class EmailService : IEmailService
         using SmtpClient smtp = new();
         await smtp.ConnectAsync(smtpSettings.Host, smtpSettings.Port, smtpSettings.SecureSocketOptions);
         await smtp.AuthenticateAsync(emailSenderDetails.Email, emailSenderDetails.Password);
-        await smtp.SendAsync(emailToSend);
+        string result = await smtp.SendAsync(emailToSend);
         await smtp.DisconnectAsync(true);
+        return result;
     }
 }
