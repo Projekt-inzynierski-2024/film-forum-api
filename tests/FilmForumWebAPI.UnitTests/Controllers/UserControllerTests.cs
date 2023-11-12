@@ -9,12 +9,14 @@ using FilmForumWebAPI.Services.Interfaces;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using PasswordManager.Interfaces;
+using System.Security.Claims;
 
 namespace FilmForumWebAPI.UnitTests.Controllers;
 
@@ -252,5 +254,100 @@ public class UserControllerTests
 
         // Assert
         result.Should().BeOfType<NotFoundObjectResult>();
+    }
+
+    [Fact]
+    public async Task ChangePassword_ForValidData_ChangesPassword()
+    {
+        //Arrange
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+        };
+        _changePasswordDtoValidatorMock.Setup(x => x.Validate(It.IsAny<ChangePasswordDto>())).Returns(new ValidationResult());
+        _userServiceMock.Setup(x => x.ChangePasswordAsync(It.IsAny<int>(), It.IsAny<ChangePasswordDto>())).ReturnsAsync(1);
+
+        //Act
+        IActionResult result = await _userController.ChangePassword(It.IsAny<ChangePasswordDto>());
+
+        //Assert
+        result.Should().BeOfType<NoContentResult>();
+    }
+
+    [Fact]
+    public async Task ChangePassword_ForInvalidData_ReturnsBadRequest()
+    {
+        //Arrange
+        _changePasswordDtoValidatorMock.Setup(x => x.Validate(It.IsAny<ChangePasswordDto>())).Returns(new ValidationResult() { Errors = new() { new ValidationFailure("Password", "Password was null") } });
+
+        //Act
+        IActionResult result = await _userController.ChangePassword(It.IsAny<ChangePasswordDto>());
+
+        //Assert
+        result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task ChangeEmail_ForValidData_ChangesEmail()
+    {
+        //Arrange
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+        };
+        Mock<EmailDto> emailDtoMock = new();     
+        _userServiceMock.Setup(x => x.ChangeEmailAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(1);
+
+        //Act
+        IActionResult result = await _userController.ChangeEmail(emailDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<NoContentResult>();
+    }
+
+    [Fact]
+    public async Task ChangeEmail_ForExistingEmail_ReturnsConflict()
+    {
+        //Arrange
+        Mock<EmailDto> emailDtoMock = new();
+        _userServiceMock.Setup(x => x.UserWithEmailExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        //Act
+        IActionResult result = await _userController.ChangeEmail(emailDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<ConflictObjectResult>();
+    }
+
+    [Fact]
+    public async Task ChangeUsername_ForValidData_ChangesUsername()
+    {
+        //Arrange
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+        };
+        Mock<UsernameDto> usernameDtoMock = new();
+        _userServiceMock.Setup(x => x.ChangeUsernameAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(1);
+
+        //Act
+        IActionResult result = await _userController.ChangeUsername(usernameDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<NoContentResult>();
+    }
+
+    [Fact]
+    public async Task ChangeUsername_ForExistingUsername_ReturnsConflict()
+    {
+        //Arrange
+        Mock<UsernameDto> usernameDtoMock = new();
+        _userServiceMock.Setup(x => x.UserWithUsernameExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        //Act
+        IActionResult result = await _userController.ChangeUsername(usernameDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<ConflictObjectResult>();
     }
 }
