@@ -3,6 +3,7 @@ using EmailSender.Interfaces;
 using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Entities;
 using FilmForumModels.Models.Enums;
+using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Controllers;
 using FilmForumWebAPI.Services.Interfaces;
@@ -11,7 +12,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -77,7 +77,7 @@ public class UserControllerTests
     public async Task RegisterAdmin_ForInvalidData_ReturnsBadRequest()
     {
         // Arrange
-        _createAdminDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateAdminDto>())).Returns(new ValidationResult() { Errors = new() {new ValidationFailure("Name", "Name was null") } });
+        _createAdminDtoValidatorMock.Setup(x => x.Validate(It.IsAny<CreateAdminDto>())).Returns(new ValidationResult() { Errors = new() { new ValidationFailure("Name", "Name was null") } });
 
         // Act
         IActionResult result = await _userController.RegisterAdmin(It.IsAny<CreateAdminDto>());
@@ -295,7 +295,7 @@ public class UserControllerTests
         {
             User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
         };
-        Mock<EmailDto> emailDtoMock = new();     
+        Mock<EmailDto> emailDtoMock = new();
         _userServiceMock.Setup(x => x.ChangeEmailAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(1);
 
         //Act
@@ -349,5 +349,94 @@ public class UserControllerTests
 
         //Assert
         result.Should().BeOfType<ConflictObjectResult>();
+    }
+
+    [Fact]
+    public async Task SendPasswordResetToken_ForValidData_ReturnsSendsToken()
+    {
+        //Arrange
+        Mock<EmailDto> emailDtoMock = new();
+        _userServiceMock.Setup(x => x.UserWithEmailExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+        //Act
+        IActionResult result = await _userController.SendPasswordResetToken(emailDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<OkObjectResult>();
+    }
+
+    [Fact]
+    public async Task SendPasswordResetToken_ForNonExistingUser_ReturnsNotFound()
+    {
+        //Arrange
+        Mock<EmailDto> emailDtoMock = new();
+        _userServiceMock.Setup(x => x.UserWithEmailExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+        //Act
+        IActionResult result = await _userController.SendPasswordResetToken(emailDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<NotFoundObjectResult>();
+    }
+
+    [Fact]
+    public async Task ResetPassword_ForValidData_ResetsPassword()
+    {
+        //Arrange
+        Mock<ResetPasswordDto> resetPasswordDtoMock = new("", "", "", "");
+        _resetPasswordDtoValidatorMock.Setup(x => x.Validate(It.IsAny<ResetPasswordDto>())).Returns(new ValidationResult());
+        _userServiceMock.Setup(x => x.UserWithEmailExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+        _userServiceMock.Setup(x => x.ValidateResetPasswordTokenAsync(It.IsAny<string>())).ReturnsAsync(new ValidateResetPasswordTokenResult(true, "Valid token"));
+
+        //Act
+        IActionResult result = await _userController.ResetPassword(resetPasswordDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<NoContentResult>();
+    }
+
+    [Fact]
+    public async Task ResetPassword_ForInvalidData_ReturnsBadRequest()
+    {
+        //Arrange
+        Mock<ResetPasswordDto> resetPasswordDtoMock = new("", "", "", "");
+        _resetPasswordDtoValidatorMock.Setup(x => x.Validate(It.IsAny<ResetPasswordDto>())).Returns(new ValidationResult() { Errors = new() { new ValidationFailure("Password", "Password was empty") } });
+
+        //Act
+        IActionResult result = await _userController.ResetPassword(resetPasswordDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task ResetPassword_ForNotExistingUser_ReturnsNotFound()
+    {
+        //Arrange
+        Mock<ResetPasswordDto> resetPasswordDtoMock = new("", "", "", "");
+        _resetPasswordDtoValidatorMock.Setup(x => x.Validate(It.IsAny<ResetPasswordDto>())).Returns(new ValidationResult());
+        _userServiceMock.Setup(x => x.UserWithEmailExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+        //Act
+        IActionResult result = await _userController.ResetPassword(resetPasswordDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<NotFoundObjectResult>();
+    }
+
+    [Fact]
+    public async Task ResetPassword_ForInvalidToken_ReturnsBadRequest()
+    {
+        //Arrange
+        Mock<ResetPasswordDto> resetPasswordDtoMock = new("", "", "", "");
+        _resetPasswordDtoValidatorMock.Setup(x => x.Validate(It.IsAny<ResetPasswordDto>())).Returns(new ValidationResult());
+        _userServiceMock.Setup(x => x.UserWithEmailExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+        _userServiceMock.Setup(x => x.ValidateResetPasswordTokenAsync(It.IsAny<string>())).ReturnsAsync(new ValidateResetPasswordTokenResult(false, "Invalid token"));
+
+        //Act
+        IActionResult result = await _userController.ResetPassword(resetPasswordDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<BadRequestObjectResult>();
     }
 }
