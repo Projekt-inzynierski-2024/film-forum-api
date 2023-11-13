@@ -22,8 +22,8 @@ public class ReviewController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateReviewDto createReviewDto)
     {
-        createReviewDto.UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!;
-        await _reviewService.CreateAsync(createReviewDto);
+        string userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!;
+        await _reviewService.CreateAsync(userId, createReviewDto);
         return Created(nameof(GetById), createReviewDto);
     }
 
@@ -40,8 +40,8 @@ public class ReviewController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, [FromBody] CreateReviewDto createReviewDto)
     {
-        createReviewDto.UserId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!;
-        ReplaceOneResult result = await _reviewService.UpdateAsync(id, createReviewDto);
+        string userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!;
+        ReplaceOneResult result = await _reviewService.UpdateAsync(id, userId, createReviewDto);
         return result.IsModifiedCountAvailable && result.ModifiedCount > 0 ? NoContent() : NotFound($"Review not found");
     }
 

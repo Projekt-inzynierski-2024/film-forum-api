@@ -11,15 +11,21 @@ public class Review : BaseMongoDatabaseEntity
     {
     }
 
-    public Review(CreateReviewDto createReviewDto)
+    /// <summary>
+    /// Constructor to create a review
+    /// </summary>
+    public Review(string userId, CreateReviewDto createReviewDto)
     {
-        UserId = createReviewDto.UserId;
+        UserId = userId;
         EpisodeId = createReviewDto.EpisodeId;
         Rate = createReviewDto.Rate;
         Comment = createReviewDto.Comment;
     }
 
-    public Review(string id, CreateReviewDto createReviewDto) : this(createReviewDto)
+    /// <summary>
+    /// Constructor to update a review
+    /// </summary>
+    public Review(string id, string userId, CreateReviewDto createReviewDto) : this(userId, createReviewDto)
     {
         Id = id;
     }
