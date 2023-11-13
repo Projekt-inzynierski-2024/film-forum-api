@@ -157,7 +157,7 @@ public class UserController : ControllerBase
         return BadRequest("Invalid credentials");
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Moderator")]
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _userService.GetAllAsync());
 
@@ -166,7 +166,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetById(int id)
         => await _userService.GetAsync(id) is GetUserDto user ? Ok(user) : NotFound($"User not found");
 
-    [Authorize(Roles = "User")]
+    [Authorize]
     [HttpPut("/change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
@@ -182,7 +182,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [Authorize(Roles = "User")]
+    [Authorize]
     [HttpPut("/change-email")]
     public async Task<IActionResult> ChangeEmail([FromBody] EmailDto emailDto)
     {
@@ -197,7 +197,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [Authorize(Roles = "User")]
+    [Authorize]
     [HttpPut("/change-username")]
     public async Task<IActionResult> ChangeUsername([FromBody] UsernameDto usernameDto)
     {
@@ -269,7 +269,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [Authorize(Roles = "Admin,Moderator,User")]
+    [Authorize]
     [HttpDelete()]
     public async Task<IActionResult> Delete()
     {

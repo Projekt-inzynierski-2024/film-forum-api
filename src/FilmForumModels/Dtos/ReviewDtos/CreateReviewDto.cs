@@ -4,7 +4,6 @@ namespace FilmForumModels.Dtos.ReviewDtos;
 
 public class CreateReviewDto
 {
-    [Required]
     public string UserId { get; set; } = string.Empty;
 
     [Required]

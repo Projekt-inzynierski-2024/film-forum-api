@@ -1,5 +1,6 @@
 ﻿using FilmForumModels.Dtos.ActorDtos;
 using FilmForumWebAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -16,6 +17,7 @@ public class ActorController : ControllerBase
         _actorService = actorService;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateActorDto createActorDto)
     {
@@ -23,16 +25,20 @@ public class ActorController : ControllerBase
         return Created(nameof(GetById), createActorDto);
     }
 
+    [Authorize]
     [HttpGet("search/{query}")]
     public async Task<IActionResult> SearchAll(string query) => Ok(await _actorService.SearchAllAsync(query));
 
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _actorService.GetAllAsync());
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
         => await _actorService.GetAsync(id) is GetActorDto actor ? Ok(actor) : NotFound($"Actor not found");
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(string id, [FromBody] CreateActorDto createActorDto)
     {
@@ -40,6 +46,7 @@ public class ActorController : ControllerBase
         return result.IsModifiedCountAvailable && result.ModifiedCount > 0 ? NoContent() : NotFound($"Actor not found");
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Remove(string id)
     {
