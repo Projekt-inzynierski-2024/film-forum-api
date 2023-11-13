@@ -32,7 +32,7 @@ public class RequestLogController : ControllerBase
            : Ok(await _requestLogService.GetUserAllRequestsLogsAsync(userId));
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> RemoveAsync(int id)
+    public async Task<IActionResult> Remove(int id)
     {
         await _requestLogService.RemoveAsync(id);
         return NoContent();
