@@ -6,12 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FilmForumWebAPI.UnitTests.Controllers;
 
@@ -48,7 +43,7 @@ public class ReviewControllerTests
 
         // Assert
         CreatedResult createdResult = result.Should().BeOfType<CreatedResult>().Subject;
-        createdResult.Value.Should().BeEquivalentTo(createReviewDto);
+        createdResult.Value.Should().Be(createReviewDto);
     }
 
     [Fact]
@@ -146,7 +141,7 @@ public class ReviewControllerTests
     }
 
     [Fact]
-    public async Task Remove__DeletesReview()
+    public async Task Remove_DeletesReview()
     {
         // Arrange
         _mockReviewService.Setup(x => x.RemoveAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
