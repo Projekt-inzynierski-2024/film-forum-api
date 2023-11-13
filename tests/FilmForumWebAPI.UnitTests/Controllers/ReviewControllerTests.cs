@@ -125,16 +125,10 @@ public class ReviewControllerTests
         {
             User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
         };
-        CreateReviewDto createReviewDto = new()
-        {
-            EpisodeId = "2",
-            Rate = 5,
-            Comment = "Great show"
-        };
-        _mockReviewService.Setup(x => x.UpdateAsync(It.IsAny<string>(), It.IsAny<string>(), createReviewDto)).ReturnsAsync(new ReplaceOneResult.Acknowledged(0, null, It.IsAny<string>()));
+        _mockReviewService.Setup(x => x.UpdateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CreateReviewDto>())).ReturnsAsync(new ReplaceOneResult.Acknowledged(0, null, It.IsAny<string>()));
 
         // Act
-        IActionResult result = await _reviewController.Update(It.IsAny<string>(), createReviewDto);
+        IActionResult result = await _reviewController.Update(It.IsAny<string>(), It.IsAny<CreateReviewDto>());
 
         // Assert
         result.Should().BeOfType<NotFoundObjectResult>();
