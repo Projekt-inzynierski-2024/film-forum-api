@@ -10,10 +10,7 @@ public class RequestLogService : IRequestLogService
 {
     private readonly UsersDatabaseContext _usersDatabaseContext;
 
-    public RequestLogService(UsersDatabaseContext usersDatabaseContext)
-    {
-        _usersDatabaseContext = usersDatabaseContext;
-    }
+    public RequestLogService(UsersDatabaseContext usersDatabaseContext) => _usersDatabaseContext = usersDatabaseContext;
 
     public async Task<int> CreateAsync(CreateRequestLogDto createRequestLogDto)
     {

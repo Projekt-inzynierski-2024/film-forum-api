@@ -15,11 +15,8 @@ public class RequestLogControllerTests
     private readonly Mock<IRequestLogService> _requestLogServiceMock = new();
     private readonly Mock<IUserService> _userServiceMock = new();
 
-    public RequestLogControllerTests()
-    {
-        _requestLogController = new(_requestLogServiceMock.Object,
+    public RequestLogControllerTests() => _requestLogController = new(_requestLogServiceMock.Object,
                                     _userServiceMock.Object);
-    }
 
     [Fact]
     public async Task GetAll_ForValidData_ReturnsAllRequestLogs()

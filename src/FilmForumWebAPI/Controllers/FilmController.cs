@@ -12,10 +12,7 @@ public class FilmController : ControllerBase
 {
     private readonly IFilmService _filmService;
 
-    public FilmController(IFilmService filmService)
-    {
-        _filmService = filmService;
-    }
+    public FilmController(IFilmService filmService) => _filmService = filmService;
 
     [Authorize]
     [HttpPost]

@@ -14,11 +14,8 @@ public class RoleControllerTests
     private readonly Mock<IRoleService> _roleServiceMock = new();
     private readonly Mock<IUserService> _userServiceMock = new();
 
-    public RoleControllerTests()
-    {
-        _roleController = new(_roleServiceMock.Object,
+    public RoleControllerTests() => _roleController = new(_roleServiceMock.Object,
                               _userServiceMock.Object);
-    }
 
     public async Task GetUserRolesNames_ForValidData_ReturnsUserRolesName()
     {

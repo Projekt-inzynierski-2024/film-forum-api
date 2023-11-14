@@ -4,9 +4,7 @@ namespace FilmForumWebAPI.Validators;
 
 public class PasswordValidator : AbstractValidator<string>
 {
-    public PasswordValidator()
-    {
-        RuleFor(x => x)
+    public PasswordValidator() => RuleFor(x => x)
             .NotEmpty()
             .WithMessage("Password is required")
             .MinimumLength(5)
@@ -19,5 +17,4 @@ public class PasswordValidator : AbstractValidator<string>
             .WithMessage("Password must have at least one lower letter")
             .Must(x => x.Any(char.IsAsciiLetterUpper))
             .WithMessage("Password must have at least one upper letter");
-    }
 }

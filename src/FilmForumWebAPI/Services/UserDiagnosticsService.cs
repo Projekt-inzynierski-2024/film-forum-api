@@ -9,10 +9,7 @@ public class UserDiagnosticsService : IUserDiagnosticsService
 {
     private readonly UsersDatabaseContext _usersDatabaseContext;
 
-    public UserDiagnosticsService(UsersDatabaseContext usersDatabaseContext)
-    {
-        _usersDatabaseContext = usersDatabaseContext;
-    }
+    public UserDiagnosticsService(UsersDatabaseContext usersDatabaseContext) => _usersDatabaseContext = usersDatabaseContext;
 
     /// <summary>
     /// Adds new user diagnostics to database

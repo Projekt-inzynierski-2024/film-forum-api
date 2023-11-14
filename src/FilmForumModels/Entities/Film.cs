@@ -18,10 +18,7 @@ public class Film : BaseMongoDatabaseEntity
         IsMovie = createFilmDto.IsMovie;
     }
 
-    public Film(string id, CreateFilmDto createFilmDto) : this(createFilmDto)
-    {
-        Id = id;
-    }
+    public Film(string id, CreateFilmDto createFilmDto) : this(createFilmDto) => Id = id;
 
     [BsonElement("title")]
     public string Title { get; set; } = string.Empty;

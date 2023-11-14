@@ -12,10 +12,7 @@ public class ActorController : ControllerBase
 {
     private readonly IActorService _actorService;
 
-    public ActorController(IActorService actorService)
-    {
-        _actorService = actorService;
-    }
+    public ActorController(IActorService actorService) => _actorService = actorService;
 
     [Authorize]
     [HttpPost]

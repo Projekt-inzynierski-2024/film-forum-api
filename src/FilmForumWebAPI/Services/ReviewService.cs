@@ -10,10 +10,7 @@ public class ReviewService : IReviewService
 {
     private readonly IMongoCollection<Review> _reviewCollection;
 
-    public ReviewService(FilmsDatabaseContext filmsDatabaseContext)
-    {
-        _reviewCollection = filmsDatabaseContext.ReviewCollection;
-    }
+    public ReviewService(FilmsDatabaseContext filmsDatabaseContext) => _reviewCollection = filmsDatabaseContext.ReviewCollection;
 
     public async Task CreateAsync(string userId, CreateReviewDto createReviewDto) => await _reviewCollection.InsertOneAsync(new(userId, createReviewDto));
 

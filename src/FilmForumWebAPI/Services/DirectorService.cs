@@ -10,10 +10,7 @@ public class DirectorService : IDirectorService
 {
     private readonly IMongoCollection<Director> _directorCollection;
 
-    public DirectorService(FilmsDatabaseContext filmsDatabaseContext)
-    {
-        _directorCollection = filmsDatabaseContext.DirectorCollection;
-    }
+    public DirectorService(FilmsDatabaseContext filmsDatabaseContext) => _directorCollection = filmsDatabaseContext.DirectorCollection;
 
     public async Task<List<GetDirectorDto>> SearchAllAsync(string query)
         => await _directorCollection.Find(x => (x.Name + " " + x.Surname).ToUpper().Contains(query.ToUpper())).ToListAsync() is IEnumerable<Director> list ? list.Select(x => new GetDirectorDto(x)).ToList() : new();

@@ -13,10 +13,7 @@ public class DirectorController : ControllerBase
 {
     private readonly IDirectorService _directorService;
 
-    public DirectorController(IDirectorService directorService)
-    {
-        _directorService = directorService;
-    }
+    public DirectorController(IDirectorService directorService) => _directorService = directorService;
 
     [Authorize]
     [HttpPost]

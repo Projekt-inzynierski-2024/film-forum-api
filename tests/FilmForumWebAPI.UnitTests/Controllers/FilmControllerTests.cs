@@ -17,10 +17,7 @@ public class FilmControllerTests
 
     private readonly Mock<IFilmService> _filmServiceMock = new();
 
-    public FilmControllerTests()
-    {
-        _filmController = new(_filmServiceMock.Object);
-    }
+    public FilmControllerTests() => _filmController = new(_filmServiceMock.Object);
 
     [Fact]
     public async Task Create_ForValidData_AddsFilm()
@@ -62,7 +59,7 @@ public class FilmControllerTests
     }
 
     [Fact]
-    public async Task SearchAll_ForValidData_ReturnsAllFilms()
+    public async Task SearchAll_ForValidData_ReturnsAllFoundFilms()
     {
         // Arrange
         List<GetFilmDto> films = new()
@@ -157,10 +154,6 @@ public class FilmControllerTests
     public async Task Update_ForValidData_UpdatesFilm()
     {
         // Arrange
-        _filmController.ControllerContext.HttpContext = new DefaultHttpContext
-        {
-            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
-        };
         CreateFilmDto createFilmDto = new()
         {
             Title = "Funny movie",
@@ -180,10 +173,6 @@ public class FilmControllerTests
     public async Task Update_ForNonExistingFilm_ReturnsNotFound()
     {
         // Arrange
-        _filmController.ControllerContext.HttpContext = new DefaultHttpContext
-        {
-            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
-        };
         _filmServiceMock.Setup(x => x.UpdateAsync(It.IsAny<string>(), It.IsAny<CreateFilmDto>())).ReturnsAsync(new ReplaceOneResult.Acknowledged(0, null, It.IsAny<string>()));
 
         // Act

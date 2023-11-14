@@ -25,10 +25,7 @@ public class Review : BaseMongoDatabaseEntity
     /// <summary>
     /// Constructor to update a review
     /// </summary>
-    public Review(string id, string userId, CreateReviewDto createReviewDto) : this(userId, createReviewDto)
-    {
-        Id = id;
-    }
+    public Review(string id, string userId, CreateReviewDto createReviewDto) : this(userId, createReviewDto) => Id = id;
 
     [BsonElement("userId")]
     public string UserId { get; set; } = string.Empty;

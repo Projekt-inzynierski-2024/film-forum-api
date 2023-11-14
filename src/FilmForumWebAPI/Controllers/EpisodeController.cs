@@ -12,10 +12,7 @@ public class EpisodeController : ControllerBase
 {
     private readonly IEpisodeService _episodeService;
 
-    public EpisodeController(IEpisodeService episodeService)
-    {
-        _episodeService = episodeService;
-    }
+    public EpisodeController(IEpisodeService episodeService) => _episodeService = episodeService;
 
     [Authorize]
     [HttpPost]

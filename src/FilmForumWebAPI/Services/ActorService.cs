@@ -10,10 +10,7 @@ public class ActorService : IActorService
 {
     private readonly IMongoCollection<Actor> _actorCollection;
 
-    public ActorService(FilmsDatabaseContext filmsDatabaseContext)
-    {
-        _actorCollection = filmsDatabaseContext.ActorCollection;
-    }
+    public ActorService(FilmsDatabaseContext filmsDatabaseContext) => _actorCollection = filmsDatabaseContext.ActorCollection;
 
     public async Task<List<GetActorDto>> SearchAllAsync(string query)
         => await _actorCollection.Find(x => (x.Name + " " + x.Surname).ToUpper().Contains(query.ToUpper())).ToListAsync() is IEnumerable<Actor> list ? list.Select(x => new GetActorDto(x)).ToList() : new();

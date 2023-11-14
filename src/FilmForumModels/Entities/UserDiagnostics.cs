@@ -10,10 +10,7 @@ namespace FilmForumModels.Entities;
 [Table("user_diagnostics")]
 public class UserDiagnostics : BaseMsSqlDatabaseEntity
 {
-    public UserDiagnostics(int userId)
-    {
-        UserId = userId;
-    }
+    public UserDiagnostics(int userId) => UserId = userId;
 
     [Column("user_id")]
     public int UserId { get; set; }

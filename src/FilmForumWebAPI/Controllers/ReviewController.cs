@@ -13,10 +13,7 @@ public class ReviewController : ControllerBase
 {
     private readonly IReviewService _reviewService;
 
-    public ReviewController(IReviewService reviewService)
-    {
-        _reviewService = reviewService;
-    }
+    public ReviewController(IReviewService reviewService) => _reviewService = reviewService;
 
     [Authorize]
     [HttpPost]
