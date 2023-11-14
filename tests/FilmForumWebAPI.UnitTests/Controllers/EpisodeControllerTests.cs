@@ -38,8 +38,9 @@ public class EpisodeControllerTests
         IActionResult result = await _episodeController.Create(createEpisodeDto);
 
         // Assert
-        CreatedResult okObjectResult = result.Should().BeOfType<CreatedResult>().Subject;
-        okObjectResult.Value.Should().Be(createEpisodeDto);
+        CreatedResult createdResult = result.Should().BeOfType<CreatedResult>().Subject;
+        createdResult.Value.Should().Be(createEpisodeDto);
+        createdResult.Location.Should().Be(nameof(_episodeController.GetById));
     }
 
     [Fact]

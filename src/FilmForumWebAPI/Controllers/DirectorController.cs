@@ -1,5 +1,4 @@
-﻿using FilmForumModels.Dtos.ActorDtos;
-using FilmForumModels.Dtos.DirectorDtos;
+﻿using FilmForumModels.Dtos.DirectorDtos;
 using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

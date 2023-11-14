@@ -3,11 +3,9 @@ using FilmForumModels.Entities;
 using FilmForumWebAPI.Controllers;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Moq;
-using System.Security.Claims;
 
 namespace FilmForumWebAPI.UnitTests.Controllers;
 
@@ -37,6 +35,7 @@ public class FilmControllerTests
         // Assert
         CreatedResult createdResult = result.Should().BeOfType<CreatedResult>().Subject;
         createdResult.Value.Should().Be(createFilmDto);
+        createdResult.Location.Should().Be(nameof(_filmController.GetById));
     }
 
     [Fact]

@@ -44,6 +44,7 @@ public class ReviewControllerTests
         // Assert
         CreatedResult createdResult = result.Should().BeOfType<CreatedResult>().Subject;
         createdResult.Value.Should().Be(createReviewDto);
+        createdResult.Location.Should().Be(nameof(_reviewController.GetById));
     }
 
     [Fact]
