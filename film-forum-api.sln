@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailSender", "src\EmailSen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailSender.IntegrationTests", "tests\EmailSender.IntegrationTests\EmailSender.IntegrationTests.csproj", "{D0A76C00-C138-4166-BB19-1ADB2271C6F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmForumWebAPI.IntegrationTests", "FilmForumWebAPI.IntegrationTests\FilmForumWebAPI.IntegrationTests.csproj", "{ECAAB815-97CE-4F43-B59E-5453C6629537}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmForumWebAPI.IntegrationTests", "tests\FilmForumWebAPI.IntegrationTests\FilmForumWebAPI.IntegrationTests.csproj", "{ECAAB815-97CE-4F43-B59E-5453C6629537}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
