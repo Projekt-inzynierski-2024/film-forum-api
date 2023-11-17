@@ -1,12 +1,14 @@
 ﻿using AuthenticationManager.Services;
 using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Entities;
+using FilmForumModels.Models.Enums;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.IntegrationTests.HelpersForTests;
 using FilmForumWebAPI.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
+using PasswordManager.Interfaces;
 using PasswordManager.Services;
 
 namespace FilmForumWebAPI.IntegrationTests.Services;
@@ -191,5 +193,31 @@ public class UserServiceTests
 
         //Assert
         result.Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ForValidData_CreatesUser()
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        JwtDetails jwtDetails = new()
+        {
+            SecretKey = "SuperSecretKeyForJwtToken123123123456",
+            Issuer = "TestIssuer",
+            Audience = "TestAudience",
+            LifetimeInMinutes = 60
+        };
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(jwtDetails), new RoleService(usersDatabaseContext));
+        CreateUserDto createUserDto = new("username", "email@email.com", "Password123!", "Password123!");
+
+        //Act
+        UserCreatedDto result = await userService.CreateAsync(createUserDto, UserRole.User);
+
+        //Assert
+        result.Id.Should().Be(1);
+        result.Email.Should().Be(createUserDto.Email);
+        result.Username.Should().Be(createUserDto.Username);
+        result.Jwt.Should().NotBeNullOrEmpty();
+
     }
 }
