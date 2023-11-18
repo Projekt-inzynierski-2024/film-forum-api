@@ -224,7 +224,7 @@ public class UserController : ControllerBase
         await _userService.UpdatePasswordResetTokenAsync(emailDto.Email, tokenWithExpirationDate);
 
         IEmailMessageFactory emailMessageFactory = new UserResetPasswordEmailMessageFactory();
-        IEmailMessage emailMessage = emailMessageFactory.Create(emailDto.Email, body: $"Your token to reset password: {tokenWithExpirationDate.Token}. The token expires {tokenWithExpirationDate.ExpirationDate}");
+        IEmailMessage emailMessage = emailMessageFactory.Create(emailDto.Email, body: $"Your token to reset password: {tokenWithExpirationDate.Token}. The token expires {tokenWithExpirationDate.ExpirationDate.ToLocalTime}");
         await _emailService.SendEmailAsync(emailMessage, _emailSenderDetails, _smtpSettings);
 
         return Ok("Token was successfully sent. Check your e-mail.");

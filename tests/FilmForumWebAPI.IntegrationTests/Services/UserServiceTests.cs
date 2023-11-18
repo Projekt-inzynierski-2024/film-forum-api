@@ -2,13 +2,13 @@
 using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Entities;
 using FilmForumModels.Models.Enums;
+using FilmForumModels.Models.Exceptions;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.IntegrationTests.HelpersForTests;
 using FilmForumWebAPI.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
-using PasswordManager.Interfaces;
 using PasswordManager.Services;
 
 namespace FilmForumWebAPI.IntegrationTests.Services;
@@ -218,6 +218,88 @@ public class UserServiceTests
         result.Email.Should().Be(createUserDto.Email);
         result.Username.Should().Be(createUserDto.Username);
         result.Jwt.Should().NotBeNullOrEmpty();
+    }
 
+    [Fact]
+    public async Task CreateAsync_ForInvalidUserMainRole_ThrowsInvalidRoleNameException()
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        CreateUserDto createUserDto = new("username", "email@email.com", "Password123!", "Password123!");
+
+        //Act
+        Func<Task<UserCreatedDto>> action = async () => await userService.CreateAsync(createUserDto, (UserRole)999999);
+
+        //Assert
+        await action.Should().ThrowAsync<InvalidRoleNameException>();
+    }
+
+    [Theory]
+    [InlineData(1, 1)]
+    [InlineData(99999, 0)]
+    public async Task RemoveAsync_ForGivenId_DeletesUserIfExistsInDatabase(int userId, int expected)
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
+        await usersDatabaseContext.SaveChangesAsync();
+
+        //Act
+        int result = await userService.RemoveAsync(userId);
+
+        //Assert
+        result.Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task LogInAsync_ForValidData_LogsIn()
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        PasswordService passwordService = new();
+        string password = passwordService.HashPassword("Password123!");
+        JwtDetails jwtDetails = new()
+        {
+            SecretKey = "SuperSecretKeyForJwtToken123123123456",
+            Issuer = "TestIssuer",
+            Audience = "TestAudience",
+            LifetimeInMinutes = 60
+        };
+        UserService userService = new(usersDatabaseContext, passwordService, new JwtService(), Options.Create(jwtDetails), new RoleService(usersDatabaseContext));
+        await usersDatabaseContext.Users.AddAsync(new User() { Password = password, Email = "emailtest@emailtest.pl", Username = "name12" });
+        await usersDatabaseContext.SaveChangesAsync();
+        LogInDto logInDto = new() { Email = "emailtest@emailtest.pl", Password = "Password123!" };
+
+        //Act
+        UserSignedInDto? result = await userService.LogInAsync(logInDto);
+
+        //Assert
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(1);
+        result.Username.Should().Be("name12");
+        result.Jwt.Should().NotBeNullOrEmpty();
+    }
+
+    [Theory]
+    [InlineData("emailthatisnotvalid@email.com", "Password123!")] //Valid password but user with given email does not exist in database
+    [InlineData("user@email.com", "invalid")] //User with this email exists in database but password is invalid
+    public async Task LogInAsync_ForInvalidCredentials_ReturnsNull(string email, string password)
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        PasswordService passwordService = new();
+        string hashedPassword = passwordService.HashPassword("Password123!");
+        UserService userService = new(usersDatabaseContext, passwordService, new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        await usersDatabaseContext.Users.AddAsync(new User() { Password = hashedPassword, Email = "user@email.com", Username = "name12" });
+        await usersDatabaseContext.SaveChangesAsync();
+        LogInDto logInDto = new() { Email = email, Password = password };
+
+        //Act
+        UserSignedInDto? result = await userService.LogInAsync(logInDto);
+
+        //Assert
+        result.Should().BeNull();
     }
 }

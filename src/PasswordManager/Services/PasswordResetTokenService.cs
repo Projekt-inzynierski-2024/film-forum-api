@@ -10,10 +10,10 @@ public class PasswordResetTokenService : IPasswordResetTokenService
     private static string CreateToken() => Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
 
     private static DateTime CreateExpirationDate(int tokenLifetimeDays = 1)
-        => tokenLifetimeDays >= 1 ? DateTime.Now.AddDays(tokenLifetimeDays) : throw new ResetPasswordTokenException();
+        => tokenLifetimeDays >= 1 ? DateTime.UtcNow.AddDays(tokenLifetimeDays) : throw new ResetPasswordTokenException();
 
     /// <summary>
-    /// Creates token with expiration date based on <paramref name="tokenLifetimeDays"/> and <see cref="DateTime.Now"/>.
+    /// Creates token with expiration date based on <paramref name="tokenLifetimeDays"/> and <see cref="DateTime.UtcNow"/>.
     /// </summary>
     /// <param name="tokenLifetimeDays">Quantity of days when token is valid and can be used</param>
     /// <returns>Token with expiration date</returns>

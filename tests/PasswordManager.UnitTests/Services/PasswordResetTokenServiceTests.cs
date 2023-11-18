@@ -18,7 +18,7 @@ public class PasswordResetTokenServiceTests
 
         // Assert
         token.Token.Should().NotBeNullOrEmpty();
-        token.ExpirationDate.Should().BeAfter(DateTime.Now);
+        token.ExpirationDate.Should().BeAfter(DateTime.UtcNow);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class PasswordResetTokenServiceTests
 
         // Assert
         token.Token.Should().NotBeNullOrEmpty();
-        token.ExpirationDate.Should().BeAfter(DateTime.Now);
+        token.ExpirationDate.Should().BeAfter(DateTime.UtcNow);
     }
 
     [Fact]

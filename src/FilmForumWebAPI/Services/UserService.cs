@@ -9,6 +9,7 @@ using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PasswordManager.Interfaces;
+using FilmForumModels.Models.Exceptions;
 
 namespace FilmForumWebAPI.Services;
 
@@ -127,6 +128,7 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="createUserDto">Details to create new user: email, username, password</param>
     /// <returns><see cref="UserCreatedDto"/> instance with details about created user</returns>
+    /// <exception cref="InvalidRoleNameException">When user's main role is not valid enum</exception>
     public async Task<UserCreatedDto> CreateAsync(CreateUserDto createUserDto, UserRole userMainRole)
     {
         User user = new()
@@ -196,7 +198,7 @@ public class UserService : IUserService
         {
             return new ValidateResetPasswordTokenResult(false, "Invalid token");
         }
-        if (!user.RecoverPasswordTokenExpiration.HasValue || user.RecoverPasswordTokenExpiration.Value.ToUniversalTime() < DateTime.UtcNow)
+        if (!user.RecoverPasswordTokenExpiration.HasValue || user.RecoverPasswordTokenExpiration.Value < DateTime.UtcNow)
         {
             return new ValidateResetPasswordTokenResult(false, "Reset password token is empty or expired");
         }
