@@ -2,15 +2,15 @@
 
 public interface IUserDiagnosticsService
 {
-    public Task CreateAsync(int userId);
+    public Task<int> CreateAsync(int userId);
 
-    Task UpdateLastFailedSignInAsync(string userEmail);
+    Task<int> UpdateLastFailedSignInAsync(string userEmail);
 
-    Task UpdateLastSuccessfullSignInAsync(int userId);
+    Task<int> UpdateLastSuccessfullSignInAsync(int userId);
 
-    Task UpdateLastUsernameChangeAsync(int userId);
+    Task<int> UpdateLastUsernameChangeAsync(int userId);
 
-    Task UpdateLastEmailChangeAsync(int userId);
+    Task<int> UpdateLastEmailChangeAsync(int userId);
 
-    Task UpdateLastPasswordChangeAsync(int userId);
+    Task<int> UpdateLastPasswordChangeAsync(int userId);
 }
