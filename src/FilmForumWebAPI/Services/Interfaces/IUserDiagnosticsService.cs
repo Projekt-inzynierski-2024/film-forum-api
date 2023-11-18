@@ -2,7 +2,7 @@
 
 public interface IUserDiagnosticsService
 {
-    public Task<int> CreateAsync(int userId);
+    Task<int> CreateAsync(int userId);
 
     Task<int> UpdateLastFailedSignInAsync(string userEmail);
 
