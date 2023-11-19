@@ -35,8 +35,7 @@ public class RequestMiddleware
                                                               httpContext.Request.Method,
                                                               httpContext.Response.StatusCode);
 
-                //comment it if you have not got proper db installed yet
-                //await _requestLogService.CreateAsync(createRequestLogDto);
+                await _requestLogService.CreateAsync(createRequestLogDto);
             }
         }
         catch (Exception exception)
