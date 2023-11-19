@@ -51,7 +51,7 @@ public class RoleServiceTests
     public async Task GetUserRolesNamesAsync_ForExistingUser_ReturnsUserRolesNames(int userId, List<UserToRole> userToRoles, List<string> expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         RoleService roleService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.Roles.AddRangeAsync(new List<Role>()
@@ -74,7 +74,7 @@ public class RoleServiceTests
     public async Task GetUserRolesNamesAsync_ForNonExistingUser_ReturnsEmptyList()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         RoleService roleService = new(usersDatabaseContext);
 
         //Act
@@ -135,7 +135,7 @@ public class RoleServiceTests
     public async Task GetUserRolesAsync_ForExistingUser_ReturnsUserRolesNames(int userId, List<UserToRole> userToRoles, List<GetUserRoleDto> expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         RoleService roleService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.Roles.AddRangeAsync(new List<Role>()
@@ -158,7 +158,7 @@ public class RoleServiceTests
     public async Task GetUserRolesAsync_ForNonExistingUser_ReturnsEmptyList()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         RoleService roleService = new(usersDatabaseContext);
 
         //Act
@@ -172,7 +172,7 @@ public class RoleServiceTests
     public async Task ChangeUserRolesAsync_ForNotExistingUser_ReturnsZero()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         RoleService roleService = new(usersDatabaseContext);
 
         //Act
@@ -193,7 +193,7 @@ public class RoleServiceTests
     public async Task ChangeUserRolesAsync_ForExistingUserButNullOrEmptyRoleList_ThrowsInvalidRoleNameException(IEnumerable<UserRole> roles)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         RoleService roleService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "email@email.com", Username = "name" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -211,7 +211,7 @@ public class RoleServiceTests
         //In this test user changes his roles from Moderator,User to Admin,Moderator,User
 
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         RoleService roleService = new(usersDatabaseContext);
         await usersDatabaseContext.Roles.AddRangeAsync(new List<Role>()
         {

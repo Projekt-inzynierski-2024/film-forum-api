@@ -14,7 +14,7 @@ public class UserDiagnosticsServiceTests
     public async Task CreateAsync_ForGivenUserId_CreatesUserDiagnosticsIfUserExistsInDatabase(int userId, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserDiagnosticsService userDiagnosticsService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -32,7 +32,7 @@ public class UserDiagnosticsServiceTests
     public async Task UpdateLastFailedSignInAsync_ForGivenUserEmail_UpdatesIfUserExistsInDatabase(string email, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserDiagnosticsService userDiagnosticsService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.UserDiagnostics.AddAsync(new UserDiagnostics(1));
@@ -51,7 +51,7 @@ public class UserDiagnosticsServiceTests
     public async Task UpdateLastSuccessfullSignInAsync_ForGivenUserId_UpdatesIfUserExistsInDatabase(int userId, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserDiagnosticsService userDiagnosticsService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.UserDiagnostics.AddAsync(new UserDiagnostics(1));
@@ -70,7 +70,7 @@ public class UserDiagnosticsServiceTests
     public async Task UpdateLastUsernameChangeAsync_ForGivenUserId_UpdatesIfUserExistsInDatabase(int userId, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserDiagnosticsService userDiagnosticsService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.UserDiagnostics.AddAsync(new UserDiagnostics(1));
@@ -89,7 +89,7 @@ public class UserDiagnosticsServiceTests
     public async Task UpdateLastEmailChangeAsync_ForGivenUserId_UpdatesIfUserExistsInDatabase(int userId, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserDiagnosticsService userDiagnosticsService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.UserDiagnostics.AddAsync(new UserDiagnostics(1));
@@ -108,7 +108,7 @@ public class UserDiagnosticsServiceTests
     public async Task UpdateLastPasswordChangeAsync_ForGivenUserId_UpdatesIfUserExistsInDatabase(int userId, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserDiagnosticsService userDiagnosticsService = new(usersDatabaseContext);
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.UserDiagnostics.AddAsync(new UserDiagnostics(1));

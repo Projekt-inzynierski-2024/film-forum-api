@@ -21,7 +21,7 @@ public class UserServiceTests
     public async Task UserWithIdExistsAsync_ForGivenId_ReturnsTrueIfUserExistsOtherwiseFalse(int userId, bool expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -39,7 +39,7 @@ public class UserServiceTests
     public async Task UserWithUsernameExistsAsync_ForGivenUsername_ReturnsTrueIfUserExistsOtherwiseFalse(string username, bool expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -57,7 +57,7 @@ public class UserServiceTests
     public async Task UserWithEmailExistsAsync_ForGivenEmail_ReturnsTrueIfUserExistsOtherwiseFalse(string email, bool expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -73,7 +73,7 @@ public class UserServiceTests
     public async Task GetAllAsync_ForExistingUsers_ReturnsAllUsers()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "pdsade23#!@!DA2", Email = "ememail@da.pl", Username = "nickanem1232" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dadada2#!@#@DAas", Email = "e2m@email.pl", Username = "name" });
@@ -91,7 +91,7 @@ public class UserServiceTests
     public async Task GetAsync_ForExistingUser_ReturnsUser()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "pdsade23#!@!DA2", Email = "ememail@da.pl", Username = "nickanem1232" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dadada2#!@#@DAas", Email = "e2m@email.pl", Username = "name" });
@@ -109,7 +109,7 @@ public class UserServiceTests
     public async Task GetAsync_ForNonExistingUser_ReturnsNull()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "pdsade23#!@!DA2", Email = "ememail@da.pl", Username = "nickanem1232" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dadada2#!@#@DAas", Email = "e2m@email.pl", Username = "name" });
@@ -129,7 +129,7 @@ public class UserServiceTests
     public async Task ChangePasswordAsync_ForGivenData_ChangesPasswordIfUserExists(int userId, string password, string confirmPassword, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "email@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -147,7 +147,7 @@ public class UserServiceTests
     public async Task ResetPasswordAsync_ForGivenData_ResetsPasswordIfUserExists(string email, string password, string confirmPassword, string resetPasswordToken, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -165,7 +165,7 @@ public class UserServiceTests
     public async Task ChangeEmailAsync_ForGivenData_ChangesEmailIfUserExists(int userId, string email, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -183,7 +183,7 @@ public class UserServiceTests
     public async Task ChangeUsernameAsync_ForGivenData_ChangesUsernameIfUserExists(int userId, string username, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -199,7 +199,7 @@ public class UserServiceTests
     public async Task CreateAsync_ForValidData_CreatesUser()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         JwtDetails jwtDetails = new()
         {
             SecretKey = "SuperSecretKeyForJwtToken123123123456",
@@ -224,7 +224,7 @@ public class UserServiceTests
     public async Task CreateAsync_ForInvalidUserMainRole_ThrowsInvalidRoleNameException()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         CreateUserDto createUserDto = new("username", "email@email.com", "Password123!", "Password123!");
 
@@ -241,7 +241,7 @@ public class UserServiceTests
     public async Task RemoveAsync_ForGivenId_DeletesUserIfExistsInDatabase(int userId, int expected)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
@@ -257,7 +257,7 @@ public class UserServiceTests
     public async Task LogInAsync_ForValidData_LogsIn()
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         PasswordService passwordService = new();
         string password = passwordService.HashPassword("Password123!");
         JwtDetails jwtDetails = new()
@@ -288,7 +288,7 @@ public class UserServiceTests
     public async Task LogInAsync_ForInvalidCredentials_ReturnsNull(string email, string password)
     {
         //Arrange
-        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         PasswordService passwordService = new();
         string hashedPassword = passwordService.HashPassword("Password123!");
         UserService userService = new(usersDatabaseContext, passwordService, new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
