@@ -13,5 +13,5 @@ public interface IReviewService
 
     Task<ReplaceOneResult> UpdateAsync(string id, string userId, CreateReviewDto createReviewDto);
 
-    Task RemoveAsync(string id);
+    Task<DeleteResult> RemoveAsync(string id);
 }

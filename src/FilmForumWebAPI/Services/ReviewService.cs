@@ -23,6 +23,6 @@ public class ReviewService : IReviewService
     public async Task<ReplaceOneResult> UpdateAsync(string id, string userId, CreateReviewDto createReviewDto)
         => await _reviewCollection.ReplaceOneAsync(x => x.Id == id, new(id, userId, createReviewDto));
 
-    public async Task RemoveAsync(string id)
+    public async Task<DeleteResult> RemoveAsync(string id)
         => await _reviewCollection.DeleteOneAsync(x => x.Id == id);
 }
