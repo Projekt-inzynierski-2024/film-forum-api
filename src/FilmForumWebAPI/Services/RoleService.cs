@@ -26,8 +26,17 @@ public class RoleService : IRoleService
                                                   userToRole => userToRole.RoleId,
                                                   (role, userToRole) => new GetUserRoleDto(role.Id, role.Name, role.CreatedAt, userToRole.UserId)).ToListAsync();
 
-    public async Task ChangeUserRolesAsync(int userId, IEnumerable<UserRole> roles)
+    public async Task<int> ChangeUserRolesAsync(int userId, IEnumerable<UserRole> roles)
     {
+        if (!await _usersDatabaseContext.Users.AnyAsync(x => x.Id == userId))
+        {
+            return 0;
+        }
+        if (roles is null || !roles.Any())
+        {
+            throw new InvalidRoleNameException();
+        }
+
         List<UserToRole> userRoles = await _usersDatabaseContext.UsersToRoles.Where(x => x.UserId == userId).ToListAsync();
         _usersDatabaseContext.UsersToRoles.RemoveRange(userRoles);
 
@@ -36,7 +45,7 @@ public class RoleService : IRoleService
 
         roleIds.ForEach(async roleId => await _usersDatabaseContext.UsersToRoles.AddAsync(new UserToRole(roleId, userId)));
 
-        await _usersDatabaseContext.SaveChangesAsync();
+        return await _usersDatabaseContext.SaveChangesAsync();
     }
 
     public List<UserRole> PrepareUserRolesToSaveInDatabase(UserRole userMainRole)

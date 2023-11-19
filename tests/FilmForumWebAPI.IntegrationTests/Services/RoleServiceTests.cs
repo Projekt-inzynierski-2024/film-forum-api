@@ -1,9 +1,12 @@
 ﻿using FilmForumModels.Dtos.RoleDtos;
 using FilmForumModels.Entities;
+using FilmForumModels.Models.Enums;
+using FilmForumModels.Models.Exceptions;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.IntegrationTests.HelpersForTests;
 using FilmForumWebAPI.Services;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 
 namespace FilmForumWebAPI.IntegrationTests.Services;
 
@@ -163,5 +166,75 @@ public class RoleServiceTests
 
         //Assert
         result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ChangeUserRolesAsync_ForNotExistingUser_ReturnsZero()
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        RoleService roleService = new(usersDatabaseContext);
+
+        //Act
+        int result = await roleService.ChangeUserRolesAsync(99999, new List<UserRole>() { UserRole.Admin });
+
+        //Assert
+        result.Should().Be(0);
+    }
+
+    public static IEnumerable<object[]> ChangeUserRolesAsyncInvalidTestData()
+    {
+        yield return new object[] { null! };
+        yield return new object[] { new List<UserRole>() };
+    }
+
+    [Theory]
+    [MemberData(nameof(ChangeUserRolesAsyncInvalidTestData))]
+    public async Task ChangeUserRolesAsync_ForExistingUserButNullOrEmptyRoleList_ThrowsInvalidRoleNameException(IEnumerable<UserRole> roles)
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        RoleService roleService = new(usersDatabaseContext);
+        await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "email@email.com", Username = "name" });
+        await usersDatabaseContext.SaveChangesAsync();
+
+        //Act
+        Func<Task> action = async () => await roleService.ChangeUserRolesAsync(1, roles);
+
+        //Assert
+        await action.Should().ThrowAsync<InvalidRoleNameException>();
+    }
+
+    [Fact]
+    public async Task ChangeUserRolesAsync_ForValidData_ChangesUserRoles()
+    {
+        //In this test user changes his roles from Moderator,User to Admin,Moderator,User
+
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTesting();
+        RoleService roleService = new(usersDatabaseContext);
+        await usersDatabaseContext.Roles.AddRangeAsync(new List<Role>()
+        {
+            new() { Name = "Admin" },
+            new() { Name = "Moderator" },
+            new() { Name = "User" }
+        });
+        await usersDatabaseContext.UsersToRoles.AddRangeAsync(new List<UserToRole>()
+        {
+            new() { RoleId = 2, UserId = 1 },
+            new() { RoleId = 3, UserId = 1 }
+        });
+        await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "email@.com", Username = "name" });
+        await usersDatabaseContext.SaveChangesAsync();
+
+        //Act
+        await roleService.ChangeUserRolesAsync(1, new List<UserRole>() { UserRole.Admin, UserRole.Moderator, UserRole.User });
+
+        //Assert
+        List<UserToRole> roles = await usersDatabaseContext.UsersToRoles.Where(x => x.UserId == 1).ToListAsync();
+        roles.Count.Should().Be(3);
+        roles.Should().Contain(x => x.RoleId == 3 && x.UserId == 1);
+        roles.Should().Contain(x => x.RoleId == 2 && x.UserId == 1);
+        roles.Should().Contain(x => x.RoleId == 1 && x.UserId == 1);
     }
 }

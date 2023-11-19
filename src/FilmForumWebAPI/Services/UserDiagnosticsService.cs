@@ -32,15 +32,11 @@ public class UserDiagnosticsService : IUserDiagnosticsService
     /// <param name="userEmail">User's email</param>
     /// <returns>The total number of rows updated in the database</returns>
     public async Task<int> UpdateLastFailedSignInAsync(string userEmail)
-    {
-        int? userId = (await _usersDatabaseContext.Users.FirstOrDefaultAsync(user => user.Email == userEmail))?.Id;
-        if (userId.HasValue)
-        {
-            return await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == userId.Value)
-                                                              .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastFailedSignIn, DateTime.UtcNow));
-        }
-        return 0;
-    }
+        => await _usersDatabaseContext.Users.FirstOrDefaultAsync(user => user.Email == userEmail) is User user
+           ? await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == user.Id)
+                                                        .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastFailedSignIn, DateTime.UtcNow)) 
+           : 0;
+    
 
     /// <summary>
     /// Updates user's last successfull sign in date
