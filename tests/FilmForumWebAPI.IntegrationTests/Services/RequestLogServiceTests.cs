@@ -127,4 +127,39 @@ public class RequestLogServiceTests
         // Assert
         result.Should().Be(0);
     }
+
+    [Fact]
+    public async Task RemoveUserRequestsLogsAsync_ForExistingRequestLogs_RemovesRequestLogs()
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
+        RequestLogService requestLogService = new(usersDatabaseContext);
+        await usersDatabaseContext.RequestLogs.AddRangeAsync(new List<RequestLog>()
+        {
+            new(){ UserId = 1, RequestPath = "api/user", IpAddress = "192.168.2.21", HttpMethod = "GET", StatusCode = 200},
+            new(){ UserId = 1, RequestPath = "api/user", IpAddress = "192.168.2.21", HttpMethod = "GET", StatusCode = 200},
+            new(){ UserId = 1, RequestPath = "api/user", IpAddress = "192.168.2.21", HttpMethod = "GET", StatusCode = 200}
+        });
+        await usersDatabaseContext.SaveChangesAsync();
+       
+        //Act
+        int result = await requestLogService.RemoveUserRequestsLogsAsync(1);
+
+        //Assert
+        result.Should().Be(3);
+    }
+
+    [Fact]
+    public async Task RemoveUserRequestsLogsAsync_ForNonExistingRequestLogs_DoesNotRemoveRequestLogs()
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
+        RequestLogService requestLogService = new(usersDatabaseContext);
+
+        //Act
+        int result = await requestLogService.RemoveUserRequestsLogsAsync(1);
+
+        //Assert
+        result.Should().Be(0);
+    }
 }
