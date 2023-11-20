@@ -28,7 +28,7 @@ public class ReviewControllerTests
         // Arrange
         _reviewController.ControllerContext.HttpContext = new DefaultHttpContext
         {
-            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
         };
         CreateReviewDto createReviewDto = new()
         {
@@ -101,7 +101,7 @@ public class ReviewControllerTests
         // Arrange
         _reviewController.ControllerContext.HttpContext = new DefaultHttpContext
         {
-            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
         };
         CreateReviewDto createReviewDto = new()
         {
@@ -124,7 +124,7 @@ public class ReviewControllerTests
         // Arrange
         _reviewController.ControllerContext.HttpContext = new DefaultHttpContext
         {
-            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
         };
         _mockReviewService.Setup(x => x.UpdateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CreateReviewDto>())).ReturnsAsync(new ReplaceOneResult.Acknowledged(0, null, It.IsAny<string>()));
 
@@ -139,7 +139,7 @@ public class ReviewControllerTests
     public async Task Remove_DeletesReview()
     {
         // Arrange
-        _mockReviewService.Setup(x => x.RemoveAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
+        _mockReviewService.Setup(x => x.RemoveAsync(It.IsAny<string>())).ReturnsAsync(new DeleteResult.Acknowledged(1));
 
         // Act
         IActionResult result = await _reviewController.Remove(It.IsAny<string>());
