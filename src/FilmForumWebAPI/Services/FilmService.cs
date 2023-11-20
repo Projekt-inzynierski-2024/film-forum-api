@@ -54,6 +54,6 @@ public class FilmService : IFilmService
     public async Task<ReplaceOneResult> UpdateAsync(string id, CreateFilmDto updatedFilm)
         => await _filmCollection.ReplaceOneAsync(x => x.Id == id, new(id, updatedFilm));
 
-    public async Task RemoveAsync(string id)
+    public async Task<DeleteResult> RemoveAsync(string id)
         => await _filmCollection.DeleteOneAsync(x => x.Id == id);
 }

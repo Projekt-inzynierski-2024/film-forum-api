@@ -3,9 +3,7 @@ using FilmForumModels.Entities;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.IntegrationTests.HelpersForTests;
 using FilmForumWebAPI.Services;
-using FilmForumWebAPI.Services.Interfaces;
 using FluentAssertions;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace FilmForumWebAPI.IntegrationTests.Services;
@@ -80,7 +78,7 @@ public class FilmServiceTests
 
         // Act
         GetDetailedFilmDto? result = await filmService.GetDetailedAsync(film.Id);
-        
+
         // Assert
         result.Should().NotBeNull();
     }
@@ -141,5 +139,87 @@ public class FilmServiceTests
 
         // Assert
         result.Should().HaveCount(5);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ForGivenData_CreatesFilm()
+    {
+        //Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        FilmService filmService = new(filmsDatabaseContext);
+        CreateFilmDto createFilmDto = new() { Title = "Grown ups", Description = "Prepare for good fun", IsMovie = true };
+
+        // Act
+        await filmService.CreateAsync(createFilmDto);
+
+        // Assert
+        Film? result = await filmsDatabaseContext.FilmCollection.Find(_ => true).FirstOrDefaultAsync();
+        result.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ForExistingFilm_UpdatesFilm()
+    {
+        //Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        FilmService filmService = new(filmsDatabaseContext);
+        Film film = new() { Title = "FunnyMovie", Description = "Prepare for good fun", IsMovie = false };
+        await filmsDatabaseContext.FilmCollection.InsertOneAsync(film);
+        CreateFilmDto createFilmDto = new() { Title = "FunnyMovie 2", Description = "Prepare for good fun 2", IsMovie = true };
+
+        // Act
+        ReplaceOneResult result = await filmService.UpdateAsync(film.Id, createFilmDto);
+
+        // Assert
+        result.ModifiedCount.Should().Be(1);
+        Film updatedFilm = await filmsDatabaseContext.FilmCollection.Find(x => x.Id == film.Id).FirstOrDefaultAsync();
+        updatedFilm.Title = createFilmDto.Title;
+        updatedFilm.Description = createFilmDto.Description;
+        updatedFilm.IsMovie = createFilmDto.IsMovie;
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ForNotExistingFilm_DoesNotUpdateFilm()
+    {
+        //Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        FilmService filmService = new(filmsDatabaseContext);
+        CreateFilmDto createFilmDto = new() { Title = "FunnyMovie 2", Description = "Prepare for good fun 2", IsMovie = true };
+
+        // Act
+        ReplaceOneResult result = await filmService.UpdateAsync("999999999999999999999999", createFilmDto);
+
+        // Assert
+        result.ModifiedCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task RemoveAsync_ForExistingFilm_RemovesFilm()
+    {
+        //Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        FilmService filmService = new(filmsDatabaseContext);
+        Film film = new() { Title = "FunnyMovie", Description = "Prepare for good fun", IsMovie = false };
+        await filmsDatabaseContext.FilmCollection.InsertOneAsync(film);
+
+        // Act
+        DeleteResult result = await filmService.RemoveAsync(film.Id);
+
+        // Assert
+        result.DeletedCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RemoveAsync_ForNotExistingFilm_DoesNotRemoveFilm()
+    {
+        //Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        FilmService filmService = new(filmsDatabaseContext);
+
+        // Act
+        DeleteResult result = await filmService.RemoveAsync("999999999999999999999999");
+
+        // Assert
+        result.DeletedCount.Should().Be(0);
     }
 }

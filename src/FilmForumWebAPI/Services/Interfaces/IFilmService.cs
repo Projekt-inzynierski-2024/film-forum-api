@@ -19,5 +19,5 @@ public interface IFilmService
 
     Task<ReplaceOneResult> UpdateAsync(string id, CreateFilmDto updatedFilm);
 
-    Task RemoveAsync(string id);
+    Task<DeleteResult> RemoveAsync(string id);
 }

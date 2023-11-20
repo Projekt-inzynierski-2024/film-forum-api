@@ -185,7 +185,7 @@ public class FilmControllerTests
     public async Task Remove_DeletesFilm()
     {
         // Arrange
-        _filmServiceMock.Setup(x => x.RemoveAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
+        _filmServiceMock.Setup(x => x.RemoveAsync(It.IsAny<string>())).ReturnsAsync(new DeleteResult.Acknowledged(It.IsAny<int>()));
 
         // Act
         IActionResult result = await _filmController.Remove(It.IsAny<string>());

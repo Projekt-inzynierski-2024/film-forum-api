@@ -139,7 +139,7 @@ public class ReviewControllerTests
     public async Task Remove_DeletesReview()
     {
         // Arrange
-        _mockReviewService.Setup(x => x.RemoveAsync(It.IsAny<string>())).ReturnsAsync(new DeleteResult.Acknowledged(1));
+        _mockReviewService.Setup(x => x.RemoveAsync(It.IsAny<string>())).ReturnsAsync(new DeleteResult.Acknowledged(It.IsAny<int>()));
 
         // Act
         IActionResult result = await _reviewController.Remove(It.IsAny<string>());
