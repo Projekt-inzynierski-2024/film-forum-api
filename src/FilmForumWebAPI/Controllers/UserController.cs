@@ -36,6 +36,7 @@ public class UserController : ControllerBase
     private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
     private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
     private readonly IValidator<CreateAdminDto> _createAdminValidator;
+    private readonly IMultifactorAuthenticationService _multifactorAuthenticationService;
 
     public UserController(ILogger<UserController> logger,
                           IUserService userService,
@@ -49,7 +50,8 @@ public class UserController : ControllerBase
                           IValidator<CreateUserDto> createUserValidator,
                           IValidator<ResetPasswordDto> resetPasswordValidator,
                           IValidator<ChangePasswordDto> changePasswordValidator,
-                          IValidator<CreateAdminDto> createAdminValidator)
+                          IValidator<CreateAdminDto> createAdminValidator,
+                          IMultifactorAuthenticationService multifactorAuthenticationService)
     {
         _logger = logger;
         _userService = userService;
@@ -64,6 +66,7 @@ public class UserController : ControllerBase
         _userDiagnosticsService = userDiagnosticsService;
         _adminDetails = adminDetails.Value;
         _createAdminValidator = createAdminValidator;
+        _multifactorAuthenticationService = multifactorAuthenticationService;
     }
 
     [HttpPost("/register-admin")]
@@ -253,6 +256,40 @@ public class UserController : ControllerBase
         await _userService.ResetPasswordAsync(resetPasswordDto);
 
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpGet("2fa")]
+    public async Task<IActionResult> Get2faUri()
+    {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
+        GetUserDto? userDto = await _userService.GetAsync(id);
+
+        if (userDto is null)
+        {
+            return Unauthorized();
+        }
+
+        string uri = _multifactorAuthenticationService.GenerateUri(userDto.Email);
+        return Ok(uri);
+    }
+
+    [Authorize]
+    [HttpGet("2fa/png")]
+    public async Task<IActionResult> Get2faPng()
+    {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
+        GetUserDto? userDto = await _userService.GetAsync(id);
+
+        if (userDto is null)
+        {
+            return Unauthorized();
+        }
+
+        string uri = _multifactorAuthenticationService.GenerateUri(userDto.Email);
+        byte[] qrCode = _multifactorAuthenticationService.GenerateQRCodePNG(uri);
+
+        return File(qrCode, "image/png");
     }
 
     [Authorize(Roles = "Admin")]
