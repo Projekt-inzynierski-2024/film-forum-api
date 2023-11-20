@@ -1,183 +1,234 @@
-﻿//namespace FilmForumWebAPI.IntegrationTests.Services;
+﻿using FilmForumModels.Dtos.EpisodeDtos;
+using FilmForumModels.Entities;
+using FilmForumWebAPI.Database;
+using FilmForumWebAPI.IntegrationTests.HelpersForTests;
+using FilmForumWebAPI.Services;
+using FluentAssertions;
+using MongoDB.Driver;
 
-//public class EpisodeServiceTests
-//{
+namespace FilmForumWebAPI.IntegrationTests.Services;
 
-//    private readonly EpisodeService _episodeService;
-//    private readonly Mock<IMongoCollection<Episode>> _mockCollection = new Mock<IMongoCollection<Episode>>();
-//    private readonly Mock<IAsyncCursor<Episode>> _mockDetailedEpisodeCursor = new Mock<IAsyncCursor<Episode>>();
+public class EpisodeServiceTests
+{
+    [Fact]
+    public async Task SearchAllAsync_ForGivenQuery_ReturnsFoundEpisodes()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
+        List<Episode> episodes = new()
+        {
+            new Episode { Title = "Episode 1", Description = "Funny movie", Year = 2021, Length = 120, SeasonNumber = 1, EpisodeNumber = 1, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Episode 2", Description = "Funny movie", Year = 2022, Length = 120, SeasonNumber = 1, EpisodeNumber = 2, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Episode 3", Description = "Funny movie", Year = 2023, Length = 120, SeasonNumber = 1, EpisodeNumber = 3, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Episode 4", Description = "Funny movie", Year = 2024, Length = 120, SeasonNumber = 1, EpisodeNumber = 4, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Movie 1", Description = "Great movie", Year = 2021, Length = 120, SeasonNumber = 1, EpisodeNumber = 1, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Movie 2", Description = "Great movie", Year = 2021, Length = 120, SeasonNumber = 1, EpisodeNumber = 2, FilmId = "123123498731231891721823"},
+        };
+        await filmsDatabaseContext.EpisodeCollection.InsertManyAsync(episodes);
 
-//    public EpisodeServiceTests()
-//    {
-//        var filmsDatabaseContext = new FilmsDatabaseContext { EpisodeCollection = _mockCollection.Object };
-//        _episodeService = new EpisodeService(filmsDatabaseContext);
-//    }
+        // Act
+        List<GetEpisodeDto> result = await episodeService.SearchAllAsync("Episode");
 
-//    [Fact]
-//    public async Task SearchAllAsync_ReturnMatchingEpisodes()
-//    {
-//        // Arrange
-//        var query = "Title";
-//        var episodes = new List<Episode>
-//            {
-//                new Episode { Title = "Title" },
-//                new Episode { Title = "Moda na sukces" }
-//            };
-//        _mockCollection.Setup(collection => collection.FindAsync(It.IsAny<FilterDefinition<Episode>>(), null, default)).ReturnsAsync(new FakeAsyncCursor<Episode>(episodes));
+        // Assert
+        result.Should().HaveCount(4);
+    }
 
-//        // Act
-//        var result = await _episodeService.SearchAllAsync(query);
+    [Fact]
+    public async Task CreateAsync_ForGivenData_CreatesEpisode()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
+        CreateEpisodeDto createEpisodeDto = new() { Title = "Amazing movie", Description = "Just watch", Length = 120, FilmId = "123123498731231891721823" };
 
-//        // Assert
-//        Assert.NotNull(result);
-//        Assert.NotEmpty(result);
-//        Assert.Equal(1, result.Count); 
-//    }
+        // Act
+        await episodeService.CreateAsync(createEpisodeDto);
 
-//    [Fact]
-//    public async Task GetAllAsync_ReturnAllEpisodes()
-//    {
-//        // Arrange
-//        var episodes = new List<Episode>
-//            {
-//                new Episode { Title = "Episode 1" },
-//                new Episode { Title = "Episode 2" }
-//            };
-//        _mockCollection.Setup(collection => collection.FindAsync(It.IsAny<FilterDefinition<Episode>>(), null, default)).ReturnsAsync(new FakeAsyncCursor<Episode>(episodes));
+        // Assert
+        Episode? createdEpisode = await filmsDatabaseContext.EpisodeCollection.Find(x => x.Title == createEpisodeDto.Title).FirstOrDefaultAsync();
+        createdEpisode.Should().NotBeNull();
+    }
 
-//        // Act
-//        var result = await _episodeService.GetAllAsync();
+    [Fact]
+    public async Task GetAllAsync_ForExistingEpisodes_ReturnsAllEpisodes()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
+        List<Episode> episodes = new()
+        {
+            new Episode { Title = "Episode 1", Description = "Funny movie", Year = 2021, Length = 120, SeasonNumber = 1,  EpisodeNumber = 1, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Episode 2", Description = "Funny movie", Year = 2022, Length = 120, SeasonNumber = 1,  EpisodeNumber = 2, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Episode 3", Description = "Funny movie", Year = 2023, Length = 120, SeasonNumber = 1,  EpisodeNumber = 3 , FilmId = "123123498731231891721823"},
+            new Episode { Title = "Episode 4", Description = "Funny movie", Year = 2024, Length = 120, SeasonNumber = 1,  EpisodeNumber = 4, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Movie 1", Description = "Great movie", Year = 2021, Length = 120, SeasonNumber = 1,  EpisodeNumber = 1, FilmId = "123123498731231891721823"},
+            new Episode { Title = "Movie 2", Description = "Great movie", Year = 2021, Length = 120, SeasonNumber = 1,  EpisodeNumber = 2, FilmId = "123123498731231891721823"},
+        };
+        await filmsDatabaseContext.EpisodeCollection.InsertManyAsync(episodes);
 
-//        // Assert
-//        Assert.NotNull(result);
-//        Assert.NotEmpty(result);
-//        Assert.Equal(2, result.Count); /
-//    }
+        // Act
+        List<GetEpisodeDto> result = await episodeService.GetAllAsync();
 
-//    [Fact]
-//    public async Task GetAsync_ReturnsEpisodeDto()
-//    {
-//        // Arrange
-//        var episodeId = 1;
-//        var episodeTitle = "Test";
-//        var episode = new Episode { Id = episodeId, Title = episodeTitle };
-//        _mockCollection.Setup(collection => collection.Find(It.IsAny<FilterDefinition<Episode>>(), null, default)).Returns(new FakeFindFluent<Episode>(new List<Episode> { episode }));
+        // Assert
+        result.Should().HaveCount(6);
+    }
 
-//        // Act
-//        var result = await _episodeService.GetAsync(episodeId);
+    [Fact]
+    public async Task GetDetailedAllAsync_ForExistingEpisodes_ReturnsDetailedAllEpisodes()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        Film film = new() { Description = "Prepare for good fun", Title = "FunnyMovie" };
+        await filmsDatabaseContext.FilmCollection.InsertOneAsync(film);
+        List<Episode> episodes = new()
+        {
+            new() { Title = "Episode 1", Description = "Funny movie", FilmId = film.Id },
+            new() { Title = "Episode 2", Description = "Funny movie", FilmId = film.Id },
+            new() { Title = "Episode 3", Description = "Funny movie", FilmId = film.Id },
+            new() { Title = "Episode 4", Description = "Funny movie", FilmId = film.Id },
+            new() { Title = "Episode 5", Description = "Funny movie", FilmId = film.Id },
+            new() { Title = "Episode 6", Description = "Funny movie", FilmId = film.Id },
+        };
+        await filmsDatabaseContext.EpisodeCollection.InsertManyAsync(episodes);
+        EpisodeService episodeService = new(filmsDatabaseContext);
 
-//        // Assert
-//        Assert.NotNull(result);
-//        Assert.Equal(episodeId, result.Id);
-//        Assert.Equal(episodeTitle, result.Title);
-//    }
+        // Act
+        List<GetDetailedEpisodeDto> result = await episodeService.GetDetailedAllAsync();
 
-//    [Fact]
-//    public async Task GetAsync_ReturnsNull()
-//    {
-//        // Arrange
-//        var nonExistingEpisodeId = 99999;
-//        _mockCollection.Setup(collection => collection.Find(It.IsAny<FilterDefinition<Episode>>(), null, default)).Returns(new FakeFindFluent<Episode>(Enumerable.Empty<Episode>()));
+        // Assert
+        result.Should().HaveCount(6);
+    }
 
-//        // Act
-//        var result = await _episodeService.GetAsync(nonExistingEpisodeId);
+    [Fact]
+    public async Task GetAsync_ForExistingEpisode_ReturnsEpisode()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
+        Episode episode = new() { Title = "Episode 1", Description = "Funny movie", Year = 2021, Length = 120, SeasonNumber = 1, EpisodeNumber = 1, FilmId = "123123498731231891721823" };
+        await filmsDatabaseContext.EpisodeCollection.InsertOneAsync(episode);
 
-//        // Assert
-//        Assert.Null(result);
-//    }
+        // Act
+        GetEpisodeDto? result = await episodeService.GetAsync(episode.Id);
 
-//    [Fact]
-//    public async Task UpdateAsync_ReturnReplaceOneResult()
-//    {
-//        // Arrange
-//        var episodeId = 1;
-//        var createEpisodeDto = new CreateEpisodeDto { Title = "New Title" };
-//        var replaceOneResult = new ReplaceOneResult.Acknowledged(1, 1, episodeId);
-//        _mockCollection.Setup(collection => collection.ReplaceOneAsync(It.IsAny<FilterDefinition<Episode>>(), It.IsAny<Episode>(), null, default)).ReturnsAsync(replaceOneResult);
+        // Assert
+        result.Should().NotBeNull();
+    }
 
-//        // Act
-//        var result = await _episodeService.UpdateAsync(episodeId, createEpisodeDto);
+    [Fact]
+    public async Task GetAsync_ForNotExistingEpisode_ReturnsNull()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
 
-//        // Assert
-//        Assert.NotNull(result);
-//        Assert.Equal(replaceOneResult, result);
-//    }
+        // Act
+        GetEpisodeDto? result = await episodeService.GetAsync("999999999999999999999999");
 
-//    [Fact]
-//    public async Task RemoveAsync_DeleteOne()
-//    {
-//        // Arrange
-//        var episodeId = 1;
-//        _mockCollection.Setup(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<Episode>>(), default)).Returns(Task.CompletedTask);
+        // Assert
+        result.Should().BeNull();
+    }
 
-//        // Act
-//        await _episodeService.RemoveAsync(episodeId);
+    [Fact]
+    public async Task GetDetailedAsync_ForExistingEpisode_ReturnsDetailedEpisode()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        Film film = new() { Description = "Prepare for good fun", Title = "FunnyMovie" };
+        await filmsDatabaseContext.FilmCollection.InsertOneAsync(film);
+        Episode episode = new() { Title = "Episode 1", Description = "Funny movie", Year = 2021, Length = 120, SeasonNumber = 1, EpisodeNumber = 1, FilmId = film.Id };
+        await filmsDatabaseContext.EpisodeCollection.InsertOneAsync(episode);
+        EpisodeService episodeService = new(filmsDatabaseContext);
 
-//        // Assert
-//        _mockCollection.Verify(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<Episode>>(), default), Times.Once);
-//    }
-//    [Fact]
-//    public async Task CreateAsync_InsertNewEpisode()
-//    {
-//        // Arrange
-//        var createEpisodeDto = new CreateEpisodeDto { Title = "New Episode" };
-//        _mockCollection.Setup(collection => collection.InsertOneAsync(It.IsAny<Episode>(), default)).Returns(Task.CompletedTask);
+        // Act
+        GetDetailedEpisodeDto? result = await episodeService.GetDetailedAsync(episode.Id);
 
-//        // Act
-//        await _episodeService.CreateAsync(createEpisodeDto);
+        // Assert
+        result.Should().NotBeNull();
+    }
 
-//        // Assert
-//        _mockCollection.Verify(collection => collection.InsertOneAsync(It.IsAny<Episode>(), default), Times.Once);
-//    }
+    [Fact]
+    public async Task GetDetailedAsync_ForNotExistingEpisode_ReturnsNull()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
 
-//    [Fact]
-//    public async Task GetDetailedAllAsync_DetailedEpisodes()
-//    {
-//        // Arrange
-//        var episodes = new List<Episode>
-//    {
-//        new Episode { Title = "Episode 1", FilmId = ObjectId.GenerateNewId(), DirectorIds = new List<ObjectId> { ObjectId.GenerateNewId() }, ActorIds = new List<ObjectId> { ObjectId.GenerateNewId() }, Id = ObjectId.GenerateNewId().ToString() },
-//        new Episode { Title = "Episode 2", FilmId = ObjectId.GenerateNewId(), DirectorIds = new List<ObjectId> { ObjectId.GenerateNewId() }, ActorIds = new List<ObjectId> { ObjectId.GenerateNewId() }, Id = ObjectId.GenerateNewId().ToString() }
-//    };
-//        _mockDetailedEpisodeCursor.Setup(cursor => cursor.ToListAsync(default)).ReturnsAsync(episodes);
+        // Act
+        GetEpisodeDto? result = await episodeService.GetAsync("999999999999999999999999");
 
-//        // Act
-//        var result = await _episodeService.GetDetailedAllAsync();
+        // Assert
+        result.Should().BeNull();
+    }
 
-//        // Assert
-//        Assert.NotNull(result);
-//        Assert.NotEmpty(result);
-//        Assert.Equal(2, result.Count);
-//    }
+    [Fact]
+    public async Task UpdateAsync_ForExistingEpisode_UpdatesEpisode()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        Film film = new() { Description = "Prepare for good fun", Title = "FunnyMovie" };
+        await filmsDatabaseContext.FilmCollection.InsertOneAsync(film);
+        Episode episode = new() { Title = "Episode 1", Description = "Funny movie", Year = 2021, Length = 120, SeasonNumber = 1, EpisodeNumber = 1, FilmId = film.Id };
+        await filmsDatabaseContext.EpisodeCollection.InsertOneAsync(episode);
+        EpisodeService episodeService = new(filmsDatabaseContext);
+        CreateEpisodeDto createEpisodeDto = new() { Title = "New title", Description = "New Description", FilmId = film.Id };
+       
+        // Act
+        ReplaceOneResult result = await episodeService.UpdateAsync(episode.Id, createEpisodeDto);
 
-//    [Fact]
-//    public async Task GetDetailedAsync_ReturnsDetailedEpisodeDto()
-//    {
-//        // Arrange
-//        var episodeId = 2;
-//        var episode = new Episode { Id = episodeId, Title = "Episode Title For Test" };
-//        _mockDetailedEpisodeCursor.Setup(cursor => cursor.ToListAsync(default)).ReturnsAsync(new List<Episode> { episode });
+        // Assert
+        result.ModifiedCount.Should().Be(1);
+        Episode updatedEpisode = await filmsDatabaseContext.EpisodeCollection.Find(x => x.Id == episode.Id).FirstOrDefaultAsync();
+        updatedEpisode.Title.Should().Be(createEpisodeDto.Title);
+        updatedEpisode.Description.Should().Be(createEpisodeDto.Description);
+    }
 
-//        // Act
-//        var result = await _episodeService.GetDetailedAsync(episodeId);
+    [Fact]
+    public async Task UpdateAsync_ForNonExistiningEpisode_DoesNotUpdateEpisode()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
+        CreateEpisodeDto createEpisodeDto = new() { Title = "New title", Description = "New Description", FilmId = "123123498731231891721823" };
 
-//        // Assert
-//        Assert.NotNull(result);
-//        Assert.Equal(episodeId, result?.Id);
-//    }
+        // Act
+        ReplaceOneResult result = await episodeService.UpdateAsync("999999999999999999999999", createEpisodeDto);
 
-//    [Fact]
-//    public async Task GetDetailedAsync_ReturnsNull()
-//    {
-//        // Arrange
-//        var nonExistingEpisodeId = 999999;
-//        _mockDetailedEpisodeCursor.Setup(cursor => cursor.ToListAsync(default)).ReturnsAsync(new List<Episode>());
+        // Assert
+        result.ModifiedCount.Should().Be(0);
+    }
 
-//        // Act
-//        var result = await _episodeService.GetDetailedAsync(nonExistingEpisodeId);
+    [Fact]
+    public async Task RemoveAsync_ForExistingEpisode_RemovesEpisode()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
+        Film film = new() { Description = "Prepare for good fun", Title = "FunnyMovie" };
+        await filmsDatabaseContext.FilmCollection.InsertOneAsync(film);
+        Episode episode = new() { Title = "Episode 1", Description = "Funny movie", Year = 2021, Length = 120, SeasonNumber = 1, EpisodeNumber = 1, FilmId = film.Id };
+        await filmsDatabaseContext.EpisodeCollection.InsertOneAsync(episode);
 
-//        // Assert
-//        Assert.Null(result);
-//    }
+        // Act
+        DeleteResult result = await episodeService.RemoveAsync(episode.Id);
 
-//}
+        // Assert
+        result.DeletedCount.Should().Be(1);
+    }
+
+
+    [Fact]
+    public async Task RemoveAsync_ForNotExistingEpisode_DoesNotRemoveEpisode()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        EpisodeService episodeService = new(filmsDatabaseContext);
+
+        // Act
+        DeleteResult result = await episodeService.RemoveAsync("999999999999999999999999");
+
+        // Assert
+        result.DeletedCount.Should().Be(0);
+    }
+}

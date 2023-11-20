@@ -18,7 +18,7 @@ public class FilmService : IFilmService
 
         BsonDocument[] pipeline = new BsonDocument[]
         {
-            new BsonDocument
+            new
             (
                 "$lookup", new BsonDocument
                 {

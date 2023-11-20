@@ -19,5 +19,5 @@ public interface IEpisodeService
 
     Task<ReplaceOneResult> UpdateAsync(string id, CreateEpisodeDto createEpisodeDto);
 
-    Task RemoveAsync(string id);
+    Task<DeleteResult> RemoveAsync(string id);
 }

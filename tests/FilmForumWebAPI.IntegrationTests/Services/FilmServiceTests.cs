@@ -173,9 +173,9 @@ public class FilmServiceTests
         // Assert
         result.ModifiedCount.Should().Be(1);
         Film updatedFilm = await filmsDatabaseContext.FilmCollection.Find(x => x.Id == film.Id).FirstOrDefaultAsync();
-        updatedFilm.Title = createFilmDto.Title;
-        updatedFilm.Description = createFilmDto.Description;
-        updatedFilm.IsMovie = createFilmDto.IsMovie;
+        updatedFilm.Title.Should().Be(createFilmDto.Title);
+        updatedFilm.Description.Should().Be(createFilmDto.Description);
+        updatedFilm.IsMovie.Should().Be(createFilmDto.IsMovie);
     }
 
     [Fact]

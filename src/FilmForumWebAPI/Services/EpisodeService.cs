@@ -18,7 +18,7 @@ public class EpisodeService : IEpisodeService
 
         BsonDocument[] pipeline = new BsonDocument[]
         {
-            new BsonDocument
+            new
             (
                 "$lookup", new BsonDocument
                 {
@@ -28,8 +28,8 @@ public class EpisodeService : IEpisodeService
                     { "as",           "film" },
                 }
             ),
-            new BsonDocument("$unwind", "$film"),
-            new BsonDocument
+            new("$unwind", "$film"),
+            new
             (
                 "$lookup", new BsonDocument
                 {
@@ -39,7 +39,7 @@ public class EpisodeService : IEpisodeService
                     { "as",           "directors" },
                 }
             ),
-            new BsonDocument
+            new
             (
                 "$lookup", new BsonDocument
                 {
@@ -49,7 +49,7 @@ public class EpisodeService : IEpisodeService
                     { "as",           "actors" },
                 }
             ),
-            new BsonDocument
+            new
             (
                 "$lookup", new BsonDocument
                 {
@@ -84,6 +84,6 @@ public class EpisodeService : IEpisodeService
     public async Task<ReplaceOneResult> UpdateAsync(string id, CreateEpisodeDto createEpisodeDto)
         => await _episodeCollection.ReplaceOneAsync(x => x.Id == id, new(id, createEpisodeDto));
 
-    public async Task RemoveAsync(string id)
+    public async Task<DeleteResult> RemoveAsync(string id)
         => await _episodeCollection.DeleteOneAsync(x => x.Id == id);
 }
