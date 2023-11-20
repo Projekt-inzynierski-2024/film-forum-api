@@ -51,11 +51,11 @@ public class ReviewServiceTests
         // Arrange
         FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
         ReviewService service = new(filmsDatabaseContext);
-        await filmsDatabaseContext.ReviewCollection.InsertOneAsync(new("1", new CreateReviewDto() { EpisodeId = "653cb4c0810cec27c0943b01", Rate = 5, Comment = "Great movie" }));
-        string createdReviewId = (await filmsDatabaseContext.ReviewCollection.Find(_ => true).FirstAsync()).Id;
+        Review review = new("1", new CreateReviewDto() { EpisodeId = "653cb4c0810cec27c0943b01", Rate = 5, Comment = "Great movie" });
+        await filmsDatabaseContext.ReviewCollection.InsertOneAsync(review);
 
         // Act
-        GetReviewDto? result = await service.GetAsync(createdReviewId);
+        GetReviewDto? result = await service.GetAsync(review.Id);
 
         // Assert
         result.Should().NotBeNull();

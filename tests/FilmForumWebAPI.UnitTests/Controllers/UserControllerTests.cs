@@ -259,7 +259,7 @@ public class UserControllerTests
         //Arrange
         _userController.ControllerContext.HttpContext = new DefaultHttpContext
         {
-            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
         };
         _changePasswordDtoValidatorMock.Setup(x => x.Validate(It.IsAny<ChangePasswordDto>())).Returns(new ValidationResult());
         _userServiceMock.Setup(x => x.ChangePasswordAsync(It.IsAny<int>(), It.IsAny<ChangePasswordDto>())).ReturnsAsync(1);
@@ -290,7 +290,7 @@ public class UserControllerTests
         //Arrange
         _userController.ControllerContext.HttpContext = new DefaultHttpContext
         {
-            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
         };
         Mock<EmailDto> emailDtoMock = new();
         _userServiceMock.Setup(x => x.ChangeEmailAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(1);
@@ -322,7 +322,7 @@ public class UserControllerTests
         //Arrange
         _userController.ControllerContext.HttpContext = new DefaultHttpContext
         {
-            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, "1") }))
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
         };
         Mock<UsernameDto> usernameDtoMock = new();
         _userServiceMock.Setup(x => x.ChangeUsernameAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(1);
