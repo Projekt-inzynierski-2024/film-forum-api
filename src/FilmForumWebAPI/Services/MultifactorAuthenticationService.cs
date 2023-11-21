@@ -15,24 +15,24 @@ public class MultifactorAuthenticationService : IMultifactorAuthenticationServic
         _qrCoderGenerator = new QRCodeGenerator();
     }
 
-    private String secret(String unique) => $"SECRETKEY{unique}";
+    private string secret(string unique) => $"SECRETKEY{unique}";
 
-    public bool VerifyCode(String unique, String code)
+    public bool VerifyCode(string email, string code)
     {
-        byte[] secretBytes = Encoding.ASCII.GetBytes(secret(unique));
+        byte[] secretBytes = Encoding.ASCII.GetBytes(secret(email));
         var totp = new Totp(secretBytes, mode: OtpHashMode.Sha512);
 
         return totp.VerifyTotp(code, out _);
     }
 
-    public string GenerateUri(String unique)
+    public string GenerateUri(string email)
     {
-        byte[] secretBytes = Encoding.ASCII.GetBytes(secret(unique));
+        byte[] secretBytes = Encoding.ASCII.GetBytes(secret(email));
         string base32 = Base32.Rfc4648.Encode(secretBytes);
-        return $"otpauth://totp/FilmForum:filmforum.api?secret={base32}&issuer=FilmForum&algorithm=SHA512";
+        return $"otpauth://totp/FilmForum:{email}?secret={base32}&issuer=FilmForum&algorithm=SHA512";
     }
 
-    public byte[] GenerateQRCodePNG(String text) 
+    public byte[] GenerateQRCodePNG(string text) 
     {
         QRCodeData qrData = _qrCoderGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
         return new PngByteQRCode(qrData).GetGraphic(5);

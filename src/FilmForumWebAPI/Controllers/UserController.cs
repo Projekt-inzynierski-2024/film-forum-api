@@ -292,6 +292,28 @@ public class UserController : ControllerBase
         return File(qrCode, "image/png");
     }
 
+    [Authorize]
+    [HttpPost("2fa")]
+    public async Task<IActionResult> SetMultifactorAuthentication([FromBody] string code)
+    {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
+        GetUserDto? userDto = await _userService.GetAsync(id);
+
+        if (userDto is null)
+        {
+            return Unauthorized();
+        }
+        
+        bool verify = _multifactorAuthenticationService.VerifyCode(userDto.Email, code);
+
+        if (!verify) {
+            return BadRequest("Wrong code");
+        }
+
+        await _userService.ChangeMultifactorAuthAsync(id, true);
+        return Ok();
+    }
+
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)

@@ -6,6 +6,8 @@ namespace FilmForumWebAPI.Services.Interfaces;
 
 public interface IUserService
 {
+    Task<int> ChangeMultifactorAuthAsync(int id, bool multifactorAuth);
+
     Task<bool> UserWithIdExistsAsync(int id);
 
     Task<bool> UserWithUsernameExistsAsync(string username);

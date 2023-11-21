@@ -20,19 +20,26 @@ public class UserService : IUserService
     private readonly IJwtService _jwtService;
     private readonly JwtDetails _jwtDetails;
     private readonly IRoleService _rolesService;
+    private readonly IMultifactorAuthenticationService _multifactorAuthenticationService;
 
     public UserService(UsersDatabaseContext usersDatabaseContext,
                        IPasswordService passwordService,
                        IJwtService jwtService,
                        IOptions<JwtDetails> jwtDetails,
-                       IRoleService rolesService)
+                       IRoleService rolesService,
+                       IMultifactorAuthenticationService multifactorAuthenticationService)
     {
         _usersDatabaseContext = usersDatabaseContext;
         _passwordService = passwordService;
         _jwtService = jwtService;
         _jwtDetails = jwtDetails.Value;
         _rolesService = rolesService;
+        _multifactorAuthenticationService = multifactorAuthenticationService;
     }
+
+    public async Task<int> ChangeMultifactorAuthAsync(int id, bool multifactorAuth)
+        => await _usersDatabaseContext.Users.Where(x => x.Id == id)
+                                      .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MultifactorAuth, multifactorAuth));
 
     /// <summary>
     /// Checks if user with given id exists in database
@@ -172,6 +179,10 @@ public class UserService : IUserService
             return null;
         }
         if (!_passwordService.VerifyPassword(logInDto.Password, user.Password))
+        {
+            return null;
+        }
+        if (user.MultifactorAuth && (logInDto.TotpCode is null || ! _multifactorAuthenticationService.VerifyCode(user.Email, logInDto.TotpCode)))
         {
             return null;
         }
