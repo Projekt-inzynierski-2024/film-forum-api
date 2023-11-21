@@ -1,144 +1,167 @@
-﻿//using FilmForumModels.Dtos.ActorDtos;
-//using FilmForumModels.Entities;
-//using FilmForumModels.Models.Enums;
-//using FilmForumModels.Models.Exceptions;
-//using FilmForumWebAPI.Database;
-//using FilmForumWebAPI.IntegrationTests.HelpersForTests;
-//using FilmForumWebAPI.Services;
+﻿using FilmForumModels.Dtos.ActorDtos;
+using FilmForumModels.Entities;
+using FilmForumWebAPI.Database;
+using FilmForumWebAPI.IntegrationTests.HelpersForTests;
+using FilmForumWebAPI.Services;
+using FluentAssertions;
+using MongoDB.Driver;
 
-//namespace FilmForumWebAPI.IntegrationTests.Services;
+namespace FilmForumWebAPI.IntegrationTests.Services;
 
-//public class ActorServiceTests
-//{
-//    private readonly FilmsDatabaseContext _filmsDatabaseContext;
-//    private readonly ActorService _actorService;
+public class ActorServiceTests
+{
+    [Fact]
+    public async Task SearchAllAsync_ForExistingActors_ReturnsFoundActors()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService actorService = new(filmsDatabaseContext);
+        List<Actor> actors = new()
+        {
+            new Actor() { Name = "Arek", Surname = "Baran", Description = "Great actor" },
+            new Actor() { Name = "Kuba", Surname = "Baran", Description = "So great actor" },
+            new Actor() { Name = "Jan", Surname = "Baran", Description = "Amazing actor" },
+            new Actor() { Name = "Jan", Surname = "Baran", Description = "Super actor" }
+        };
+        await filmsDatabaseContext.ActorCollection.InsertManyAsync(actors);
 
-//    public ActorServiceTests()
-//    {
-//        _filmsDatabaseContext = new FilmsDatabaseContext();
-//        _actorService = new ActorService(_filmsDatabaseContext);
-//    }
+        // Act
+        List<GetActorDto> result = await actorService.SearchAllAsync("Jan");
 
-//    public static IEnumerable<object[]> GetUserRolesNamesAsyncTestsData()
-//    {
-//        yield return new object[]
-//        {
-//            1,
-//            new List<Actor>()
-//            {
-                 
-//                new() { Name = 'Jakub', Surname = 'Czura', Description = 'Programista c kratka' },
-//                new() { Name = 'Jan', Surname = 'Gil', Description = 'Docker swir'},
-//                new() { Name = 'Arkadiusz', Surname = 'Jezierski', Description = 'Wsparcie i katering'},
-//            }
-//        };
-//    }
-//    [Fact]
-//    public async Task SearchAllAsync_ReturnEmptyList()
-//    {
-//        // Arrange
-//        var nonMatchingQuery = "BrzeczyszczykiewiczGrzegorz";
+        // Assert
+        result.Should().HaveCount(2);
+    }
 
-//        // Act
-//        var result = await _actorService.SearchAllAsync(nonMatchingQuery);
+    [Fact]
+    public async Task CreateAsync_ForGivenData_CreatesActor()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService actorService = new(filmsDatabaseContext);
+        CreateActorDto createActorDto = new() { Name = "Jan", Surname = "Baran", Description = "Great actor" };
 
-//        // Assert
-//        result.Should().NotBeNull();
-//        result.Should().BeEmpty();
-//    }
-//    [Fact]
-//    public async Task CreateAsync_CreateNewActor()
-//    {
-//        // Arrange
-//        var actorDto = new CreateActorDto;
-//        var count = (await _actorService.GetAllAsync()).Count;
+        // Act
+        await actorService.CreateAsync(createActorDto);
 
-//        // Act
-//        await _actorService.CreateAsync(actorDto);
+        // Assert
+        Actor? result = await filmsDatabaseContext.ActorCollection.Find(x => x.Name == "Jan").FirstOrDefaultAsync();
+        result.Should().NotBeNull();
+    }
 
-//        // Assert
-//        var actors = await _actorService.GetAllAsync();
-//        actors.Should().HaveCount(count + 1);
-//        actors.Last().Name.Should().Be(actorDto.Name);
-//    }
-//    [Fact]
-//    public async Task SearchAllAsync_ReturnMatchingActors()
-//    {
-//        // Arrange
-//        var query = "Jan";
+    [Fact]
+    public async Task GetAllAsync_ForExistingActors_ReturnsAllActors()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService actorService = new(filmsDatabaseContext);
+        List<Actor> actors = new()
+        {
+            new(){ Name = "Jan", Surname = "Baran", Description = "Great actor" },
+            new(){ Name = "Arek", Surname = "Baran", Description = "Great actor" },
+            new(){ Name = "Jakub", Surname = "Baran", Description = "Great actor" }
+        };
+        await filmsDatabaseContext.ActorCollection.InsertManyAsync(actors);
 
-//        // Act
-//        var result = await _actorService.SearchAllAsync(query);
+        // Act
+        List<GetActorDto> result = await actorService.GetAllAsync();
 
-//        // Assert
-//        result.Should().NotBeNull();
-//        result.Should().BeAssignableTo<IEnumerable<GetActorDto>>();
-//        result.Should().OnlyContain(actor => actor.Name.ToUpper().Contains(query.ToUpper()) || actor.Surname.ToUpper().Contains(query.ToUpper()));
-//    }
+        // Assert
+        result.Should().HaveCount(3);
+    }
 
+    [Fact]
+    public async Task GetAsync_ForExistingActor_ReturnsActor()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService actorService = new(filmsDatabaseContext);
+        Actor actor = new() { Name = "Jan", Surname = "Baran", Description = "Great actor" };
+        await filmsDatabaseContext.ActorCollection.InsertOneAsync(actor);
 
-//    [Fact]
-//    public async Task GetAllAsync_ReturnAllActors()
-//    {
-//        // Act
-//        var result = await _actorService.GetAllAsync();
+        // Act
+        GetActorDto? result = await actorService.GetAsync(actor.Id);
 
-//        // Assert
-//        result.Should().NotBeNull();
-//        result.Should().BeAssignableTo<IEnumerable<GetActorDto>>();
-//        result.Should().HaveCountGreaterThan(0); 
-//    }
+        // Assert
+        result.Should().NotBeNull();
+    }
 
-//    [Fact]
-//    public async Task GetAsync_ReturnActorById()
-//    {
-//        // Arrange
-//        var actors = await _actorService.GetAllAsync();
-//        var actorId = actors.FirstOrDefault()?.Id; 
+    [Fact]
+    public async Task GetAsync_ForNotExistingActor_ReturnsNull()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService actorService = new(filmsDatabaseContext);
 
-//        // Act
-//        var result = await _actorService.GetAsync(actorId);
+        // Act
+        GetActorDto? result = await actorService.GetAsync("999999999999999999999999");
 
-//        // Assert
-//        result.Should().NotBeNull();
-//        result.Id.Should().Be(actorId);
-//    }
+        // Assert
+        result.Should().BeNull();
+    }
 
-//    [Fact]
-//    public async Task UpdateAsync_UpdateExistingActor()
-//    {
-//        // Arrange
-//        var actors = await _actorService.GetAllAsync();
-//        var actorToUpdate = actors.FirstOrDefault();
-//        var updatedActorDto = new CreateActorDto;
+    [Fact]
+    public async Task UpdateAsync_ForExistingActor_UpdatesActor()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService actorService = new(filmsDatabaseContext);
+        Actor actor = new() { Name = "Jan", Surname = "Baran", Description = "Great actor" };
+        await filmsDatabaseContext.ActorCollection.InsertOneAsync(actor);
+        CreateActorDto createActorDto = new() { Name = "NewName", Surname = "NewSurname", Description = "NewDescription" };
 
-//        // Act
-//        var result = await _actorService.UpdateAsync(actorToUpdate.Id, updatedActorDto);
+        // Act
+        ReplaceOneResult result = await actorService.UpdateAsync(actor.Id, createActorDto);
 
-//        // Assert
-//        result.Should().NotBeNull();
-//        result.IsAcknowledged.Should().BeTrue(); 
+        // Assert
+        result.ModifiedCount.Should().Be(1);
+        Actor updatedActor = await filmsDatabaseContext.ActorCollection.Find(x => x.Id == actor.Id).FirstOrDefaultAsync();
+        updatedActor.Name.Should().Be(createActorDto.Name);
+        updatedActor.Surname.Should().Be(createActorDto.Surname);
+        updatedActor.Description.Should().Be(createActorDto.Description);
+    }
 
-//        var updatedActor = await _actorService.GetAsync(actorToUpdate.Id);
-//        updatedActor.Should().NotBeNull();
-//        updatedActor.Name.Should().Be(updatedActorDto.Name);
-//    }
+    [Fact]
+    public async Task UpdateAsync_ForNotExistingActor_DoesNotUpdateActor()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService actorService = new(filmsDatabaseContext);
+        CreateActorDto createActorDto = new() { Name = "NewName", Surname = "NewSurname", Description = "NewDescription" };
 
-//    [Fact]
-//    public async Task RemoveAsync_RemoveActor()
-//    {
-//        // Arrange
-//        var actors = await _actorService.GetAllAsync();
-//        var actorToRemove = actors.FirstOrDefault();
-//        var initialCount = actors.Count;
+        // Act
+        ReplaceOneResult result = await actorService.UpdateAsync("999999999999999999999999", createActorDto);
 
-//        // Act
-//        await _actorService.RemoveAsync(actorToRemove.Id);
+        // Assert
+        result.ModifiedCount.Should().Be(0);
+    }
 
-//        // Assert
-//        var remainingActors = await _actorService.GetAllAsync();
-//        remainingActors.Should().HaveCount(initialCount - 1);
-//        remainingActors.Should().NotContain(actor => actor.Id == actorToRemove.Id);
-//    }
+    [Fact]
+    public async Task RemoveAsync_ForExistingActor_RemovesActor()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService _actorService = new(filmsDatabaseContext);
+        Actor actor = new() { Name = "Jan", Surname = "Baran", Description = "Great actor" };
+        await filmsDatabaseContext.ActorCollection.InsertOneAsync(actor);
 
-//}
+        // Act
+        DeleteResult result = await _actorService.RemoveAsync(actor.Id);
+
+        // Assert
+        result.DeletedCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RemoveAsync_ForNotExistingActor_DoesNotRemoveActor()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        ActorService _actorService = new(filmsDatabaseContext);
+
+        // Act
+        DeleteResult result = await _actorService.RemoveAsync("999999999999999999999999");
+
+        // Assert
+        result.DeletedCount.Should().Be(0);
+    }
+}
