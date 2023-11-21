@@ -26,6 +26,6 @@ public class DirectorService : IDirectorService
     public async Task<ReplaceOneResult> UpdateAsync(string id, CreateDirectorDto createDirectorDto)
         => await _directorCollection.ReplaceOneAsync(x => x.Id == id, new(id, createDirectorDto));
 
-    public async Task RemoveAsync(string id)
+    public async Task<DeleteResult> RemoveAsync(string id)
         => await _directorCollection.DeleteOneAsync(x => x.Id == id);
 }

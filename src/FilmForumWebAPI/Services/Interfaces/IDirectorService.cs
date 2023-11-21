@@ -15,5 +15,5 @@ public interface IDirectorService
 
     Task<ReplaceOneResult> UpdateAsync(string id, CreateDirectorDto createDirectorDto);
 
-    Task RemoveAsync(string id);
+    Task<DeleteResult> RemoveAsync(string id);
 }

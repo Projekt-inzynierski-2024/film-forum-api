@@ -15,5 +15,5 @@ public interface IActorService
 
     Task<ReplaceOneResult> UpdateAsync(string id, CreateActorDto createActorDto);
 
-    Task RemoveAsync(string id);
+    Task<DeleteResult> RemoveAsync(string id);
 }

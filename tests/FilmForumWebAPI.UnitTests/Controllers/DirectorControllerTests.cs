@@ -139,7 +139,7 @@ public class DirectorControllerTests
     public async Task Remove_DeletesDirector()
     {
         // Arrange
-        _directorServiceMock.Setup(x => x.RemoveAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
+        _directorServiceMock.Setup(x => x.RemoveAsync(It.IsAny<string>())).ReturnsAsync(new DeleteResult.Acknowledged(It.IsAny<int>()));
 
         // Act
         IActionResult result = await _directorController.Remove(It.IsAny<string>());

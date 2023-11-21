@@ -1,133 +1,169 @@
-﻿//using FilmForumModels.Dtos.DirectorDtos;
-//using FilmForumModels.Entities;
-//using FilmForumWebAPI.Database;
-//using FilmForumWebAPI.Services;
-//using MongoDB.Driver;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
+﻿using FilmForumModels.Dtos.DirectorDtos;
+using FilmForumModels.Entities;
+using FilmForumWebAPI.Database;
+using FilmForumWebAPI.IntegrationTests.HelpersForTests;
+using FilmForumWebAPI.Services;
+using FluentAssertions;
+using MongoDB.Driver;
 
-//namespace FilmForumWebAPI.IntegrationTests.Services;
+namespace FilmForumWebAPI.IntegrationTests.Services;
 
-//public class DirectorServiceTests
-//{
-//    public class DirectorServiceTests
-//    {
-//        private readonly DirectorService _directorService;
-//        private readonly Mock<IMongoCollection<Director>> _mockCollection = new Mock<IMongoCollection<Director>>();
+public class DirectorServiceTests
+{
+    [Fact]
+    public async Task SearchAllAsync_ForExistingDirectors_ReturnsFoundDirectors()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);
+        List<Director> directors = new()
+        {
+                new Director() { Name = "Arek", Surname = "Baran", Description = "Great director" },
+                new Director() { Name = "Kuba", Surname = "Baran", Description = "So great director" },
+                new Director() { Name = "Jan", Surname = "Baran", Description = "Amazing director" },
+                new Director() { Name = "Jan", Surname = "Baran", Description = "Super director" }
+        };
+        await filmsDatabaseContext.DirectorCollection.InsertManyAsync(directors);
 
-//        public DirectorServiceTests()
-//        {
-//            _directorService = new DirectorService(new FilmsDatabaseContext { DirectorCollection = _mockCollection.Object });
-//        }
+        // Act
+        List<GetDirectorDto> result = await _directorService.SearchAllAsync("Jan");
 
-//        [Fact]
-//        public async Task SearchAllAsync_ReturnMatchingDirectors()
-//        {
-//            // Arrange
-//            var query = "Kuba";
-//            var directors = new List<Director>
-//            {
-//                new Director { Name = "Arek", Surname = "Czura", description = "Wspanialy rezyser" },
-//                new Director { Name = "Kuba", Surname = "Baran", description = "Mniej wspanialy rezyser" }
-//            };
+        // Assert
+        result.Should().HaveCount(2);
+    }
 
-//            // Act
-//            var result = await _directorService.SearchAllAsync(query);
+    [Fact]
+    public async Task CreateAsync_ForGivenData_CreatesDirector()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);
+        CreateDirectorDto createDirectorDto = new() { Name = "Arek", Surname = "Baran", Description = "Great director" };
 
-//            // Assert
-//            Assert.NotNull(result);
-//            Assert.NotEmpty(result);
-//            Assert.Equal(2, result.Count); 
-//        }
+        // Act
+        await _directorService.CreateAsync(createDirectorDto);
 
-//        [Fact]
-//        public async Task GetAsync_ReturnsSpecyfiDirectorDto()
-//        {
-//            // Arrange
-//            var directorId = 1;
-//            var director = new Director { Id = directorId, Name = "John", Surname = "Doe" };
-//            _mockCollection.Setup(collection => collection.Find(It.IsAny<FilterDefinition<Director>>(), null, default)).Returns(new FakeFindFluent<Director>(new List<Director> { director }));
+        // Assert
+        Director? result = await filmsDatabaseContext.DirectorCollection.Find(x => x.Name == "Arek").FirstOrDefaultAsync();
+        result.Should().NotBeNull();
+    }
 
-//            // Act
-//            var result = await _directorService.GetAsync(directorId);
+    [Fact]
+    public async Task GetAllAsync_ForExistingDirectors_ReturnsAllDirectors()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);
+        List<Director> directors = new()
+        {
+            new Director() { Name = "Arek", Surname = "Baran", Description = "Great director" },
+            new Director() { Name = "Kuba", Surname = "Baran", Description = "So great director" },
+            new Director() { Name = "Jan", Surname = "Baran", Description = "Amazing director" },
+            new Director() { Name = "Jan", Surname = "Baran", Description = "Super director" }
+        };
+        await filmsDatabaseContext.DirectorCollection.InsertManyAsync(directors);
 
-//            // Assert
-//            Assert.NotNull(result);
-//            Assert.Equal(directorId, result.Id);
-//        }
+        // Act
+        List<GetDirectorDto> result = await _directorService.GetAllAsync();
 
-//        [Fact]
-//        public async Task CreateAsync_InsertNewDirector()
-//        {
-//            // Arrange
-//            var createDirectorDto = new CreateDirectorDto { Name = "Kuba", Surname = "Polak", description = "Rezyser komediowy" };
-//            _mockCollection.Setup(collection => collection.InsertOneAsync(It.IsAny<Director>(), null, default)).Returns(Task.CompletedTask);
+        // Assert
+        result.Should().HaveCount(4);
+    }
 
-//            // Act
-//            await _directorService.CreateAsync(createDirectorDto);
+    [Fact]
+    public async Task GetAsync_ForExistingDirector_ReturnsDirector()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);
+        Director director = new() { Name = "Arek", Surname = "Baran", Description = "Great director" };
+        await filmsDatabaseContext.DirectorCollection.InsertOneAsync(director);
 
-//            // Assert
-//            _mockCollection.Verify(collection => collection.InsertOneAsync(It.IsAny<Director>(), null, default), Times.Once);
-//        }
+        // Act
+        GetDirectorDto? result = await _directorService.GetAsync(director.Id);
 
-//        [Fact]
-//        public async Task UpdateAsync_ReturnReplaceOneResult()
-//        {
-//            // Arrange
-//            var directorId = 1;
-//            var createDirectorDto = new CreateDirectorDto { Name = "Test", Surname = "Testowski", description = "Rezyser testogedonu" };
-//            var replaceOneResult = new ReplaceOneResult.Acknowledged(1, 1, directorId);
-//            _mockCollection.Setup(collection => collection.ReplaceOneAsync(It.IsAny<FilterDefinition<Director>>(), It.IsAny<Director>(), null, default)).ReturnsAsync(replaceOneResult);
+        // Assert
+        result.Should().NotBeNull();
+    }
 
-//            // Act
-//            var result = await _directorService.UpdateAsync(directorId, createDirectorDto);
+    [Fact]
+    public async Task GetAsync_ForNotExistingDirector_DoesNotReturnDirector()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);
 
-//            // Assert
-//            Assert.NotNull(result);
-//            Assert.Equal(replaceOneResult, result);
-//        }
+        // Act
+        GetDirectorDto? result = await _directorService.GetAsync("999999999999999999999999");
 
-//        [Fact]
-//        public async Task UpdateAsync_ReturnNotModified()
-//        {
-//            // Arrange
-//            var DirectorId = 234441;
-//            var createDirectorDto = new CreateDirectorDto { Name = "Imie", Surname = "Nazwisko", description = "Rezyser"};
-//            var replaceOneResult = new ReplaceOneResult.Acknowledged(0, 0, DirectorId);
-//            _mockCollection.Setup(collection => collection.ReplaceOneAsync(It.IsAny<FilterDefinition<Director>>(), It.IsAny<Director>(), null, default)).ReturnsAsync(replaceOneResult);
+        // Assert
+        result.Should().BeNull();
+    }
 
-//            // Act
-//            var result = await _directorService.UpdateAsync(DirectorId, createDirectorDto);
+    [Fact]
+    public async Task UpdateAsync_ForExistingDirector_UpdatesDirector()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);
+        Director director = new() { Name = "Arek", Surname = "Baran", Description = "Great director" };
+        await filmsDatabaseContext.DirectorCollection.InsertOneAsync(director);
+        CreateDirectorDto createDirectorDto = new() { Name = "Kuba", Surname = "Baran", Description = "So great director" };
 
-//            // Assert
-//            Assert.NotNull(result);
-//            Assert.Equal(replaceOneResult, result);
-//        }
+        // Act
+        ReplaceOneResult result = await _directorService.UpdateAsync(director.Id, createDirectorDto);
 
-//        [Fact]
-//        public async Task RemoveAsync_DeleteOnoDirector()
-//        {
-//            // Arrange
-//            var directorId = 1;
-//            _mockCollection.Setup(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<Director>>(), default)).Returns(Task.CompletedTask);
+        // Assert
+        result.ModifiedCount.Should().Be(1);
+        Director updatedDirector = await filmsDatabaseContext.DirectorCollection.Find(x => x.Id == director.Id).FirstOrDefaultAsync();
+        updatedDirector.Name.Should().Be(createDirectorDto.Name);
+        updatedDirector.Surname.Should().Be(createDirectorDto.Surname);
+        updatedDirector.Description.Should().Be(createDirectorDto.Description);
+    }
 
-//            // Act
-//            await _directorService.RemoveAsync(directorId);
 
-//            // Assert
-//            _mockCollection.Verify(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<Director>>(), default), Times.Once);
-//        }
+    [Fact]
+    public async Task UpdateAsync_ForNotExistingDirector_DoesNotUpdateDirector()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);      
+        CreateDirectorDto createDirectorDto = new() { Name = "Kuba", Surname = "Baran", Description = "So great director" };
 
-//        [Fact]
-//        public async Task RemoveAsync_DeleteNonExistingDircetor()
-//        {
-//            // Arrange
-//            var nonExistingDirectorId = 3211;
-//            _mockCollection.Setup(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<Director>>(), default)).Returns(Task.CompletedTask);
+        // Act
+        ReplaceOneResult result = await _directorService.UpdateAsync("999999999999999999999999", createDirectorDto);
 
-//            // Act  // Assert
-//            await _directorService.RemoveAsync(nonExistingDirectorId);
-//        }
-//    }
-//}
+        // Assert
+        result.ModifiedCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task RemoveAsync_ForExistingDirector_RemovesDirector()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);
+        Director director = new() { Name = "Arek", Surname = "Baran", Description = "Great director" };
+        await filmsDatabaseContext.DirectorCollection.InsertOneAsync(director);
+
+        // Act
+        DeleteResult result = await _directorService.RemoveAsync(director.Id);
+
+        // Assert
+        result.DeletedCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RemoveAsync_ForNotExistingDirector_DoesNotRemoveDirector()
+    {
+        // Arrange
+        FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
+        DirectorService _directorService = new(filmsDatabaseContext);
+
+        // Act
+        DeleteResult result = await _directorService.RemoveAsync("999999999999999999999999");
+
+        // Assert
+        result.DeletedCount.Should().Be(0);
+    }
+}

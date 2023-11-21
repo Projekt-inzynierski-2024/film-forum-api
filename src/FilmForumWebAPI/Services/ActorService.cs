@@ -26,6 +26,6 @@ public class ActorService : IActorService
     public async Task<ReplaceOneResult> UpdateAsync(string id, CreateActorDto createActorDto)
         => await _actorCollection.ReplaceOneAsync(x => x.Id == id, new(id, createActorDto));
 
-    public async Task RemoveAsync(string id)
+    public async Task<DeleteResult> RemoveAsync(string id)
         => await _actorCollection.DeleteOneAsync(x => x.Id == id);
 }

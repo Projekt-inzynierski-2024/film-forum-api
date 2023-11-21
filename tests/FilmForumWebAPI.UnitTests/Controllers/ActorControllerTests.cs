@@ -3,6 +3,7 @@ using FilmForumWebAPI.Controllers;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MongoDB.Driver;
 using Moq;
 
@@ -138,7 +139,7 @@ public class ActorControllerTests
     public async Task Remove_DeletesActor()
     {
         // Arrange
-        _actorServiceMock.Setup(x => x.RemoveAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
+        _actorServiceMock.Setup(x => x.RemoveAsync(It.IsAny<string>())).ReturnsAsync(new DeleteResult.Acknowledged(It.IsAny<int>()));
 
         // Act
         IActionResult result = await _actorController.Remove(It.IsAny<string>());

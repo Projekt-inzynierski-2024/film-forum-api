@@ -200,7 +200,7 @@ public class EpisodeControllerTests
     public async Task Remove_DeletesEpisode()
     {
         // Arrange
-        _episodeServiceMock.Setup(x => x.RemoveAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
+        _episodeServiceMock.Setup(x => x.RemoveAsync(It.IsAny<string>())).ReturnsAsync(new DeleteResult.Acknowledged(It.IsAny<int>()));
 
         // Act
         IActionResult result = await _episodeController.Remove(It.IsAny<string>());
