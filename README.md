@@ -31,3 +31,18 @@ It delivers full back-end API that can be combined with any front-end architectu
 * xunit.runner.visualstudio 2.6.1
 
 Thanks for all authors of these helpful packages.
+
+## Architecture
+The application has been developed using layer architecture.
+I have put the whole WebAPI into film-forum-api solution and divided it into src and tests directories.
+![obraz](https://github.com/Projekt-inzynierski-2024/film-forum-api/assets/76125047/e69ade12-6ee7-46dd-b227-60f1adc616ec)
+
+
+
+
+
+
+
+
+
+
