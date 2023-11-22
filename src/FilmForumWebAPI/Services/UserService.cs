@@ -182,7 +182,7 @@ public class UserService : IUserService
         {
             return null;
         }
-        if (user.MultifactorAuth && (logInDto.TotpCode is null || ! _multifactorAuthenticationService.VerifyCode(user.Email, logInDto.TotpCode)))
+        if (user.MultifactorAuth && (logInDto.TotpCode is null || ! await _multifactorAuthenticationService.VerifyCodeAsync(user.Email, logInDto.TotpCode)))
         {
             return null;
         }

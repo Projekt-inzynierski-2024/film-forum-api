@@ -2,7 +2,7 @@
 
 public interface IMultifactorAuthenticationService
 {
-    bool VerifyCode(string email, string code);
-    string GenerateUri(string email);
-    byte[] GenerateQRCodePNG(string text);
+    Task<bool> VerifyCodeAsync(string email, string code);
+    Task<string> GenerateUriAsync(string email);
+    Task<byte[]> GenerateQRCodePNGAsync(string text);
 }

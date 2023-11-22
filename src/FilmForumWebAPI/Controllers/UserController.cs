@@ -270,7 +270,7 @@ public class UserController : ControllerBase
             return Unauthorized();
         }
 
-        string uri = _multifactorAuthenticationService.GenerateUri(userDto.Email);
+        string uri = await _multifactorAuthenticationService.GenerateUriAsync(userDto.Email);
         return Ok(uri);
     }
 
@@ -286,8 +286,8 @@ public class UserController : ControllerBase
             return Unauthorized();
         }
 
-        string uri = _multifactorAuthenticationService.GenerateUri(userDto.Email);
-        byte[] qrCode = _multifactorAuthenticationService.GenerateQRCodePNG(uri);
+        string uri = await _multifactorAuthenticationService.GenerateUriAsync(userDto.Email);
+        byte[] qrCode = await _multifactorAuthenticationService.GenerateQRCodePNGAsync(uri);
 
         return File(qrCode, "image/png");
     }
@@ -304,7 +304,7 @@ public class UserController : ControllerBase
             return Unauthorized();
         }
         
-        bool verify = _multifactorAuthenticationService.VerifyCode(userDto.Email, code);
+        bool verify = await _multifactorAuthenticationService.VerifyCodeAsync(userDto.Email, code);
 
         if (!verify) {
             return BadRequest("Wrong code");
