@@ -6,6 +6,7 @@ It delivers full back-end API that can be combined with any front-end architectu
 ## Main technologies and packages
 * .NET 7 and C# 11
 * BCrypt.Net-Next 4.0.3
+* coverlet.collector 6.0.0
 * Fluent Assertions 6.12.0
 * Fluent Validation.AspNetCore 11.3.0
 * MailKit 4.2.0
@@ -28,3 +29,5 @@ It delivers full back-end API that can be combined with any front-end architectu
 * System.IdentityModel.Tokens.Jwt 7.0.3
 * xunit 2.6.1
 * xunit.runner.visualstudio 2.6.1
+
+Thanks for all authors of these helpful packages.
