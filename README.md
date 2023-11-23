@@ -70,6 +70,7 @@ If you have working databases you can use the WebAPI.
 * Run the FilmForumWebAPI.
 
 That's all! Have fun!
+Swagger should run automatically. You can also use helpful applications like Postman to test endpoints.
 
 
 
