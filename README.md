@@ -58,6 +58,19 @@ I decided to put some features into libraries to make code more readable and eas
 * FilmForumWebAPI.UnitTests - testing behaviour of controllers and some helpful features included in WebAPI.
 * PasswordManager.UnitTests - testing hashing, verifying of users' password and creating token to reset lost password.
 
+## Launching the application
+At first you need to prepare databases. 
+* Check this repository and follow the instructions to run databases using Docker: https://github.com/Projekt-inzynierski-2024/film-forum-db 
+
+If you have working databases you can use the WebAPI.
+* Clone this repository.
+* Run container with databases from previous step.
+* Open film-forum-api.sln (Visual Studio is recommended solution).
+* Choose FilmForumWebAPI as startup project.
+* Run the FilmForumWebAPI.
+
+That's all! Have fun!
+
 
 
 
