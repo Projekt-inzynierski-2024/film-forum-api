@@ -1,7 +1,8 @@
 # FilmForumWebAPI
 
-## C# WebAPI to create a film forum. 
-It delivers full back-end API that can be combined with any front-end architecture.
+## C# WebAPI to create a film forum
+It delivers full back-end API that can be combined with any front-end architecture like React.
+The project was created to graduate IT studies and get engineer's degree.
 
 ## Main technologies and packages
 * .NET 7 and C# 11
