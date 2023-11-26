@@ -294,7 +294,7 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpPost("2fa")]
-    public async Task<IActionResult> SetMultifactorAuthentication([FromBody] string code)
+    public async Task<IActionResult> SetMultifactorAuthentication([FromBody] ChangeMultifactorAuthenticationDto changeMultifactorAuthenticationDto)
     {
         int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
         GetUserDto? userDto = await _userService.GetAsync(id);
@@ -304,13 +304,13 @@ public class UserController : ControllerBase
             return Unauthorized();
         }
         
-        bool verify = await _multifactorAuthenticationService.VerifyCodeAsync(userDto.Email, code);
+        bool verify = await _multifactorAuthenticationService.VerifyCodeAsync(userDto.Email, changeMultifactorAuthenticationDto.TotpCode);
 
         if (!verify) {
             return BadRequest("Wrong code");
         }
 
-        await _userService.ChangeMultifactorAuthAsync(id, true);
+        await _userService.ChangeMultifactorAuthAsync(id, changeMultifactorAuthenticationDto.MultifactorAuthentication);
         return Ok();
     }
 
