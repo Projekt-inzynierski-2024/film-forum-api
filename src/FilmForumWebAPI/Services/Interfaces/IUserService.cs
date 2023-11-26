@@ -14,6 +14,8 @@ public interface IUserService
 
     Task<bool> UserWithEmailExistsAsync(string email);
 
+    Task<bool> UserWithEmailAndMultifactorAuthOnExistsAsync(string email);
+
     Task<List<GetUserDto>> GetAllAsync();
 
     Task<GetUserDto?> GetAsync(int id);
