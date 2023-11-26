@@ -251,7 +251,7 @@ public class UserController : ControllerBase
         if (!validateResetPasswordTokenResult.IsValid)
         {
             bool user2faAuth = await _userService.UserWithEmailAndMultifactorAuthOnExistsAsync(resetPasswordDto.Email);
-            if (user2faAuth && !await _multifactorAuthenticationService.VerifyCodeAsync(resetPasswordDto.Email, resetPasswordDto.ResetPasswordToken))
+            if (!user2faAuth || !await _multifactorAuthenticationService.VerifyCodeAsync(resetPasswordDto.Email, resetPasswordDto.ResetPasswordToken))
             {
                 return BadRequest(validateResetPasswordTokenResult.Message);
             }
