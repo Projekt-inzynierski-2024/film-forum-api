@@ -36,6 +36,7 @@ public class UserController : ControllerBase
     private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
     private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
     private readonly IValidator<CreateAdminDto> _createAdminValidator;
+    private readonly IMultifactorAuthenticationService _multifactorAuthenticationService;
 
     public UserController(ILogger<UserController> logger,
                           IUserService userService,
@@ -49,7 +50,8 @@ public class UserController : ControllerBase
                           IValidator<CreateUserDto> createUserValidator,
                           IValidator<ResetPasswordDto> resetPasswordValidator,
                           IValidator<ChangePasswordDto> changePasswordValidator,
-                          IValidator<CreateAdminDto> createAdminValidator)
+                          IValidator<CreateAdminDto> createAdminValidator,
+                          IMultifactorAuthenticationService multifactorAuthenticationService)
     {
         _logger = logger;
         _userService = userService;
@@ -64,6 +66,7 @@ public class UserController : ControllerBase
         _userDiagnosticsService = userDiagnosticsService;
         _adminDetails = adminDetails.Value;
         _createAdminValidator = createAdminValidator;
+        _multifactorAuthenticationService = multifactorAuthenticationService;
     }
 
     [HttpPost("/register-admin")]
@@ -247,12 +250,72 @@ public class UserController : ControllerBase
         ValidateResetPasswordTokenResult validateResetPasswordTokenResult = await _userService.ValidateResetPasswordTokenAsync(resetPasswordDto.ResetPasswordToken);
         if (!validateResetPasswordTokenResult.IsValid)
         {
-            return BadRequest(validateResetPasswordTokenResult.Message);
+            bool user2faAuth = await _userService.UserWithEmailAndMultifactorAuthOnExistsAsync(resetPasswordDto.Email);
+            if (!user2faAuth || !await _multifactorAuthenticationService.VerifyCodeAsync(resetPasswordDto.Email, resetPasswordDto.ResetPasswordToken))
+            {
+                return BadRequest(validateResetPasswordTokenResult.Message);
+            }
         }
 
         await _userService.ResetPasswordAsync(resetPasswordDto);
 
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpGet("2fa")]
+    public async Task<IActionResult> Get2faUri()
+    {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
+        GetUserDto? userDto = await _userService.GetAsync(id);
+
+        if (userDto is null)
+        {
+            return Unauthorized();
+        }
+
+        string uri = await _multifactorAuthenticationService.GenerateUriAsync(userDto.Email);
+        return Ok(uri);
+    }
+
+    [Authorize]
+    [HttpGet("2fa/png")]
+    public async Task<IActionResult> Get2faPng()
+    {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
+        GetUserDto? userDto = await _userService.GetAsync(id);
+
+        if (userDto is null)
+        {
+            return Unauthorized();
+        }
+
+        string uri = await _multifactorAuthenticationService.GenerateUriAsync(userDto.Email);
+        byte[] qrCode = await _multifactorAuthenticationService.GenerateQRCodePNGAsync(uri);
+
+        return File(qrCode, "image/png");
+    }
+
+    [Authorize]
+    [HttpPost("2fa")]
+    public async Task<IActionResult> SetMultifactorAuthentication([FromBody] ChangeMultifactorAuthenticationDto changeMultifactorAuthenticationDto)
+    {
+        int id = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value!);
+        GetUserDto? userDto = await _userService.GetAsync(id);
+
+        if (userDto is null)
+        {
+            return Unauthorized();
+        }
+        
+        bool verify = await _multifactorAuthenticationService.VerifyCodeAsync(userDto.Email, changeMultifactorAuthenticationDto.TotpCode);
+
+        if (!verify) {
+            return BadRequest("Wrong code");
+        }
+
+        await _userService.ChangeMultifactorAuthAsync(id, changeMultifactorAuthenticationDto.MultifactorAuthentication);
+        return Ok();
     }
 
     [Authorize(Roles = "Admin")]

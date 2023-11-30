@@ -20,19 +20,26 @@ public class UserService : IUserService
     private readonly IJwtService _jwtService;
     private readonly JwtDetails _jwtDetails;
     private readonly IRoleService _rolesService;
+    private readonly IMultifactorAuthenticationService _multifactorAuthenticationService;
 
     public UserService(UsersDatabaseContext usersDatabaseContext,
                        IPasswordService passwordService,
                        IJwtService jwtService,
                        IOptions<JwtDetails> jwtDetails,
-                       IRoleService rolesService)
+                       IRoleService rolesService,
+                       IMultifactorAuthenticationService multifactorAuthenticationService)
     {
         _usersDatabaseContext = usersDatabaseContext;
         _passwordService = passwordService;
         _jwtService = jwtService;
         _jwtDetails = jwtDetails.Value;
         _rolesService = rolesService;
+        _multifactorAuthenticationService = multifactorAuthenticationService;
     }
+
+    public async Task<int> ChangeMultifactorAuthAsync(int id, bool multifactorAuth)
+        => await _usersDatabaseContext.Users.Where(x => x.Id == id)
+                                      .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MultifactorAuth, multifactorAuth));
 
     /// <summary>
     /// Checks if user with given id exists in database
@@ -57,6 +64,15 @@ public class UserService : IUserService
     /// <returns>True if user exists in database, otherwise false</returns>
     public async Task<bool> UserWithEmailExistsAsync(string email)
         => await _usersDatabaseContext.Users.AsNoTracking().AnyAsync(user => user.Email == email);
+
+    /// <summary>
+    /// Checks if user with given email has mutlifactor auth on
+    /// </summary>
+    /// <param name="email">User's email</param>
+    /// <returns>True if user exists in database and has multifactor auth on, otherwise false</returns>
+    public async Task<bool> UserWithEmailAndMultifactorAuthOnExistsAsync(string email)
+        => await _usersDatabaseContext.Users.AsNoTracking().AnyAsync(user => user.Email == email && user.MultifactorAuth);
+
 
     /// <summary>
     /// Gets all users from database
@@ -172,6 +188,10 @@ public class UserService : IUserService
             return null;
         }
         if (!_passwordService.VerifyPassword(logInDto.Password, user.Password))
+        {
+            return null;
+        }
+        if (user.MultifactorAuth && (logInDto.TotpCode is null || ! await _multifactorAuthenticationService.VerifyCodeAsync(user.Email, logInDto.TotpCode)))
         {
             return null;
         }

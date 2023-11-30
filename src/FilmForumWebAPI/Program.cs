@@ -73,6 +73,7 @@ public class Program
         builder.Services.AddScoped<IRoleService, RoleService>();
         builder.Services.AddScoped<IUserDiagnosticsService, UserDiagnosticsService>();
         builder.Services.AddScoped<IRequestLogService, RequestLogService>();
+        builder.Services.AddScoped<IMultifactorAuthenticationService, MultifactorAuthenticationService>();
         builder.Services.AddEmailSender();
 
         #endregion Services

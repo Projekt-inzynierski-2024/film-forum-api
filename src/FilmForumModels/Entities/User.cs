@@ -16,6 +16,9 @@ public class User : BaseMsSqlDatabaseEntity
     [Required, Column("password")]
     public string Password { get; set; } = string.Empty;
 
+    [Column("2fa")]
+    public bool MultifactorAuth { get; set; } = false;
+
     [Column("recover_password_token")]
     public string? RecoverPasswordToken { get; set; } = null;
 

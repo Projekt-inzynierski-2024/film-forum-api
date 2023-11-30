@@ -11,4 +11,6 @@ public class LogInDto
     [Required]
     [MaxLength(50)]
     public string Password { get; set; } = string.Empty;
+
+    public string? TotpCode { get; set; } = null;
 }
