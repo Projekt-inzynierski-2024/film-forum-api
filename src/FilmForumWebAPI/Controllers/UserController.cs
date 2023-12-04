@@ -307,10 +307,11 @@ public class UserController : ControllerBase
         {
             return Unauthorized();
         }
-        
+
         bool verify = await _multifactorAuthenticationService.VerifyCodeAsync(userDto.Email, changeMultifactorAuthenticationDto.TotpCode);
 
-        if (!verify) {
+        if (!verify)
+        {
             return BadRequest("Wrong code");
         }
 

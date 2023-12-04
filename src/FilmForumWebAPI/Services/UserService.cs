@@ -37,6 +37,12 @@ public class UserService : IUserService
         _multifactorAuthenticationService = multifactorAuthenticationService;
     }
 
+    /// <summary>
+    /// Changes information if user has multifactor auth on or off
+    /// </summary>
+    /// <param name="id">User's id</param>
+    /// <param name="multifactorAuth">True if user uses multifactor auth otherwise false</param>
+    /// <returns>The total number of rows updated in the database</returns>
     public async Task<int> ChangeMultifactorAuthAsync(int id, bool multifactorAuth)
         => await _usersDatabaseContext.Users.Where(x => x.Id == id)
                                       .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MultifactorAuth, multifactorAuth));

@@ -28,11 +28,11 @@ public class Program
 
         #region Configuration
 
-        builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection("FilmForumMongoDatabase"));
-        builder.Services.Configure<JwtDetails>(builder.Configuration.GetSection("JwtDetails"));
-        builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
-        builder.Services.Configure<EmailSenderDetails>(builder.Configuration.GetSection("EmailSenderDetails"));
-        builder.Services.Configure<AdminDetails>(builder.Configuration.GetSection("AdminDetails"));
+        builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection(FilmForumMongoDatabaseSettings.SectionKey));
+        builder.Services.Configure<JwtDetails>(builder.Configuration.GetSection(JwtDetails.SectionKey));
+        builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection(SmtpSettings.SectionKey));
+        builder.Services.Configure<EmailSenderDetails>(builder.Configuration.GetSection(EmailSenderDetails.SectionKey));
+        builder.Services.Configure<AdminDetails>(builder.Configuration.GetSection(AdminDetails.SectionKey));
 
         #endregion Configuration
 
@@ -56,7 +56,7 @@ public class Program
 
         #region Database
 
-        builder.Services.AddDbContext<UsersDatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UsersDbConnection")));
+        builder.Services.AddDbContext<UsersDatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString(UsersDatabaseContext.ConnectionStringKey)));
         builder.Services.AddScoped<FilmsDatabaseContext>();
 
         #endregion Database
@@ -119,7 +119,7 @@ public class Program
         });
 
         builder.Services.AddAuthorization();
-        builder.Services.AddAuthenticationManager(builder.Configuration.GetSection("JwtDetails").Get<JwtDetails>()!);
+        builder.Services.AddAuthenticationManager(builder.Configuration.GetSection(JwtDetails.SectionKey).Get<JwtDetails>()!);
 
         WebApplication app = builder.Build();
 

@@ -5,6 +5,8 @@ namespace FilmForumWebAPI.Database;
 
 public class UsersDatabaseContext : DbContext
 {
+    public static string ConnectionStringKey { get; } = "UsersDbConnection";
+
     public UsersDatabaseContext(DbContextOptions<UsersDatabaseContext> options) : base(options)
     {
     }
