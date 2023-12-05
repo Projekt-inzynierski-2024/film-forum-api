@@ -45,7 +45,7 @@ public class UserService : IUserService
     /// <returns>The total number of rows updated in the database</returns>
     public async Task<int> ChangeMultifactorAuthAsync(int id, bool multifactorAuth)
         => await _usersDatabaseContext.Users.Where(x => x.Id == id)
-                                      .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MultifactorAuth, multifactorAuth));
+                                            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.MultifactorAuth, multifactorAuth));
 
     /// <summary>
     /// Checks if user with given id exists in database

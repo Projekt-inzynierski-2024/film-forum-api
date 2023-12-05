@@ -16,13 +16,34 @@ namespace FilmForumWebAPI.IntegrationTests.Services;
 public class UserServiceTests
 {
     [Theory]
+    [InlineData(1, true, 1)]
+    [InlineData(1, false, 1)]
+    [InlineData(999999, false, 0)]
+    [InlineData(999999, true, 0)]
+    public async Task ChangeMultifactorAuthAsync_ForGivenId_ChangesMultifactorAuthIfUserExists(int userId, bool multifactorAuth, int expected)
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
+        await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
+        await usersDatabaseContext.SaveChangesAsync();
+
+        //Act
+        int result = await userService.ChangeMultifactorAuthAsync(userId, multifactorAuth);
+
+        //Assert
+        result.Should().Be(expected);
+    }
+        
+
+    [Theory]
     [InlineData(1, true)]
     [InlineData(999999, false)]
     public async Task UserWithIdExistsAsync_ForGivenId_ReturnsTrueIfUserExistsOtherwiseFalse(int userId, bool expected)
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.SaveChangesAsync();
 
@@ -40,7 +61,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.SaveChangesAsync();
 
@@ -58,7 +79,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dasd321D!@#@!#a", Email = "test@test.com", Username = "name" });
         await usersDatabaseContext.SaveChangesAsync();
 
@@ -74,7 +95,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "pdsade23#!@!DA2", Email = "ememail@da.pl", Username = "nickanem1232" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dadada2#!@#@DAas", Email = "e2m@email.pl", Username = "name" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "em1@emailtest.pl", Username = "name12" });
@@ -92,7 +113,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "pdsade23#!@!DA2", Email = "ememail@da.pl", Username = "nickanem1232" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dadada2#!@#@DAas", Email = "e2m@email.pl", Username = "name" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "em1@emailtest.pl", Username = "name12" });
@@ -110,7 +131,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "pdsade23#!@!DA2", Email = "ememail@da.pl", Username = "nickanem1232" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "dadada2#!@#@DAas", Email = "e2m@email.pl", Username = "name" });
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "em1@emailtest.pl", Username = "name12" });
@@ -130,7 +151,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "email@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
 
@@ -148,7 +169,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
 
@@ -166,7 +187,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
 
@@ -184,7 +205,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
 
@@ -207,7 +228,7 @@ public class UserServiceTests
             Audience = "TestAudience",
             LifetimeInMinutes = 60
         };
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(jwtDetails), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(jwtDetails), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         CreateUserDto createUserDto = new("username", "email@email.com", "Password123!", "Password123!");
 
         //Act
@@ -225,7 +246,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         CreateUserDto createUserDto = new("username", "email@email.com", "Password123!", "Password123!");
 
         //Act
@@ -242,7 +263,7 @@ public class UserServiceTests
     {
         //Arrange
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
-        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = "da@#!@#a", Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
 
@@ -267,7 +288,7 @@ public class UserServiceTests
             Audience = "TestAudience",
             LifetimeInMinutes = 60
         };
-        UserService userService = new(usersDatabaseContext, passwordService, new JwtService(), Options.Create(jwtDetails), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, passwordService, new JwtService(), Options.Create(jwtDetails), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = password, Email = "emailtest@emailtest.pl", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
         LogInDto logInDto = new() { Email = "emailtest@emailtest.pl", Password = "Password123!" };
@@ -291,7 +312,7 @@ public class UserServiceTests
         UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
         PasswordService passwordService = new();
         string hashedPassword = passwordService.HashPassword("Password123!");
-        UserService userService = new(usersDatabaseContext, passwordService, new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext));
+        UserService userService = new(usersDatabaseContext, passwordService, new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
         await usersDatabaseContext.Users.AddAsync(new User() { Password = hashedPassword, Email = "user@email.com", Username = "name12" });
         await usersDatabaseContext.SaveChangesAsync();
         LogInDto logInDto = new() { Email = email, Password = password };

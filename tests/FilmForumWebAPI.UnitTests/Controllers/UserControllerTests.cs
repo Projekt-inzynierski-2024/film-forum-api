@@ -37,6 +37,7 @@ public class UserControllerTests
     private readonly Mock<IValidator<ResetPasswordDto>> _resetPasswordDtoValidatorMock = new();
     private readonly Mock<IValidator<ChangePasswordDto>> _changePasswordDtoValidatorMock = new();
     private readonly Mock<IValidator<CreateAdminDto>> _createAdminDtoValidatorMock = new();
+    private readonly Mock<IMultifactorAuthenticationService> _multifactorAuthenticationService = new();
 
     public UserControllerTests() => _userController = new(_loggerMock.Object,
                               _userServiceMock.Object,
@@ -50,7 +51,8 @@ public class UserControllerTests
                               _createUserDtoValidatorMock.Object,
                               _resetPasswordDtoValidatorMock.Object,
                               _changePasswordDtoValidatorMock.Object,
-                              _createAdminDtoValidatorMock.Object);
+                              _createAdminDtoValidatorMock.Object,
+                              _multifactorAuthenticationService.Object);
 
     [Fact]
     public async Task RegisterAdmin_ForValidData_CreatesAdmin()
