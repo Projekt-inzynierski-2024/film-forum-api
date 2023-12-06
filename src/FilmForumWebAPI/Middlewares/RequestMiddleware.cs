@@ -31,7 +31,7 @@ public class RequestMiddleware
             {
                 CreateRequestLogDto createRequestLogDto = new(int.Parse(userId),
                                                               httpContext.Request.Path,
-                                                              httpContext.Request.HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+                                                              string.Empty, // we stopped logging user's IP due to privacy concerns
                                                               httpContext.Request.Method,
                                                               httpContext.Response.StatusCode);
 
