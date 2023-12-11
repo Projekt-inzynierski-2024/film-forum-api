@@ -141,7 +141,7 @@ public class RequestLogServiceTests
             new(){ UserId = 1, RequestPath = "api/user", IpAddress = "192.168.2.21", HttpMethod = "GET", StatusCode = 200}
         });
         await usersDatabaseContext.SaveChangesAsync();
-       
+
         //Act
         int result = await requestLogService.RemoveUserRequestsLogsAsync(1);
 

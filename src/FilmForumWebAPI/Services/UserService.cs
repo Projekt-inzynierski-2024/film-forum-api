@@ -2,6 +2,7 @@
 using FilmForumModels.Dtos.UserDtos;
 using FilmForumModels.Entities;
 using FilmForumModels.Models.Enums;
+using FilmForumModels.Models.Exceptions;
 using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Database;
@@ -9,7 +10,6 @@ using FilmForumWebAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PasswordManager.Interfaces;
-using FilmForumModels.Models.Exceptions;
 
 namespace FilmForumWebAPI.Services;
 
@@ -196,7 +196,7 @@ public class UserService : IUserService
         {
             return null;
         }
-        if (user.MultifactorAuth && (logInDto.TotpCode is null || ! await _multifactorAuthenticationService.VerifyCodeAsync(user.Email, logInDto.TotpCode)))
+        if (user.MultifactorAuth && (logInDto.TotpCode is null || !await _multifactorAuthenticationService.VerifyCodeAsync(user.Email, logInDto.TotpCode)))
         {
             return null;
         }

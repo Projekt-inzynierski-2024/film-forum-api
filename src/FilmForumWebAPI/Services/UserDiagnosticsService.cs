@@ -34,9 +34,8 @@ public class UserDiagnosticsService : IUserDiagnosticsService
     public async Task<int> UpdateLastFailedSignInAsync(string userEmail)
         => await _usersDatabaseContext.Users.FirstOrDefaultAsync(user => user.Email == userEmail) is User user
            ? await _usersDatabaseContext.UserDiagnostics.Where(x => x.UserId == user.Id)
-                                                        .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastFailedSignIn, DateTime.UtcNow)) 
+                                                        .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastFailedSignIn, DateTime.UtcNow))
            : 0;
-    
 
     /// <summary>
     /// Updates user's last successfull sign in date

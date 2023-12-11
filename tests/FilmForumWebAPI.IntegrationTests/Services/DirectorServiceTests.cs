@@ -121,13 +121,12 @@ public class DirectorServiceTests
         updatedDirector.Description.Should().Be(createDirectorDto.Description);
     }
 
-
     [Fact]
     public async Task UpdateAsync_ForNotExistingDirector_DoesNotUpdateDirector()
     {
         // Arrange
         FilmsDatabaseContext filmsDatabaseContext = await DatabaseHelper.CreateAndPrepareFilmsDatabaseContextForTestingAsync();
-        DirectorService _directorService = new(filmsDatabaseContext);      
+        DirectorService _directorService = new(filmsDatabaseContext);
         CreateDirectorDto createDirectorDto = new() { Name = "Kuba", Surname = "Baran", Description = "So great director" };
 
         // Act

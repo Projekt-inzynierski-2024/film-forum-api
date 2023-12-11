@@ -173,7 +173,7 @@ public class EpisodeServiceTests
         await filmsDatabaseContext.EpisodeCollection.InsertOneAsync(episode);
         EpisodeService episodeService = new(filmsDatabaseContext);
         CreateEpisodeDto createEpisodeDto = new() { Title = "New title", Description = "New Description", FilmId = film.Id };
-       
+
         // Act
         ReplaceOneResult result = await episodeService.UpdateAsync(episode.Id, createEpisodeDto);
 
@@ -216,7 +216,6 @@ public class EpisodeServiceTests
         // Assert
         result.DeletedCount.Should().Be(1);
     }
-
 
     [Fact]
     public async Task RemoveAsync_ForNotExistingEpisode_DoesNotRemoveEpisode()

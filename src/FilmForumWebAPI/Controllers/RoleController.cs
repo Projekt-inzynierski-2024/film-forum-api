@@ -20,15 +20,15 @@ public class RoleController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpGet("user-roles-names{userId}")]
-    public async Task<IActionResult> GetUserRolesNames(int userId) 
+    public async Task<IActionResult> GetUserRolesNames(int userId)
         => !await _userService.UserWithIdExistsAsync(userId)
-           ? NotFound("User not found") 
+           ? NotFound("User not found")
            : Ok(await _rolesService.GetUserRolesNamesAsync(userId));
 
     [Authorize(Roles = "Admin")]
     [HttpGet("user-roles{userId}")]
-    public async Task<IActionResult> GetUserRoles(int userId) 
-        => !await _userService.UserWithIdExistsAsync(userId) 
-           ? NotFound("User not found") 
+    public async Task<IActionResult> GetUserRoles(int userId)
+        => !await _userService.UserWithIdExistsAsync(userId)
+           ? NotFound("User not found")
            : Ok(await _rolesService.GetUserRolesAsync(userId));
 }
