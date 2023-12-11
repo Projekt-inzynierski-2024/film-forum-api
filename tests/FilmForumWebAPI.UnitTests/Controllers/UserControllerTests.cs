@@ -6,6 +6,7 @@ using FilmForumModels.Models.Enums;
 using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Controllers;
+using FilmForumWebAPI.Services;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentAssertions;
 using FluentValidation;
@@ -16,7 +17,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using PasswordManager.Interfaces;
+using SimpleBase;
 using System.Security.Claims;
+using static QRCoder.PayloadGenerator;
 
 namespace FilmForumWebAPI.UnitTests.Controllers;
 
@@ -437,5 +440,45 @@ public class UserControllerTests
 
         //Assert
         result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+
+    [Fact]
+    public async Task Get2faUri_ForValidData_ReturnsUri()
+    {
+        //Arrange
+        string uri = "otpauth://totp/FilmForum:email@email.com?secret=3123ddd123&issuer=FilmForum&algorithm=SHA512";
+        GetUserDto getUserDto = new(new User() { Id = 1, Email = "email@email.com" });
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
+        };
+        _userServiceMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(getUserDto);
+        _multifactorAuthenticationService.Setup(x => x.GenerateUriAsync(getUserDto.Email)).ReturnsAsync(() => uri);
+
+        //Act
+        IActionResult result = await _userController.Get2faUri();
+
+        //Assert
+        OkObjectResult okObjectResult = result.Should().BeOfType<OkObjectResult>().Subject;
+        string uriResult = okObjectResult.Value.Should().BeOfType<string>().Subject;
+        uriResult.Should().Be(uri);
+    }
+
+    [Fact]
+    public async Task Get2faUri_ForNonExistingUser_ReturnsUnauthorized()
+    {
+        //Arrange
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "999999") }))
+        };
+        _userServiceMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(() => null);
+
+        //Act
+        IActionResult result = await _userController.Get2faUri();
+
+        //Assert
+        result.Should().BeOfType<UnauthorizedResult>();
     }
 }

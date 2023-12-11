@@ -26,7 +26,7 @@ public class JwtService : IJwtService
         {
             throw new ArgumentNullException(nameof(user));
         }
-        if (options == null)
+        if (options is null)
         {
             throw new ArgumentNullException(nameof(options));
         }
@@ -48,7 +48,6 @@ public class JwtService : IJwtService
         SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
         DateTime expires = DateTime.Now.AddMinutes(Convert.ToDouble(options.LifetimeInMinutes));
 
-        //FilmForumWebAPI
         JwtSecurityToken token = new(issuer: options.Issuer,
                                      audience: options.Audience,
                                      claims: claims,
