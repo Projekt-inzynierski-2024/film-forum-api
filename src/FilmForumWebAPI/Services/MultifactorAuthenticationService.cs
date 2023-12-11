@@ -15,7 +15,7 @@ public class MultifactorAuthenticationService : IMultifactorAuthenticationServic
     public async Task<bool> VerifyCodeAsync(string email, string code) => await Task.Run(() =>
     {
         byte[] secretBytes = Encoding.ASCII.GetBytes(Secret(email));
-        var totp = new Totp(secretBytes, mode: OtpHashMode.Sha512);
+        Totp totp = new(secretBytes, mode: OtpHashMode.Sha512);
 
         return totp.VerifyTotp(code, out _);
     });

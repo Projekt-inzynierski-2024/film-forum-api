@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Org.BouncyCastle.Crypto.Paddings;
 using PasswordManager.Interfaces;
 using SimpleBase;
 using System.Security.Claims;
@@ -40,7 +41,7 @@ public class UserControllerTests
     private readonly Mock<IValidator<ResetPasswordDto>> _resetPasswordDtoValidatorMock = new();
     private readonly Mock<IValidator<ChangePasswordDto>> _changePasswordDtoValidatorMock = new();
     private readonly Mock<IValidator<CreateAdminDto>> _createAdminDtoValidatorMock = new();
-    private readonly Mock<IMultifactorAuthenticationService> _multifactorAuthenticationService = new();
+    private readonly Mock<IMultifactorAuthenticationService> _multifactorAuthenticationServiceMock = new();
 
     public UserControllerTests() => _userController = new(_loggerMock.Object,
                               _userServiceMock.Object,
@@ -55,7 +56,7 @@ public class UserControllerTests
                               _resetPasswordDtoValidatorMock.Object,
                               _changePasswordDtoValidatorMock.Object,
                               _createAdminDtoValidatorMock.Object,
-                              _multifactorAuthenticationService.Object);
+                              _multifactorAuthenticationServiceMock.Object);
 
     [Fact]
     public async Task RegisterAdmin_ForValidData_CreatesAdmin()
@@ -442,7 +443,6 @@ public class UserControllerTests
         result.Should().BeOfType<BadRequestObjectResult>();
     }
 
-
     [Fact]
     public async Task Get2faUri_ForValidData_ReturnsUri()
     {
@@ -454,7 +454,7 @@ public class UserControllerTests
             User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
         };
         _userServiceMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(getUserDto);
-        _multifactorAuthenticationService.Setup(x => x.GenerateUriAsync(getUserDto.Email)).ReturnsAsync(() => uri);
+        _multifactorAuthenticationServiceMock.Setup(x => x.GenerateUriAsync(getUserDto.Email)).ReturnsAsync(() => uri);
 
         //Act
         IActionResult result = await _userController.Get2faUri();
@@ -481,4 +481,108 @@ public class UserControllerTests
         //Assert
         result.Should().BeOfType<UnauthorizedResult>();
     }
+
+    [Fact]
+    public async Task Get2faPng_ForValidData_ReturnsUri()
+    {
+        //Arrange
+        string uri = "otpauth://totp/FilmForum:email@email.com?secret=3123ddd123&issuer=FilmForum&algorithm=SHA512";
+        byte[] qrCode = new byte[] { 1, 2, 3, 4, 5 };
+        GetUserDto getUserDto = new(new User() { Id = 1, Email = "email@email.com" });
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
+        };
+        _userServiceMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(getUserDto);
+        _multifactorAuthenticationServiceMock.Setup(x => x.GenerateUriAsync(getUserDto.Email)).ReturnsAsync(() => uri);
+        _multifactorAuthenticationServiceMock.Setup(x => x.GenerateQRCodePNGAsync(uri)).ReturnsAsync(() => qrCode);
+
+        //Act
+        IActionResult result = await _userController.Get2faPng();
+
+        //Assert
+        FileContentResult fileContentResult = result.Should().BeOfType<FileContentResult>().Subject;
+        byte[] qrCodeResult = fileContentResult.FileContents.Should().BeOfType<byte[]>().Subject;
+        qrCodeResult.Should().BeEquivalentTo(qrCode);
+        string contentTypeResult = fileContentResult.ContentType.Should().BeOfType<string>().Subject;
+        contentTypeResult.Should().Be("image/png");
+    }
+
+    [Fact]
+    public async Task Get2faPng_ForNonExistingUser_ReturnsUnauthorized()
+    {
+        //Arrange
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "999999") }))
+        };
+        _userServiceMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(() => null);
+
+        //Act
+        IActionResult result = await _userController.Get2faPng();
+
+        //Assert
+        result.Should().BeOfType<UnauthorizedResult>();
+    }
+
+    [Fact]
+    public async Task SetMultifactorAuthentication_ForValidData_ChangesMultifactorAuthentication()
+    {
+        //Arrange
+        Mock<ChangeMultifactorAuthenticationDto> changeMultifactorAuthenticationDtoMock = new("top", true);
+        GetUserDto getUserDto = new(new User() { Id = 1, Email = "email@email.com" });
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
+        };
+        _userServiceMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(getUserDto);
+        _multifactorAuthenticationServiceMock.Setup(x => x.VerifyCodeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
+        _userServiceMock.Setup(x => x.ChangeMultifactorAuthAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(1);
+
+        //Act
+        IActionResult result = await _userController.SetMultifactorAuthentication(changeMultifactorAuthenticationDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<OkResult>();
+    }
+
+    [Fact]
+    public async Task SetMultifactorAuthentication_ForNonExistingUser_ReturnsUnauthorized()
+    {
+        //Arrange
+        Mock<ChangeMultifactorAuthenticationDto> changeMultifactorAuthenticationDtoMock = new("top", true);
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "999999") }))
+        };
+        _userServiceMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(() => null);
+
+        //Act
+        IActionResult result = await _userController.SetMultifactorAuthentication(changeMultifactorAuthenticationDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<UnauthorizedResult>();
+    }
+
+    [Fact]
+    public async Task SetMultifactorAuthentication_ForInvalidCode_ReturnsBadRequest()
+    {
+        //Arrange
+        Mock<ChangeMultifactorAuthenticationDto> changeMultifactorAuthenticationDtoMock = new("top", true);
+        GetUserDto getUserDto = new(new User() { Id = 1, Email = "email@email.com" });
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
+        };
+        _userServiceMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(getUserDto);
+        _multifactorAuthenticationServiceMock.Setup(x => x.VerifyCodeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(false);
+
+        //Act
+        IActionResult result = await _userController.SetMultifactorAuthentication(changeMultifactorAuthenticationDtoMock.Object);
+
+        //Assert
+        result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+
 }
