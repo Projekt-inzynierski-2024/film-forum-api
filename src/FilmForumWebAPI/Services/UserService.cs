@@ -79,7 +79,6 @@ public class UserService : IUserService
     public async Task<bool> UserWithEmailAndMultifactorAuthOnExistsAsync(string email)
         => await _usersDatabaseContext.Users.AsNoTracking().AnyAsync(user => user.Email == email && user.MultifactorAuth);
 
-
     /// <summary>
     /// Gets all users from database
     /// </summary>

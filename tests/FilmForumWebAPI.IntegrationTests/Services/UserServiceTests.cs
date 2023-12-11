@@ -34,7 +34,6 @@ public class UserServiceTests
         //Assert
         result.Should().Be(expected);
     }
-        
 
     [Theory]
     [InlineData(1, true)]
@@ -85,6 +84,31 @@ public class UserServiceTests
 
         //Act
         bool userExists = await userService.UserWithEmailExistsAsync(email);
+
+        //Assert
+        userExists.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData("email@email.com", true, true)]
+    [InlineData("email2@email.com", false, false)]
+    [InlineData("emailwhodonotexists@email.com", true, false)]
+    [InlineData("emailwhodonotexists@email.com", false, false)]
+    public async Task UserWithEmailAndMultifactorAuthOnExistsAsync_ForGivenEmailAndAuth_ReturnsTrueIfUserExistsOtherwiseFalse(string email, bool auth, bool expected)
+    {
+        //Arrange
+        UsersDatabaseContext usersDatabaseContext = await DatabaseHelper.CreateAndPrepareUsersDatabaseContextForTestingAsync();
+        UserService userService = new(usersDatabaseContext, new PasswordService(), new JwtService(), Options.Create(new JwtDetails()), new RoleService(usersDatabaseContext), new MultifactorAuthenticationService());
+        await usersDatabaseContext.Users.AddRangeAsync(new List<User>()
+        {
+            new() { Password = "dasd321D!@#@!#a", Email = "email@email.com", Username = "name", MultifactorAuth = auth },
+            new() { Password = "dasd321D!@#@!#a2", Email = "email2@email.com", Username = "name2", MultifactorAuth = auth }
+        });
+
+        await usersDatabaseContext.SaveChangesAsync();
+
+        //Act
+        bool userExists = await userService.UserWithEmailAndMultifactorAuthOnExistsAsync(email);
 
         //Assert
         userExists.Should().Be(expected);
