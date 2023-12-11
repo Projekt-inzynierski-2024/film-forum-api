@@ -6,7 +6,6 @@ using FilmForumModels.Models.Enums;
 using FilmForumModels.Models.Password;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Controllers;
-using FilmForumWebAPI.Services;
 using FilmForumWebAPI.Services.Interfaces;
 using FluentAssertions;
 using FluentValidation;
@@ -16,11 +15,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using Org.BouncyCastle.Crypto.Paddings;
 using PasswordManager.Interfaces;
-using SimpleBase;
 using System.Security.Claims;
-using static QRCoder.PayloadGenerator;
 
 namespace FilmForumWebAPI.UnitTests.Controllers;
 
@@ -584,5 +580,55 @@ public class UserControllerTests
         result.Should().BeOfType<BadRequestObjectResult>();
     }
 
+    [Fact]
+    public async Task Delete_ForGivenId_DeletesUserIfUserExists()
+    {
+        // Arrange
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
+        };
+        _userServiceMock.Setup(x => x.UserWithIdExistsAsync(It.IsAny<int>())).ReturnsAsync(true);
+        _userServiceMock.Setup(x => x.RemoveAsync(It.IsAny<int>())).ReturnsAsync(It.IsAny<int>());
 
+        // Act
+        IActionResult result = await _userController.Delete(It.IsAny<int>());
+
+        // Assert
+        result.Should().BeOfType<NoContentResult>();
+    }
+
+    [Fact]
+    public async Task Delete_ForGivenIdButNonExistingUser_ReturnsNotFound()
+    {
+        // Arrange
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
+        };
+        _userServiceMock.Setup(x => x.UserWithIdExistsAsync(It.IsAny<int>())).ReturnsAsync(false);
+
+        // Act
+        IActionResult result = await _userController.Delete(It.IsAny<int>());
+
+        // Assert
+        result.Should().BeOfType<NotFoundObjectResult>();
+    }
+
+    [Fact]
+    public async Task Delete_DeletesUser()
+    {
+        // Arrange
+        _userController.ControllerContext.HttpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new(ClaimTypes.NameIdentifier, "1") }))
+        };
+        _userServiceMock.Setup(x => x.RemoveAsync(It.IsAny<int>())).ReturnsAsync(It.IsAny<int>());
+
+        // Act
+        IActionResult result = await _userController.Delete();
+
+        // Assert
+        result.Should().BeOfType<NoContentResult>();
+    }
 }
