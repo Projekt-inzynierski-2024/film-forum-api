@@ -94,15 +94,36 @@ public class EpisodeService : IEpisodeService
     public async Task<List<GetDetailedEpisodeDto>> GetDetailedAllAsync()
         => await _detailedEpisodeCursor.ToListAsync() is IEnumerable<Episode> episodes ? episodes.Select(x => new GetDetailedEpisodeDto(x)).ToList() : new();
 
+    /// <summary>
+    /// Returns episode with given <paramref name="id"/> from database
+    /// </summary>
+    /// <param name="id">Episode's id</param>
+    /// <returns>Episode if found otherwise null</returns>
     public async Task<GetEpisodeDto?> GetAsync(string id)
         => await _episodeCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Episode episode ? new(episode) : null;
 
+    /// <summary>
+    /// Returns episode with details with given <paramref name="id"/> from database
+    /// </summary>
+    /// <param name="id">Episode's id</param>
+    /// <returns>Episode with details if found otherwise null</returns>
     public async Task<GetDetailedEpisodeDto?> GetDetailedAsync(string id)
         => await _detailedEpisodeCursor.ToListAsync().ContinueWith(episodeTask => episodeTask.Result.Find(x => x.Id == id)) is Episode episode ? new(episode) : null;
 
+    /// <summary>
+    /// Updates episode with given <paramref name="id"/> in database
+    /// </summary>
+    /// <param name="id">Episode's id</param>
+    /// <param name="createEpisodeDto">Details to update episode</param>
+    /// <returns>The result of the replacement</returns>
     public async Task<ReplaceOneResult> UpdateAsync(string id, CreateEpisodeDto createEpisodeDto)
         => await _episodeCollection.ReplaceOneAsync(x => x.Id == id, new(id, createEpisodeDto));
 
+    /// <summary>
+    /// Deletes episode with given <paramref name="id"/> from database
+    /// </summary>
+    /// <param name="id">Episode's id</param>
+    /// <returns>The result of the delete operation</returns>
     public async Task<DeleteResult> RemoveAsync(string id)
         => await _episodeCollection.DeleteOneAsync(x => x.Id == id);
 }
