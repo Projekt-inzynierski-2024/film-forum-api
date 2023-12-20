@@ -21,7 +21,7 @@ public class ReviewService : IReviewService
     public async Task CreateAsync(string userId, CreateReviewDto createReviewDto) => await _reviewCollection.InsertOneAsync(new(userId, createReviewDto));
 
     /// <summary>
-    /// Gets all reviews from database
+    /// Gets list of all reviews from database
     /// </summary>
     /// <returns>List of all reviews from database</returns>
     public async Task<List<GetReviewDto>> GetAllAsync()

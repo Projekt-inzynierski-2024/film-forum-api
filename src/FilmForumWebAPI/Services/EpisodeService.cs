@@ -64,14 +64,33 @@ public class EpisodeService : IEpisodeService
         _detailedEpisodeCursor = _episodeCollection.Aggregate<Episode>(pipeline);
     }
 
+    /// <summary>
+    /// Returns list of episodes with titles matching <paramref name="query"/> from database
+    /// </summary>
+    /// <param name="query">Episode's title</param>
+    /// <returns>List of episodes with matching titles</returns>
     public async Task<List<GetEpisodeDto>> SearchAllAsync(string query)
         => await _episodeCollection.Find(x => (x.Title ?? "").ToUpper().Contains(query.ToUpper())).ToListAsync() is IEnumerable<Episode> episodes ? episodes.Select(x => new GetEpisodeDto(x)).ToList() : new();
 
-    public async Task CreateAsync(CreateEpisodeDto createEpisodeDto) => await _episodeCollection.InsertOneAsync(new(createEpisodeDto));
+    /// <summary>
+    /// Adds new episode to database
+    /// </summary>
+    /// <param name="createEpisodeDto">Details to create new episode</param>
+    /// <returns>The result of the insert operation</returns>
+    public async Task CreateAsync(CreateEpisodeDto createEpisodeDto) 
+        => await _episodeCollection.InsertOneAsync(new(createEpisodeDto));
 
+    /// <summary>
+    /// Returns list of all episodes from database
+    /// </summary>
+    /// <returns>List of all episodes</returns>
     public async Task<List<GetEpisodeDto>> GetAllAsync()
         => await _episodeCollection.Find(_ => true).ToListAsync() is IEnumerable<Episode> episodes ? episodes.Select(x => new GetEpisodeDto(x)).ToList() : new();
 
+    /// <summary>
+    /// Returns list of all episodes with details from database
+    /// </summary>
+    /// <returns>List of all episodes with details</returns>
     public async Task<List<GetDetailedEpisodeDto>> GetDetailedAllAsync()
         => await _detailedEpisodeCursor.ToListAsync() is IEnumerable<Episode> episodes ? episodes.Select(x => new GetDetailedEpisodeDto(x)).ToList() : new();
 

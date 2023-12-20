@@ -35,10 +35,10 @@ public class FilmService : IFilmService
     }
 
     /// <summary>
-    /// Returns list of film with titles matching <paramref name="query"/> from database
+    /// Returns list of films with titles matching <paramref name="query"/> from database
     /// </summary>
     /// <param name="query">Film's title</param>
-    /// <returns>List of film with matching titles</returns>
+    /// <returns>List of films with matching titles</returns>
     public async Task<List<GetFilmDto>> SearchAllAsync(string query)
         => await _filmCollection.Find(x => x.Title.ToUpper().Contains(query.ToUpper())).ToListAsync() is IEnumerable<Film> films ? films.Select(x => new GetFilmDto(x)).ToList() : new();
 
@@ -59,16 +59,16 @@ public class FilmService : IFilmService
         => await _detailedFilmCursor.ToListAsync().ContinueWith(filmsTask => filmsTask.Result.Find(x => x.Id == id)) is Film film ? new(film) : null;
 
     /// <summary>
-    /// Returns list of all film from database
+    /// Returns list of all films from database
     /// </summary>
-    /// <returns>List of all film</returns>
+    /// <returns>List of all films</returns>
     public async Task<List<GetFilmDto>> GetAllAsync()
         => await _filmCollection.Find(_ => true).ToListAsync() is IEnumerable<Film> films ? films.Select(x => new GetFilmDto(x)).ToList() : new();
 
     /// <summary>
-    /// Returns list of all film with details from database
+    /// Returns list of all films with details from database
     /// </summary>
-    /// <returns>List of all film with details from database</returns>
+    /// <returns>List of all films with details from database</returns>
     public async Task<List<GetDetailedFilmDto>> GetDetailedAllAsync()
        => await _detailedFilmCursor.ToListAsync() is IEnumerable<Film> films ? films.Select(x => new GetDetailedFilmDto(x)).ToList() : new();
 
