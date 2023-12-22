@@ -34,12 +34,28 @@ public class DirectorService : IDirectorService
     public async Task<List<GetDirectorDto>> GetAllAsync()
         => await _directorCollection.Find(_ => true).ToListAsync() is IEnumerable<Director> directors ? directors.Select(x => new GetDirectorDto(x)).ToList() : new();
 
+    /// <summary>
+    /// Returns director with details with given <paramref name="id"/> from database
+    /// </summary>
+    /// <param name="id">Director's id</param>
+    /// <returns>Director with details if found, otherwise null</returns>
     public async Task<GetDirectorDto?> GetAsync(string id)
         => await _directorCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Director director ? new(director) : null;
 
+    /// <summary>
+    /// Updates director with given <paramref name="id"/> in database
+    /// </summary>
+    /// <param name="id">Director's id</param>
+    /// <param name="createDirectorDto">Details to update director</param>
+    /// <returns>The result of the replacement</returns>
     public async Task<ReplaceOneResult> UpdateAsync(string id, CreateDirectorDto createDirectorDto)
         => await _directorCollection.ReplaceOneAsync(x => x.Id == id, new(id, createDirectorDto));
 
+    /// <summary>
+    /// Deletes director with given <paramref name="id"/> from database
+    /// </summary>
+    /// <param name="id">Director's id</param>
+    /// <returns>The result of the delete operation</returns>
     public async Task<DeleteResult> RemoveAsync(string id)
         => await _directorCollection.DeleteOneAsync(x => x.Id == id);
 }
