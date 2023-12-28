@@ -77,7 +77,7 @@ public class EpisodeService : IEpisodeService
     /// </summary>
     /// <param name="createEpisodeDto">Details to create new episode</param>
     /// <returns>The result of the insert operation</returns>
-    public async Task CreateAsync(CreateEpisodeDto createEpisodeDto) 
+    public async Task CreateAsync(CreateEpisodeDto createEpisodeDto)
         => await _episodeCollection.InsertOneAsync(new(createEpisodeDto));
 
     /// <summary>
