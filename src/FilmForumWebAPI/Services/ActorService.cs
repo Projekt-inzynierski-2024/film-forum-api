@@ -34,12 +34,28 @@ public class ActorService : IActorService
     public async Task<List<GetActorDto>> GetAllAsync()
         => await _actorCollection.Find(_ => true).ToListAsync() is IEnumerable<Actor> list ? list.Select(x => new GetActorDto(x)).ToList() : new();
 
+    /// <summary>
+    /// Returns actor with given <paramref name="id"/> from database
+    /// </summary>
+    /// <param name="id">Actor's id</param>
+    /// <returns>Actor if found otherwise null</returns>
     public async Task<GetActorDto?> GetAsync(string id)
         => await _actorCollection.Find(x => x.Id == id).FirstOrDefaultAsync() is Actor actor ? new(actor) : null;
 
+    /// <summary>
+    /// Updates actor with given <paramref name="id"/> in database
+    /// </summary>
+    /// <param name="id">Actor's id</param>
+    /// <param name="createActorDto">Details to update actor</param>
+    /// <returns>The result of the replacement</returns>
     public async Task<ReplaceOneResult> UpdateAsync(string id, CreateActorDto createActorDto)
         => await _actorCollection.ReplaceOneAsync(x => x.Id == id, new(id, createActorDto));
 
+    /// <summary>
+    /// Deletes actor with given <paramref name="id"/> from database
+    /// </summary>
+    /// <param name="id">Actor's id</param>
+    /// <returns>The result of the delete operation</returns>
     public async Task<DeleteResult> RemoveAsync(string id)
         => await _actorCollection.DeleteOneAsync(x => x.Id == id);
 }
