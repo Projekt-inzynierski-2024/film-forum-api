@@ -9,6 +9,7 @@ public class GetDirectorDto
         Id = director.Id;
         Name = director.Name;
         Surname = director.Surname;
+        Description = director.Description;
     }
 
     public string Id { get; set; }
@@ -16,4 +17,6 @@ public class GetDirectorDto
     public string Name { get; set; }
 
     public string Surname { get; set; }
+
+    public string Description { get; set; }
 }
