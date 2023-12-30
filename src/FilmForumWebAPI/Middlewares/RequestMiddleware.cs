@@ -1,4 +1,5 @@
-﻿using FilmForumModels.Dtos.RequestDtos;
+﻿using FilmForumModels.Consts;
+using FilmForumModels.Dtos.RequestDtos;
 using FilmForumModels.Models.Errors;
 using FilmForumWebAPI.Services.Interfaces;
 using MongoDB.Driver;
@@ -47,7 +48,7 @@ public class RequestMiddleware
 
     private static async Task WriteExceptionToResponseAsync(HttpContext context, Exception exception)
     {
-        context.Response.ContentType = "application/json";
+        context.Response.ContentType = ContentTypes.ApplicationJson;
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         await context.Response.WriteAsync(new RequestError(context.Response.StatusCode,
                                                            exception.Message).ToString());

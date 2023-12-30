@@ -1,5 +1,6 @@
 using AuthenticationManager.Extensions;
 using EmailSender.Extensions;
+using FilmForumModels.Consts;
 using FilmForumModels.Models.Settings;
 using FilmForumWebAPI.Database;
 using FilmForumWebAPI.Extensions;
@@ -24,8 +25,6 @@ public class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
         #region Configuration
 
         builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection(FilmForumMongoDatabaseSettings.SectionKey));
@@ -40,7 +39,7 @@ public class Program
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            string filePath = $"{Environment.GetEnvironmentVariable("HOME")}/Documents/projinz/logs/film-forum.log";
+            string filePath = Paths.LinuxLogFilePath;
             builder.Host.UseSerilog((hostContext, services, configuration) =>
             {
                 configuration.WriteTo.Console();

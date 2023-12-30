@@ -11,6 +11,7 @@ public class MultifactorAuthenticationService : IMultifactorAuthenticationServic
     private readonly QRCodeGenerator _qrCoderGenerator = new();
 
     private static string Secret(string unique) => $"SECRETKEY{unique}";
+    private static string MultifactorUri(string email, string secret) => $"otpauth://totp/FilmForum:{email}?secret={secret}&issuer=FilmForum&algorithm=SHA512";
 
     /// <summary>
     /// Verify the <paramref name="code"/> taking into account <paramref name="email"/> to pass multifactor authentication
@@ -22,7 +23,6 @@ public class MultifactorAuthenticationService : IMultifactorAuthenticationServic
     {
         byte[] secretBytes = Encoding.ASCII.GetBytes(Secret(email));
         Totp totp = new(secretBytes, mode: OtpHashMode.Sha512);
-
         return totp.VerifyTotp(code, out _);
     });
 
@@ -35,7 +35,7 @@ public class MultifactorAuthenticationService : IMultifactorAuthenticationServic
     {
         byte[] secretBytes = Encoding.ASCII.GetBytes(Secret(email));
         string base32 = Base32.Rfc4648.Encode(secretBytes);
-        return $"otpauth://totp/FilmForum:{email}?secret={base32}&issuer=FilmForum&algorithm=SHA512";
+        return MultifactorUri(email, base32);
     });
 
     /// <summary>
