@@ -1,4 +1,4 @@
-﻿namespace FilmForumWebAPI.Services.Interfaces;
+﻿namespace AuthenticationManager.Interfaces;
 
 public interface IMultifactorAuthenticationService
 {

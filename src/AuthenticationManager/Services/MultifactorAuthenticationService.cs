@@ -1,16 +1,17 @@
-﻿using FilmForumWebAPI.Services.Interfaces;
+﻿using AuthenticationManager.Interfaces;
 using OtpNet;
 using QRCoder;
 using SimpleBase;
 using System.Text;
 
-namespace FilmForumWebAPI.Services;
+namespace AuthenticationManager.Services;
 
 public class MultifactorAuthenticationService : IMultifactorAuthenticationService
 {
     private readonly QRCodeGenerator _qrCoderGenerator = new();
 
     private static string Secret(string unique) => $"SECRETKEY{unique}";
+
     private static string MultifactorUri(string email, string secret) => $"otpauth://totp/FilmForum:{email}?secret={secret}&issuer=FilmForum&algorithm=SHA512";
 
     /// <summary>

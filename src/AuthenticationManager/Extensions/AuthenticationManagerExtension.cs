@@ -14,6 +14,7 @@ public static class AuthenticationManagerExtension
     public static IServiceCollection AddAuthenticationManager(this IServiceCollection services, JwtDetails jwtDetails)
     {
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IMultifactorAuthenticationService, MultifactorAuthenticationService>();
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
