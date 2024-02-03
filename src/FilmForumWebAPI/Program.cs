@@ -27,6 +27,17 @@ public class Program
 
         #region Configuration
 
+        string mongodbUsername = Environment.GetEnvironmentVariable("MONGODB_USERNAME") ?? "root";
+        string mongodbPassword = Environment.GetEnvironmentVariable("MONGODB_PASSWORD") ?? "zaq1@WSX";
+
+        string mongodbConnectionString = builder.Configuration
+                                                .GetSection(FilmForumMongoDatabaseSettings.SectionKey)
+                                                .GetSection("ConnectionString").Value ?? "";
+
+        builder.Configuration.GetSection(FilmForumMongoDatabaseSettings.SectionKey)
+                             .GetSection("ConnectionString").Value = mongodbConnectionString.Replace("${MONGODB_USERNAME}", mongodbUsername)
+                                                                                            .Replace("${MONGODB_PASSWORD}", mongodbPassword);
+
         builder.Services.Configure<FilmForumMongoDatabaseSettings>(builder.Configuration.GetSection(FilmForumMongoDatabaseSettings.SectionKey));
         builder.Services.Configure<JwtDetails>(builder.Configuration.GetSection(JwtDetails.SectionKey));
         builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection(SmtpSettings.SectionKey));
@@ -55,7 +66,10 @@ public class Program
 
         #region Database
 
-        builder.Services.AddDbContext<UsersDatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString(UsersDatabaseContext.ConnectionStringKey)));
+        string mssqlSaPassword = Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD") ?? "zaq1@WSX";
+        string mssqlConnectionString = builder.Configuration.GetConnectionString(UsersDatabaseContext.ConnectionStringKey) ?? "";
+
+        builder.Services.AddDbContext<UsersDatabaseContext>(options => options.UseSqlServer(mssqlConnectionString.Replace("${MSSQL_SA_PASSWORD}", mssqlSaPassword)));
         builder.Services.AddScoped<FilmsDatabaseContext>();
 
         #endregion Database
